@@ -1,0 +1,49 @@
+@startmindmap archi_v1
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+* array/
+
+** event/
+
+*** time/
+
+*** contentType/
+
+*** user/
+
+*** category/
+
+*** doc/
+
+*** docOffice/
+
+*** content/
+
+**** diag/
+***** diagSymptoms/
+***** diagCheckPoints/
+***** diagConclusions/
+***** diagMedicThemes/
+***** ordoList/
+
+**** treatPharmaSession/
+
+**** treatPharmaUsageMod/
+
+**** careSession/
+
+**** careUsageMod/
+
+**** laboNoOrdoSampling/
+
+**** laboOrdoSampling/
+
+**** vaxSession/
+
+**** vaxUsageMod/
+
+
+@endmindmap

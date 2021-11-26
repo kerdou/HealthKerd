@@ -1,0 +1,8 @@
+/* Resize des textarea*/
+#my-content{
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+        max-height: 250px;
+    }
+}

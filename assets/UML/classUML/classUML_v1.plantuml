@@ -1,0 +1,57 @@
+@startuml
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+together {
+    package Controller {
+        abstract class GetAndPostCleaner {
+            #inputCleaner()
+        }
+
+        class ControllerDispatch extends GetAndPostCleaner {
+            -$cleanedUpGet : array
+            -$cleanedUpPost : array
+            -$selectedController : string
+            --
+            +__construct()
+            -sessionChecker()
+            -unloggedDispatcher()
+            -loggedInDispatcher()
+        }
+
+        package login_contr {
+            abstract class LoginCommonController {
+
+            }
+
+            class LoginPostController extends LoginCommonController {
+
+            }
+
+            class LoginGetController extends LoginCommonController {
+
+            }
+        }
+
+
+    }
+
+
+    package Model {
+
+    }
+
+
+    package View {
+
+    }
+
+
+}
+
+
+
+
+@enduml

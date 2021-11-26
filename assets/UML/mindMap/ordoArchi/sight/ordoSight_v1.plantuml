@@ -1,0 +1,17 @@
+@startmindmap
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+* diag/
+
+** ordoList/
+
+*** ordo(Sight)/
+
+**** rightEye/
+**** leftEye/
+**** glass/
+**** lens/
+
+@endmindmap

@@ -1,0 +1,23 @@
+@startuml
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+participant Controller as Controller
+participant EventIdFinder as EventIdFinder
+participant EventDataGatherer as EventDataGatherer
+collections dataStore as dataStore
+database MySQL as MySQL
+
+autonumber
+
+Controller -> EventIdFinder: Demande d'ID d'events
+EventIdFinder -> MySQL : Requete d'ID d'events concernés
+EventIdFinder <- MySQL : Renvoi des ID d'events concernés
+Controller <- EventIdFinder: Renvoi des ID d'events
+
+Controller -> EventDataGatherer: Envoi des ID d'events
+EventDataGatherer -> MySQL : Requete de tous les données\nde medic_event_list des ID
+dataStore <- MySQL : Renvoi de tous les\ndonnées des events
+
+@enduml

@@ -1,0 +1,61 @@
+#my-container { /* Pour avoir un footer qui reste en bas*/
+  min-height: 100vh; /* 88% de vertical viewport pour que ça prenne l'intégralité d'un 16/9 sur Windows 10 */
+  display: flex;
+  flex-direction: column;
+}
+
+
+#my-header {  /* Pour avoir un footer qui reste en bas*/
+  flex: 0 1;
+}
+
+
+#my-content {  /* Pour avoir un footer qui reste en bas*/
+  flex: 1;
+}
+
+
+#footer {  /* Pour avoir un footer qui reste en bas*/
+  flex: 1;
+}
+
+
+
+/* Suppression du style des liens */
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+a:link {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+
+/* Scroll up button */
+#scrollUpButton {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s linear;
+  -webkit-transition: opacity 0.15s linear;
+  -moz-transition: opacity 0.15s linear;
+  -ms-transition: opacity 0.15s linear;
+  -o-transition: opacity 0.15s linear;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}

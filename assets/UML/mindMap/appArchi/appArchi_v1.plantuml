@@ -1,0 +1,73 @@
+@startmindmap archi_v1
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+* root/
+
+** assets/
+    *** mindMap/
+        **** folderArchi/
+            *****_ archi_v1.plantuml
+    *** classUML/
+    *** JS/
+    *** Sass/
+
+** public/
+    ***_ index.php
+    *** css/
+    *** html/
+    *** img/
+    *** js/
+
+** src/
+    *** Controller/
+        ****_ ControllerDispatcher.php
+        **** common/
+        **** login/
+            *****_ LoginCommonController.php
+            *****_ LoginGetController.php
+            *****_ LoginPostController.php
+        **** medic/
+            *****_ MedicController.php
+            ***** home/
+            ***** doc/
+                ******_ DocCommonController.php
+                ******_ DocGetController.php
+                ******_ DocPostController.php
+            ***** docOffice/
+                ******_ DocOfficeCommonController.php
+                ******_ DocOfficeGetController.php
+                ******_ DocOfficePostController.php
+            ***** speMedic/
+                ******_ SpeMedicGetController.php
+    *** Model/
+        ****_ ModelDispatcher.php
+        **** common/
+        **** login/
+        **** medic/
+            ***** home/
+            ***** docs/
+            ***** docOffice/
+            ***** speMedic/
+    *** View/
+        ****_ ViewDispatcher.php
+        **** common/
+        **** login/
+        **** medic/
+            ***** home/
+            ***** docs/
+            ***** docOffice/
+            ***** speMedic/
+
+** template/
+    *** login/
+    *** home/
+    *** medic/
+
+** tests/
+
+** vendor/
+
+@endmindmap

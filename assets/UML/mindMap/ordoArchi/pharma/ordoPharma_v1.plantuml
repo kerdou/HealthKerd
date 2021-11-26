@@ -1,0 +1,17 @@
+@startmindmap archi_v1
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+* diag/
+
+** ordoList/
+
+*** ordo(Pharma)/
+
+**** presc/
+***** treatPharma/
+***** roleOnAffect/
+***** medicAffect/
+
+@endmindmap
