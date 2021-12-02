@@ -1,7 +1,8 @@
 @charset "UTF-8";
 #my-container {
   /* Pour avoir un footer qui reste en bas*/
-  min-height: 100vh; /* réagit bien quand hosté sur Wamp, mais oblige à mettre 88 quand accés direct en version HTML simple sinon le footer est affiché trop bas */
+  min-height: 100vh;
+  /* 88% de vertical viewport pour que ça prenne l'intégralité d'un 16/9 sur Windows 10 */
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -54,6 +55,7 @@ a:hover {
   bottom: 32px;
   right: 32px;
   z-index: 99;
+  padding: 0;
   border: none;
   outline: none;
   cursor: pointer;
@@ -119,6 +121,16 @@ a:hover {
   resize: vertical;
   min-height: 100px;
   max-height: 250px;
+}
+#my-content textarea.textarea-ridonli {
+  background-color: transparent;
+}
+#my-content textarea.textarea-ridonli + label {
+  transition: opacity 0.1s linear;
+  -webkit-transition: opacity 0.1s linear;
+  -moz-transition: opacity 0.1s linear;
+  -ms-transition: opacity 0.1s linear;
+  -o-transition: opacity 0.1s linear;
 }
 
 /* BASIC */

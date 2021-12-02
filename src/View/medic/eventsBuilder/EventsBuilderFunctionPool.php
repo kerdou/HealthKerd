@@ -31,6 +31,52 @@ abstract class EventsBuilderFunctionPool
 
 
     /** */
+    protected function eventCategory(string $eventCategoryName)
+    {
+        $eventCategoryHTML =
+            '<div class="event-category d-flex justify-content-start p-1"> <!-- START OF CATEGORY -->
+                <div class="me-2">Catégorie:</div>
+                <a href="#"  class="badge bg-success text-white">' . $eventCategoryName . '</a>
+            </div> <!-- END OF CATEGORY -->';
+
+        return $eventCategoryHTML;
+    }
+
+
+    /** */
+    protected function medicThemeBadges(array $eventMedicThemesList)
+    {
+        $allBadgesHTML = '';
+
+        foreach ($eventMedicThemesList as $theme) {
+            $singleBadgeHTML = '<a href="#" class="badge mb-1 me-1 bg-primary text-white">' . $theme['medicThemeName'] . '</a>';
+            $allBadgesHTML .= $singleBadgeHTML;
+        }
+
+        return $allBadgesHTML;
+    }
+
+
+    /** */
+    protected function eventMedicTheme($medicThemeBadges)
+    {
+        $medicThemesHTML =
+            '<div class="event-theme d-flex justify-content-start p-1"> <!-- START OF THEME -->
+                <div class="me-2">Thème(s):</div>
+                <div>' . $medicThemeBadges . '</div>
+            </div> <!-- END OF THEME -->
+
+            <hr class="mx-4 my-2">';
+
+        return $medicThemesHTML;
+    }
+
+
+
+
+
+
+    /** */
     protected function docSpeMedicBadges(array $speMedicList)
     {
         $allBadgesHTML = '';
@@ -123,7 +169,8 @@ abstract class EventsBuilderFunctionPool
     protected function eventSubject(string $eventTitle)
     {
         $eventTitleHTML =
-            '<div class="event-subject d-flex justify-content-start p-1"> <!-- START OF SUBJECT -->
+            '<hr class="mx-4 my-2">
+            <div class="event-subject d-flex justify-content-start p-1"> <!-- START OF SUBJECT -->
             <div class="me-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bullseye" viewBox="0 0 16 16">
                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -139,48 +186,7 @@ abstract class EventsBuilderFunctionPool
     }
 
 
-    /** */
-    protected function eventCategory(string $eventCategoryName)
-    {
-        $eventCategoryHTML =
-            '<hr class="mx-4 my-2">
 
-            <div class="event-category d-flex justify-content-start p-1"> <!-- START OF CATEGORY -->
-                <div class="me-2">Catégorie:</div>
-                <a href="#"  class="badge bg-success text-white">' . $eventCategoryName . '</a>
-            </div> <!-- END OF CATEGORY -->';
-
-        return $eventCategoryHTML;
-    }
-
-
-    /** */
-    protected function medicThemeBadges(array $eventMedicThemesList)
-    {
-        $allBadgesHTML = '';
-
-        foreach ($eventMedicThemesList as $theme) {
-            $singleBadgeHTML = '<a href="#" class="badge mb-1 me-1 bg-primary text-white">' . $theme['medicThemeName'] . '</a>';
-            $allBadgesHTML .= $singleBadgeHTML;
-        }
-
-        return $allBadgesHTML;
-    }
-
-
-    /** */
-    protected function eventMedicTheme($medicThemeBadges)
-    {
-        $medicThemesHTML =
-            '<div class="event-theme d-flex justify-content-start p-1"> <!-- START OF THEME -->
-                <div class="me-2">Thème(s):</div>
-                <div>' . $medicThemeBadges . '</div>
-            </div> <!-- END OF THEME -->
-
-            <hr class="mx-4 my-2">';
-
-        return $medicThemesHTML;
-    }
 
 
     /** */
@@ -204,6 +210,20 @@ abstract class EventsBuilderFunctionPool
 
         return $eventAccordHeaderEndHTML;
     }
+
+
+    /** */
+    protected function eventAccordComment($value)
+    {
+        $eventAccordCommentHTML =
+        '<div class="form-floating my-1">
+            <textarea class="form-control textarea-ridonli" placeholder="" id="event-floating-Textarea-' . $value['medicEventID'] . '" readonly>' . $value['comment'] . '</textarea>
+            <label for="event-floating-Textarea-' . $value['medicEventID'] . '">Informations complémentaires sur l\'évènement</label>
+        </div>';
+
+        return $eventAccordCommentHTML;
+    }
+
 
 
     /** */
@@ -268,18 +288,6 @@ abstract class EventsBuilderFunctionPool
         return $eventFullAddrAccordEndHTML;
     }
 
-
-    /** */
-    protected function eventAccordComment($value)
-    {
-        $eventAccordCommentHTML =
-        '<div class="form-floating mx-1 mt-2">
-            <textarea class="form-control" placeholder="" id="event-floating-Textarea-' . $value['medicEventID'] . '" readonly>' . $value['comment'] . '</textarea>
-            <label for="event-floating-Textarea-' . $value['medicEventID'] . '">Informations complémentaires sur l\'évènement</label>
-        </div>';
-
-        return $eventAccordCommentHTML;
-    }
 
 
     /** */

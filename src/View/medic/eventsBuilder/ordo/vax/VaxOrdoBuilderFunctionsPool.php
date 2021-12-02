@@ -13,7 +13,7 @@ abstract class VaxOrdoBuilderFunctionsPool
     protected function ordoVaxStarter(array $singleOrdo, string $medicEventID)
     {
         $ordoVaxStarterHTML =
-            '<div id="ordo-vax-accordion-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoVaxID'] . '" class="accordion mt-3"> <!-- START OF ORDO VAX ACCORDION -->
+            '<div id="ordo-vax-accordion-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoVaxID'] . '" class="accordion my-1 mx-1 mx-lg-2"> <!-- START OF ORDO VAX ACCORDION -->
                 <div class="accordion-item"> <!-- START OF ORDO VAX ACCORDION ITEM -->
                     <h2 class="accordion-header" id="">
                         <button class="btn accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ordo-vax-content-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoVaxID'] . '">
@@ -31,8 +31,8 @@ abstract class VaxOrdoBuilderFunctionsPool
     protected function ordoComment(array $singleOrdo, string $medicEventID)
     {
         $ordoCommentHTML =
-            '<div class="form-floating mx-0 mt-2">
-                <textarea class="form-control" placeholder="" id="ordo-vax-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoVaxID'] . '">' . $singleOrdo['comment'] . '</textarea>
+            '<div class="form-floating mx-0 my-1">
+                <textarea class="form-control textarea-ridonli" placeholder="" id="ordo-vax-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoVaxID'] . '" readonly>' . $singleOrdo['comment'] . '</textarea>
                 <label for="ordo-vax-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoVaxID'] . '">Informations complémentaires</label>
             </div>';
 

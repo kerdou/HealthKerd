@@ -30,7 +30,7 @@ class PrescLaboBuilder extends PrescLaboBuilderFunctionsPool
             }
         }
 
-        $prescArray['prescComment'] = $this->prescComment($presc);
+        //$prescArray['prescComment'] = $this->prescComment($presc);
         $prescArray['prescEnd'] = $this->prescEnd();
 
         foreach ($prescArray as $portion) {

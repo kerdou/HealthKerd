@@ -13,7 +13,7 @@ class LensOrdoBuilder
     public function ordoBuilder(array $singleOrdo, string $medicEventID)
     {
         $lensOrdoHTML =
-            '<div id="ordo-lens-accordion-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoSightID'] . '" class="accordion mt-3"> <!-- ordoSightID= ' . $singleOrdo['ordoSightID'] . ' START OF ORDO LENS ACCORDION -->
+            '<div id="ordo-lens-accordion-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoSightID'] . '" class="accordion my-1 mx-1 mx-lg-2"> <!-- ordoSightID= ' . $singleOrdo['ordoSightID'] . ' START OF ORDO LENS ACCORDION -->
                 <div class="accordion-item"> <!-- START OF ORDO LENS ACCORDION ITEM -->
                     <h2 class="accordion-header" id="">
                         <button class="btn accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ordo-lens-content-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoSightID'] . '">
@@ -42,8 +42,8 @@ class LensOrdoBuilder
                                 </div>
                             </div>
 
-                            <div class="form-floating mx-0 mt-2">
-                                <textarea class="form-control" placeholder="" id="ordo-lens-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoSightID'] . '">' . $singleOrdo['comment'] . '</textarea>
+                            <div class="form-floating mx-0 my-1">
+                                <textarea class="form-control textarea-ridonli" placeholder="" id="ordo-lens-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoSightID'] . '" readonly>' . $singleOrdo['comment'] . '</textarea>
                                 <label for="ordo-lens-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoSightID'] . '">Informations complémentaires</label>
                             </div>
 

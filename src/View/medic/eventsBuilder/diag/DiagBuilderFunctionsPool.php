@@ -13,7 +13,7 @@ abstract class DiagBuilderFunctionsPool
     protected function diagAccordionStart(array $value)
     {
         $diagAccordionStartHTML =
-        '<div id="diag-accordion-' . $value['medicEventID'] . '-' . $value['content']['diag']['diagID'] . '" class="accordion mt-3"> <!-- diagID = ' . $value['content']['diag']['diagID'] . '  START OF DIAG ACCORDION -->
+        '<div id="diag-accordion-' . $value['medicEventID'] . '-' . $value['content']['diag']['diagID'] . '" class="accordion my-1"> <!-- diagID = ' . $value['content']['diag']['diagID'] . '  START OF DIAG ACCORDION -->
             <div class="accordion-item"> <!-- START OF DIAG ACCORDION ITEM -->
                 <h2 class="accordion-header" id="diag-header"> <!-- START OF DIAG ACCORDION HEADER -->
                     <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#diag-content-' . $value['medicEventID'] . '-' . $value['content']['diag']['diagID'] . '">
@@ -191,8 +191,8 @@ abstract class DiagBuilderFunctionsPool
                     '</ul>
                 </div>
 
-                <div class="form-floating mx-0 mt-2">
-                    <textarea class="form-control" placeholder="" id="diag-textarea-' . $value['medicEventID'] . '-' . $value['content']['diag']['diagID'] . '">' . $value['content']['diag']['comment'] . '</textarea>
+                <div class="form-floating mx-0 my-1">
+                    <textarea class="form-control textarea-ridonli" placeholder="" id="diag-textarea-' . $value['medicEventID'] . '-' . $value['content']['diag']['diagID'] . '" readonly>' . $value['content']['diag']['comment'] . '</textarea>
                     <label for="diag-textarea-' . $value['medicEventID'] . '-' . $value['content']['diag']['diagID'] . '">Informations complémentaires sur le diagnostic</label>
                 </div>
             </div>';

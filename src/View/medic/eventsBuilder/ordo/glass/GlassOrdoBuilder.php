@@ -12,7 +12,7 @@ class GlassOrdoBuilder
     public function ordoBuilder(array $singleOrdo, string $medicEventID)
     {
         $glassOrdoHTML =
-            '<div id="ordo-glass-accordion-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoSightID'] . '" class="accordion my-2 mx-lg-2"> <!-- ordoSightID= ' . $singleOrdo['ordoSightID'] . ' START OF ORDO GLASS ACCORDION -->
+            '<div id="ordo-glass-accordion-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoSightID'] . '" class="accordion my-1 mx-1 mx-lg-2"> <!-- ordoSightID= ' . $singleOrdo['ordoSightID'] . ' START OF ORDO GLASS ACCORDION -->
                 <div class="accordion-item"> <!-- START OF ORDO GLASS ACCORDION ITEM -->
                     <h2 class="accordion-header" id="">
                         <button class="btn accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ordo-glass-content-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoSightID'] . '"">
@@ -36,7 +36,7 @@ class GlassOrdoBuilder
                             </div>
 
                             <div class="form-floating mx-0 mt-2">
-                                <textarea class="form-control" placeholder="" id="ordo-glass-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoSightID'] . '">' . $singleOrdo['comment'] . '</textarea>
+                                <textarea class="form-control textarea-ridonli" placeholder="" id="ordo-glass-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoSightID'] . '">' . $singleOrdo['comment'] . '</textarea>
                                 <label for="ordo-glass-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoSightID'] . '">Informations complémentaires</label>
                             </div>
 

@@ -13,7 +13,7 @@ abstract class LaboOrdoBuilderFunctionsPool
     protected function ordoLaboAccordionStart(array $singleOrdo, string $medicEventID)
     {
         $ordoLaboAccordionStartHTML =
-        '<div id="ordo-labo-accordion-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoLaboID'] . '" class="accordion mt-3"> <!-- ordoLaboID = ' . $singleOrdo['ordoLaboID'] . ' START OF ORDO LABO ACCORDION -->
+        '<div id="ordo-labo-accordion-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoLaboID'] . '" class="accordion my-1 mx-1 mx-lg-2"> <!-- ordoLaboID = ' . $singleOrdo['ordoLaboID'] . ' START OF ORDO LABO ACCORDION -->
             <div class="accordion-item"> <!-- START OF ORDO LABO ACCORDION ITEM -->
                 <h2 class="accordion-header" id="">
                     <button class="btn accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ordo-labo-content-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoLaboID'] . '">
@@ -29,8 +29,8 @@ abstract class LaboOrdoBuilderFunctionsPool
     protected function ordoLaboAccordionEnd(array $singleOrdo, string $medicEventID)
     {
         $ordoLaboAccordionEndHTML =
-                            '<div class="form-floating mx-0 mt-2">
-                                <textarea class="form-control" placeholder="" id="ordo-labo-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoLaboID'] . '">' . $singleOrdo['comment'] . '</textarea>
+                            '<div class="form-floating mx-0 my-1">
+                                <textarea class="form-control textarea-ridonli" placeholder="" id="ordo-labo-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoLaboID'] . '" readonly>' . $singleOrdo['comment'] . '</textarea>
                                 <label for="ordo-labo-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoLaboID'] . '">Informations complémentaires</label>
                             </div>
 

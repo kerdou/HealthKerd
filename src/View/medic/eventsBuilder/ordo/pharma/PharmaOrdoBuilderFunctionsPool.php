@@ -12,7 +12,7 @@ abstract class PharmaOrdoBuilderFunctionsPool
     protected function ordoPharmaStarter(array $singleOrdo, string $medicEventID)
     {
         $ordoPharmaStarterHTML =
-            '<div id="ordo-pharma-accordion-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoPharmaID'] . '" class="accordion mt-3"> <!-- ordoPharmaID = ' . $singleOrdo['ordoPharmaID'] . ' START OF ORDO PHARMA ACCORDION -->
+            '<div id="ordo-pharma-accordion-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoPharmaID'] . '" class="accordion my-1 mx-1 mx-lg-2"> <!-- ordoPharmaID = ' . $singleOrdo['ordoPharmaID'] . ' START OF ORDO PHARMA ACCORDION -->
                 <div class="accordion-item"> <!-- START OF ORDO PHARMA ACCORDION ITEM -->
                     <h2 class="accordion-header" id="">
                         <button class="btn accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ordo-pharma-content' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoPharmaID'] . '">
@@ -31,7 +31,7 @@ abstract class PharmaOrdoBuilderFunctionsPool
     {
         $ordoPharmaCommentHTML =
             '<div class="form-floating mx-0 mt-2">
-                <textarea class="form-control" placeholder="" id="ordo-pharma-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoPharmaID'] . '">' . $singleOrdo['comment'] .  '</textarea>
+                <textarea class="form-control textarea-ridonli" placeholder="" id="ordo-pharma-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoPharmaID'] . '" readonly>' . $singleOrdo['comment'] .  '</textarea>
                 <label for="ordo-pharma-textarea-' . $medicEventID . '-' . $singleOrdo['diagID'] . '-' . $singleOrdo['ordoPharmaID'] . '">Informations complémentaires</label>
             </div>';
 

@@ -5,4 +5,16 @@
         min-height: 100px;
         max-height: 250px;
     }
+
+    textarea.textarea-ridonli {
+        background-color: transparent;
+    }
+
+    textarea.textarea-ridonli + label {
+        transition: opacity 0.10s linear;
+        -webkit-transition: opacity 0.10s linear;
+        -moz-transition: opacity 0.10s linear;
+        -ms-transition: opacity 0.10s linear;
+        -o-transition: opacity 0.10s linear;
+}
 }
