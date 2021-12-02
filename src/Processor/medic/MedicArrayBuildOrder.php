@@ -61,9 +61,12 @@ class MedicArrayBuildOrder
     }
 
 
-    /**
-     *
-     */
+    public function __destruct()
+    {
+    }
+
+
+    /**  */
     public function eventDataReceiver(array $receivedDataStore)
     {
         $this->originalDataStore = $receivedDataStore;
@@ -82,21 +85,7 @@ class MedicArrayBuildOrder
         //print_r($this->dataWorkbench['eventFinalArray']);
         //echo '</pre>';
 
-        unset($receivedDataStore); // suppression des références au tableau
-        $receivedDataStore = array(); // suppression du contenu du tableau
-
-        unset($this->originalDataStore);
-        $this->originalDataStore = array();
-
-        $this->processedDataArray = $this->dataWorkbench['eventFinalArray'];
-
-        unset($this->dataWorkbench);
-        $this->dataWorkbench = array();
-
-        unset($this->objectStore);
-        $this->objectStore = array();
-
-        return $this->processedDataArray;
+        return $this->dataWorkbench['eventFinalArray'];
     }
 
 

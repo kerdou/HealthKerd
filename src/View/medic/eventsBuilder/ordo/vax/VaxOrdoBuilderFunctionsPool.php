@@ -4,6 +4,11 @@ namespace HealthKerd\View\medic\eventsBuilder\ordo\vax;
 
 abstract class VaxOrdoBuilderFunctionsPool
 {
+
+    public function __destruct()
+    {
+    }
+
     /** */
     protected function ordoVaxStarter(array $singleOrdo, string $medicEventID)
     {

@@ -11,6 +11,11 @@ class LaboOrdoBuilder extends LaboOrdoBuilderFunctionsPool
         $this->prescLaboObj = new \HealthKerd\View\medic\eventsBuilder\presc\labo\PrescLaboBuilder();
     }
 
+    public function __destruct()
+    {
+    }
+
+
     public function ordoBuilder(array $singleOrdo, string $medicEventID)
     {
         $ordoHTML = '';

@@ -4,6 +4,10 @@ namespace HealthKerd\View\medic\eventsBuilder\ordo\pharma;
 
 abstract class PharmaOrdoBuilderFunctionsPool
 {
+    public function __destruct()
+    {
+    }
+
     /** */
     protected function ordoPharmaStarter(array $singleOrdo, string $medicEventID)
     {

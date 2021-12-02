@@ -4,6 +4,11 @@ namespace HealthKerd\View\medic\eventsBuilder\presc\pharma;
 
 class PharmaPrescBuilder
 {
+    public function __destruct()
+    {
+    }
+
+
     public function prescBuilder(array $presc, string $medicEventID)
     {
         $prescHTML =

@@ -4,6 +4,9 @@ namespace HealthKerd\View\medic\eventsBuilder;
 
 abstract class EventsBuilderFunctionPool
 {
+    public function __destruct()
+    {
+    }
 
     /** */
     protected function eventAccordStart(array $value)

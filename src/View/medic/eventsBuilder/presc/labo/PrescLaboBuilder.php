@@ -4,6 +4,11 @@ namespace HealthKerd\View\medic\eventsBuilder\presc\labo;
 
 class PrescLaboBuilder extends PrescLaboBuilderFunctionsPool
 {
+    public function __destruct()
+    {
+    }
+
+
     public function prescBuilder(array $presc)
     {
         $prescHTML = '';

@@ -15,13 +15,17 @@ class HomePageBuilder extends \HealthKerd\View\common\ViewInChief
     public function __construct()
     {
         parent::__construct();
-        $this->eventsBuilder = new \HealthKerd\View\medic\eventsBuilder\EventsBuilder();
         /*
         $this->pageSettingsList = array(
             "pageTitle" => "Page de connexion"
         );
         */
     }
+
+    public function __destruct()
+    {
+    }
+
 
     public function dataReceiver(array $medicEvtProcessedDataStore)
     {
@@ -30,6 +34,7 @@ class HomePageBuilder extends \HealthKerd\View\common\ViewInChief
         //echo '</pre>';
 
         $this->eventsData = $medicEvtProcessedDataStore;
+        $this->eventsBuilder = new \HealthKerd\View\medic\eventsBuilder\EventsBuilder();
         $this->futureEventsHTML = $this->eventsBuilder->eventBuildOrder($this->eventsData['futureEvents']);
         $this->buildOrder();
     }

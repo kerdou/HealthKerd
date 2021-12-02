@@ -20,6 +20,10 @@ class DiagBuilder extends DiagBuilderFunctionsPool
         $this->vaxOrdoObj = new \HealthKerd\View\medic\eventsBuilder\ordo\vax\VaxOrdoBuilder();
     }
 
+    public function __destruct()
+    {
+    }
+
     /** */
     public function diagBuilder(array $value)
     {

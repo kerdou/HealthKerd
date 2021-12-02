@@ -22,6 +22,11 @@ class ControllerDispatch extends GetAndPostCleaner
         $this->sessionChecker();
     }
 
+
+    public function __destruct()
+    {
+    }
+
     /** Vérifie si $_SESSION contient des données ou pas, s'il n'en contient pas ce qu'on est pas loggé
      * Donc on part sur différents controleurs adaptés au bon cas de figure
     */
@@ -73,6 +78,10 @@ class ControllerDispatch extends GetAndPostCleaner
     private function loggedInDispatcher()
     {
         switch ($this->selectedController) {
+            case 'login':
+                $controllerObj = new \HealthKerd\Controller\login\LoginGetController();
+                $controllerObj->actionReceiver($this->cleanedUpGet);
+                break;
             case 'home':
                 $controllerObj = new \HealthKerd\Controller\home\HomeGetController();
                 $controllerObj->displayHomePage();

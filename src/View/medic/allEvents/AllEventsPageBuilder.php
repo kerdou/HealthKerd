@@ -1,8 +1,8 @@
 <?php
 
-namespace HealthKerd\View\medic\doc\eventsWithOneDoc;
+namespace HealthKerd\View\medic\allEvents;
 
-class EventsWithOneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
+class AllEventsPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
     private array|null $eventsData = array();
@@ -10,7 +10,9 @@ class EventsWithOneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
     private string|null $pastEventsHTML = '';
     private string|null $futureEventsHTML = '';
 
+    private object $eventsBuilder;
 
+    /** */
     public function __construct()
     {
         parent::__construct();
@@ -26,7 +28,7 @@ class EventsWithOneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
     }
 
-    /** */
+
     public function dataReceiver(array $medicEvtProcessedDataStore)
     {
         $this->eventsData = $medicEvtProcessedDataStore;

@@ -11,6 +11,11 @@ abstract class SpecificStmtStore extends EventDataHelpers
         parent::__construct();
     }
 
+
+    public function __destruct()
+    {
+    }
+
     /** */
     protected function medicEventList(array $eventsIdList)
     {

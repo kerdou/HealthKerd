@@ -16,6 +16,9 @@ class DocGetController extends DocCommonController
         parent::__construct();
     }
 
+    public function __destruct()
+    {
+    }
 
     /** */
     public function actionReceiver(array $cleanedUpGet)
@@ -111,15 +114,15 @@ class DocGetController extends DocCommonController
         $medicEvtOriginalDataStore = $medicEventDataGatherer->eventIdReceiver($medicEventsIdList);
         $medicEvtProcessedDataStore = $medicEventArrayBuildOrder->eventDataReceiver($medicEvtOriginalDataStore);
 
-        echo '<pre>';
-        print_r($medicEvtOriginalDataStore);
-        echo '</pre>';
+        //echo '<pre>';
+        //print_r($medicEvtOriginalDataStore);
+        //echo '</pre>';
 
         // vidage de $medicEvtOriginalDataStore
         unset($medicEvtOriginalDataStore);
         $medicEvtOriginalDataStore = array();
 
-        //$this->docView->dataReceiver($medicEvtProcessedDataStore);
+        $this->docView->dataReceiver($medicEvtProcessedDataStore);
     }
 
 

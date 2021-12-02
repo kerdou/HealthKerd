@@ -14,13 +14,17 @@ class LoginPostController extends LoginCommonController
     }
 
 
+    public function __destruct()
+    {
+    }
+
     /** Récupére [$_POST['action']] et lance l'affichage de la page voulue */
     public function actionReceiver(array $cleanedUpPost)
     {
         if (isset($cleanedUpPost['action'])) {
             switch ($cleanedUpPost['action']) {
                 case 'logMeIn':
-                    echo '<h1>LOGIN!!!!</h1>';
+                    //echo '<h1>LOGIN!!!!</h1>';
                     $userData = $this->loginModel->checkUserLogs($cleanedUpPost);
 
                     if (!empty($userData)) {
@@ -30,17 +34,17 @@ class LoginPostController extends LoginCommonController
                         $_SESSION['lastName'] = $userData['lastName'];
                         echo "<script>window.location = 'index.php?controller=home';</script>";
                     } else {
-                        echo '<h1>NOT GOOD!!!</h1>';
-                        //echo "<script>window.location = 'index.php';</script>";
+                        //echo '<h1>NOT GOOD!!!</h1>';
+                        echo "<script>window.location = 'index.php';</script>";
                     }
 
                     break;
                 default:
-                    echo '<h1>LOGIN DEFAULT!!!!</h1>';
-                    //echo "<script>window.location = 'index.php';</script>";
+                    //echo '<h1>LOGIN DEFAULT!!!!</h1>';
+                    echo "<script>window.location = 'index.php';</script>";
             }
         } else {
-            //echo "<script>window.location = 'index.php';</script>";
+            echo "<script>window.location = 'index.php';</script>";
         }
     }
 }

@@ -16,6 +16,9 @@ abstract class ViewInChief
         $this->bottomMainLayoutAssembly();
     }
 
+    public function __destruct()
+    {
+    }
 
     /** */
     protected function topMainLayoutAssembly()

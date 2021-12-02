@@ -10,6 +10,12 @@ class DocPostController extends DocCommonController
         parent::__construct();
     }
 
+
+    public function __destruct()
+    {
+    }
+
+
     public function actionReceiver(array $cleanedUpGet)
     {
         if (isset($cleanedUpGet['action'])) {

@@ -4,6 +4,11 @@ namespace HealthKerd\View\medic\eventsBuilder\ordo\glass;
 
 class GlassOrdoBuilder
 {
+
+    public function __destruct()
+    {
+    }
+
     public function ordoBuilder(array $singleOrdo, string $medicEventID)
     {
         $glassOrdoHTML =

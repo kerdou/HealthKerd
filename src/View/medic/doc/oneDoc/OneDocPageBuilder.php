@@ -21,6 +21,12 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         */
     }
 
+
+    public function __destruct()
+    {
+    }
+
+
     /** PLOP */
     public function dataReceiver(array $docAndSpeDatas)
     {

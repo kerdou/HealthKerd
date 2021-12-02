@@ -12,6 +12,9 @@ class PharmaOrdoBuilder extends PharmaOrdoBuilderFunctionsPool
         $this->pharmaPrescObj = new \HealthKerd\View\medic\eventsBuilder\presc\pharma\PharmaPrescBuilder();
     }
 
+    public function __destruct()
+    {
+    }
 
     /** */
     public function ordoBuilder(array $singleOrdo, string $medicEventID)

@@ -4,6 +4,12 @@ namespace HealthKerd\View\medic\eventsBuilder\ordo\lens;
 
 class LensOrdoBuilder
 {
+
+    public function __destruct()
+    {
+    }
+
+
     public function ordoBuilder(array $singleOrdo, string $medicEventID)
     {
         $lensOrdoHTML =

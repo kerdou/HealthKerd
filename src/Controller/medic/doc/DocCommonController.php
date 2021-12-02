@@ -12,5 +12,7 @@ abstract class DocCommonController
         $this->docModel = new \HealthKerd\Model\medic\doc\DocModel();
     }
 
-
+    public function __destruct()
+    {
+    }
 }

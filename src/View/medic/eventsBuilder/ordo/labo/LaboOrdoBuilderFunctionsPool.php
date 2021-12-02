@@ -4,6 +4,11 @@ namespace HealthKerd\View\medic\eventsBuilder\ordo\labo;
 
 abstract class LaboOrdoBuilderFunctionsPool
 {
+    public function __destruct()
+    {
+    }
+
+
     /** */
     protected function ordoLaboAccordionStart(array $singleOrdo, string $medicEventID)
     {

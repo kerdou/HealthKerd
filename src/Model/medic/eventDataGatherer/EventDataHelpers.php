@@ -13,6 +13,12 @@ abstract class EventDataHelpers extends EventDataGathererPdoManager
         $this->dataStoreArrayPrepPhase2();
     }
 
+
+    public function __destruct()
+    {
+    }
+
+
     /** */
     private function dataStoreArrayPrepPhase1()
     {

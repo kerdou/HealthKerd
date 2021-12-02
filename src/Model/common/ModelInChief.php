@@ -33,6 +33,7 @@ abstract class ModelInChief
     }
 
 
+
     /** Construction du PDO
      * @param string $host      Adresse de l'hôte
      * @param string $base      Nom de la DB

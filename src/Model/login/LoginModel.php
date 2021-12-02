@@ -5,6 +5,10 @@ namespace HealthKerd\Model\login;
 /** Model de la section 'client' */
 class LoginModel extends \HealthKerd\Model\common\ModelInChief
 {
+    public function __destruct()
+    {
+    }
+
     /** Récupération des identifiants dans la base selon le userLogin envoyé par le user
      * @param array $postArray Contient les paramètres du $_POST
      * @return array Renvoie les infos du user

@@ -4,6 +4,11 @@ namespace HealthKerd\View\medic\eventsBuilder\presc\vax;
 
 class PrescVaxBuilder
 {
+    public function __destruct()
+    {
+    }
+
+
     public function prescBuilder(array $presc)
     {
         $prescHTML =

@@ -13,6 +13,10 @@ abstract class EventDataGathererPdoManager extends \HealthKerd\Model\common\Mode
     }
 
 
+    public function __destruct()
+    {
+    }
+
     /** Remise de $pdoBufferArray à son état initial
      */
     protected function pdoBufferArrayReinit()

@@ -15,6 +15,10 @@ class EventsBuilder extends EventsBuilderFunctionPool
         $this->diagAccordionObj = new \HealthKerd\View\medic\eventsBuilder\diag\DiagBuilder();
     }
 
+    public function __destruct()
+    {
+    }
+
     public function eventBuildOrder(array $eventsData)
     {
         $this->eventsData = $eventsData;

@@ -21,6 +21,10 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
         */
     }
 
+    public function __destruct()
+    {
+    }
+
     /** PLOP */
     public function dataReceiver(array $docList, array $speMedicBadgeList)
     {

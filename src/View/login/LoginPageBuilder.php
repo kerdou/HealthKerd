@@ -13,6 +13,10 @@ class LoginPageBuilder extends \HealthKerd\View\common\ViewInChief
         );
     }
 
+    public function __destruct()
+    {
+    }
+
     public function buildOrder()
     {
         //$this->pageContent = '<h1>WELCOME TO LOGIN PAGE!!!!!</h1>';

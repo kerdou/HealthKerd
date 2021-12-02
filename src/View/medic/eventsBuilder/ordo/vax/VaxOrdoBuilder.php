@@ -12,6 +12,12 @@ class VaxOrdoBuilder extends VaxOrdoBuilderFunctionsPool
         $this->prescVaxObj = new \HealthKerd\View\medic\eventsBuilder\presc\vax\PrescVaxBuilder();
     }
 
+
+    public function __destruct()
+    {
+    }
+
+
     /** */
     public function ordoBuilder(array $singleOrdo, string $medicEventID)
     {

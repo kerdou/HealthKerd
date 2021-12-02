@@ -12,6 +12,10 @@ class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
     }
 
 
+    public function __destruct()
+    {
+    }
+
     /** */
     public function comingEventsIds()
     {

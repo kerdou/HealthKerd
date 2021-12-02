@@ -4,6 +4,11 @@ namespace HealthKerd\View\medic\eventsBuilder\diag;
 
 abstract class DiagBuilderFunctionsPool
 {
+    public function __destruct()
+    {
+    }
+
+
     /** */
     protected function diagAccordionStart(array $value)
     {

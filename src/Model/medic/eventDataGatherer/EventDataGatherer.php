@@ -13,6 +13,10 @@ class EventDataGatherer extends SpecificStmtStore
         parent::__construct();
     }
 
+    public function __destruct()
+    {
+    }
+
     /** 41 tables contactées en 7 passes */
     public function eventIdReceiver(array $eventsIdList)
     {
