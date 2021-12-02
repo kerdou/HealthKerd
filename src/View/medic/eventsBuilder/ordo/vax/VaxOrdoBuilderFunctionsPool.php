@@ -2,7 +2,7 @@
 
 namespace HealthKerd\View\medic\eventsBuilder\ordo\vax;
 
-class VaxOrdoBuilderFunctionsPool
+abstract class VaxOrdoBuilderFunctionsPool
 {
     /** */
     protected function ordoVaxStarter(array $singleOrdo, string $medicEventID)

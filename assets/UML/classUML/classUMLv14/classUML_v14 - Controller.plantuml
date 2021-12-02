@@ -1,0 +1,131 @@
+@startuml
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+
+package Controller {
+    abstract class GetAndPostCleaner {
+        # inputCleaner()
+    }
+
+    class ControllerDispatch extends GetAndPostCleaner {
+        - $cleanedUpGet : array
+        - $cleanedUpPost : array
+        - $selectedController : string
+        --
+        + __construct()
+        - sessionChecker()
+        - unloggedDispatcher()
+        - loggedInDispatcher()
+    }
+
+    package home {
+        class HomeGetController {
+            - $homeModel : object
+            - $eventIdFinder : object
+            - $eventDataGatherer : object
+            - $medicArrayBuildOrder : object
+            - $homeView : object
+            --
+            + __construct()
+            + displayHomePage()
+        }
+    }
+
+
+    package login {
+        abstract class LoginCommonController {
+            - $loginView : object
+            --
+            + __construct()
+            + displayLoginPage()
+        }
+
+        class LoginGetController extends LoginCommonController {
+            + actionReceiver()
+        }
+
+        class LoginPostController extends LoginCommonController {
+            - $loginModel : object
+            --
+            + __construct()
+            + actionReceiver()
+        }
+    }
+
+
+    package medic {
+        class MedicMainController {
+            + subContReceiver()
+        }
+
+        package allEvents///medic {
+
+        }
+
+        package doc///medic {
+            abstract class DocCommonController {
+                # $docModel : object
+                --
+                +__construct()
+            }
+
+            class DocGetController extends DocCommonController {
+                - $docView : object
+                - $cleanedUpGet : array
+                - $docList : array
+                - $speMedicList : array
+                --
+                + __construct()
+                + actionReceiver()
+                - displayAllDocList()
+                - displayOneDoc()
+                - docIDsExtractor()
+                - showEventsWithOneDoc()
+                - docTitleAddition()
+                - docFullNameSentenceCreator()
+                - speMedicAdditionToDocs()
+                - speMedicBadgeListBuildUp()
+            }
+
+            class DocPostController extends DocCommonController {
+                + __construct()
+                + actionReceiver()
+            }
+        }
+
+        package docOffice///medic {
+
+        }
+
+        package speMedic///medic {
+
+        }
+    }
+
+
+    package userAccount {
+        class UserAccountGetController {
+            - $homeModel : object
+            - $homeView : object
+            --
+            + actionReceiver()
+        }
+
+        class UserAccountPostController {
+            - $homeModel : object
+            - $homeView : object
+            --
+            + actionReceiver()
+        }
+    }
+}
+
+ControllerDispatch -[hidden]-> MedicMainController
+MedicMainController -[hidden]-> DocCommonController
+UserAccountGetController -[hidden] MedicMainController
+UserAccountGetController -[hidden] LoginCommonController
+LoginCommonController -[hidden] HomeGetController
+@enduml

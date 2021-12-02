@@ -1,0 +1,34 @@
+@startuml
+
+left to right direction
+actor User as U
+
+rectangle HealthKerd {
+    usecase (Cliquer sur le lien\n affichant tous\n les rendez-vous liés\n à un professionnel\n de santé) as UC1
+        UC1 ..> (Affichage des\n rendez-vous liés\n au professionnel\n de santé) : include
+            (Affichage des\n rendez-vous liés\n au professionnel\n de santé) <.. (Création du HTML\n de chaque\n rendez-vous) : extend
+                (Création du HTML\n de chaque\n rendez-vous) <.. (Accordéon d'un\n rendez-vous) : extend
+                    (Accordéon d'un\n rendez-vous) <.. (Accordéon du\n soin) : extend
+                    (Accordéon d'un\n rendez-vous) <.. (Accordéon X) : extend
+                    (Accordéon d'un\n rendez-vous) <.. (Accordéon du\n diagnostic) : extend
+                        (Accordéon du\n diagnostic) <.. (Accordéon de\n l'ordonnance) : extend
+
+
+        UC1 ..> (Recombinaison\n des données\n des rendez-vous\n concernés) : include
+            (Recombinaison\n des données\n des rendez-vous\n concernés) <.. (Recombinaison\n de chaque\n rendez-vous) : extend
+                (Recombinaison\n de chaque\n rendez-vous) <.. (Recombinaison des\n prises vaccinales) : extend
+                (Recombinaison\n de chaque\n rendez-vous) <.. (Recombinaison X ) : extend
+                (Recombinaison\n de chaque\n rendez-vous) <.. (Recombinaison\n des diagnostics) : extend
+                    (Recombinaison\n des diagnostics) <.. (Recombinaison\n des ordonnances) : extend
+
+        UC1 ..> (Récupération\n des données des\n rendez-vous\n concernés) : include
+            (Récupération\n des données des\n rendez-vous\n concernés) <.. (Vague 7 de\n récupération\n de données) : extend
+            (Récupération\n des données des\n rendez-vous\n concernés) <.. (Vague X de\n récupération\n de données) : extend
+            (Récupération\n des données des\n rendez-vous\n concernés) <.. (Vague 1 de\n récupération\n de données) : extend
+
+        UC1 ..> (Récupération\n des ID des\n rendez-vous\n concernés) : include
+}
+
+U --> UC1
+
+@enduml

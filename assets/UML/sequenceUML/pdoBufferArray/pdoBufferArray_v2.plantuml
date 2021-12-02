@@ -1,0 +1,103 @@
+@startuml
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+autonumber
+
+footer Page %page% of %lastpage%
+
+participant "current\nWave" as currentWave
+
+participant "pdoStmt\nAndDest\nInsertion\nInCue()" as pdoStmtAndDestInsertionInCue
+participant "pdo\nQuery\nExec()" as pdoQueryExec
+participant "pdoStmt\nAndDest\nProcessing()" as pdoStmtAndDestProcessing
+participant "pdoEvent\nSelect\nMultiQuery()" as pdoEventSelectMultiQuery
+participant "pdoResult\nWriter()" as pdoResultWriter
+participant "pdoBuffer\nArray\nReinit()" as pdoBufferArrayReinit
+
+collections "$pdoBuffer\nArray\n['elements']" as pdoBufferArrayElements
+collections "$pdoBuffer\nArray\n['joinedStmt']" as pdoBufferArrayJoinedStmt
+collections "$pdoBuffer\nArray\n['dest']" as pdoBufferArrayDest
+collections "$pdoBuffer\nArray\n['pdoMixedResult']" as pdoBufferArrayMixedResult
+collections "$dataStore" as dataStore
+
+database MySQL
+
+
+
+== Remplissage de $pdoBufferArray ==
+currentWave -> pdoStmtAndDestInsertionInCue : Ajout d'une déclaration\net de sa destination\ndans $dataStore
+pdoStmtAndDestInsertionInCue -> pdoBufferArrayElements : Ajout d'une déclaration et de sa destination dans $dataStore
+...
+currentWave -> pdoStmtAndDestInsertionInCue : Ajout d'une déclaration\net de sa destination\ndans $dataStore
+pdoStmtAndDestInsertionInCue -> pdoBufferArrayElements : Ajout d'une déclaration et de sa destination dans $dataStore
+
+
+newpage
+== Préparation des données de $pdoBufferArray ==
+
+currentWave -> pdoQueryExec : Lancement de\nla séquence
+activate pdoQueryExec
+
+pdoQueryExec -> pdoStmtAndDestProcessing : Lancement
+activate pdoStmtAndDestProcessing
+
+pdoStmtAndDestProcessing -> pdoBufferArrayElements : Concatenation de toutes les déclarations\nstockées dans $pdoBufferArray['elements']
+pdoStmtAndDestProcessing -> pdoBufferArrayJoinedStmt : Stockage de la string incluant toutes les\ndéclarations dans $pdoBufferArray['joinedStmt']
+
+pdoStmtAndDestProcessing -> pdoBufferArrayElements : Séparation de toutes les destinations
+pdoStmtAndDestProcessing -> pdoBufferArrayDest : array_push des destinations dans $pdoBufferArray['dest']
+deactivate pdoStmtAndDestProcessing
+
+
+newpage
+== Connexion au serveur MySQL ==
+
+pdoQueryExec -> pdoEventSelectMultiQuery : Demande de connexion à la DB
+activate pdoEventSelectMultiQuery
+
+pdoBufferArrayJoinedStmt --> pdoEventSelectMultiQuery : Récupération de la string des déclarations
+
+pdoEventSelectMultiQuery -> MySQL : Envoie de la requête au serveur MySQL
+activate MySQL
+
+MySQL --> pdoEventSelectMultiQuery : Donnée renvoyées par le serveur MySQL
+deactivate MySQL
+
+pdoBufferArrayDest -> pdoEventSelectMultiQuery : Utilisation des indexes de $pdoBufferArray['dest'] pour "dérouler"\nles résultats de la requête dans un foreach()
+
+pdoEventSelectMultiQuery -> pdoEventSelectMultiQuery : foreach() pour que\nnextRowSet()\nprésente les données\nreçues suivantes
+
+pdoEventSelectMultiQuery --> pdoQueryExec : Retour des données de la requête
+deactivate pdoEventSelectMultiQuery
+
+pdoQueryExec -> pdoBufferArrayMixedResult : Ecriture des données retournées dans $pdoBufferArray['pdoMixedResult']
+
+newpage
+== Ecriture des données dans $dataStore ==
+
+pdoQueryExec -> pdoResultWriter : Demande d'écriture des données dans le $dataStore
+activate pdoResultWriter
+
+pdoBufferArrayDest --> pdoResultWriter : Récupération des destinations des données\ndans $dataStore depuis $pdoBufferArray['dest']
+pdoBufferArrayMixedResult --> pdoResultWriter : Récupération des données depuis $pdoBufferArray['pdoMixedResult']
+
+pdoResultWriter -> dataStore : foreach() d'écriture des données aux bonnes destinations dans $dataStore
+deactivate pdoResultWriter
+
+
+newpage
+== Réinitialisation de $pdoBufferArray ==
+
+pdoQueryExec -> pdoBufferArrayReinit : Demande de réinitialisation de tout le contenu de $pdoBufferArray
+deactivate pdoQueryExec
+activate pdoBufferArrayReinit
+
+pdoBufferArrayReinit -> pdoBufferArrayElements : Vidage
+pdoBufferArrayReinit -> pdoBufferArrayJoinedStmt : Vidage
+pdoBufferArrayReinit -> pdoBufferArrayDest : Vidage
+pdoBufferArrayReinit -> pdoBufferArrayMixedResult : Vidage
+deactivate pdoBufferArrayReinit
+
+@enduml

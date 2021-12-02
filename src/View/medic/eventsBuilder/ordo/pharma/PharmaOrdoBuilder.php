@@ -16,9 +16,9 @@ class PharmaOrdoBuilder extends PharmaOrdoBuilderFunctionsPool
     /** */
     public function ordoBuilder(array $singleOrdo, string $medicEventID)
     {
-        echo '<pre>';
-        print_r($singleOrdo);
-        echo '</pre>';
+        //echo '<pre>';
+        //print_r($singleOrdo);
+        //echo '</pre>';
 
         $ordoHTML = '';
         $ordoArray = array();

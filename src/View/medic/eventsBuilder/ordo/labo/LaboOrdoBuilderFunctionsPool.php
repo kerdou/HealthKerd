@@ -2,7 +2,7 @@
 
 namespace HealthKerd\View\medic\eventsBuilder\ordo\labo;
 
-class LaboOrdoBuilderFunctionsPool
+abstract class LaboOrdoBuilderFunctionsPool
 {
     /** */
     protected function ordoLaboAccordionStart(array $singleOrdo, string $medicEventID)

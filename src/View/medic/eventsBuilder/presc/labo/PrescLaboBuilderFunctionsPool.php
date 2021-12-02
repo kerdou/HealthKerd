@@ -2,10 +2,10 @@
 
 namespace HealthKerd\View\medic\eventsBuilder\presc\labo;
 
-class PrescLaboBuilderFunctionsPool
+abstract class PrescLaboBuilderFunctionsPool
 {
     /** */
-    public function prescStarter($presc)
+    protected function prescStarter(array $presc)
     {
         $prescStarterHTML =
             '<div class="border border-1 rounded-3 p-2 mb-3">
@@ -19,7 +19,7 @@ class PrescLaboBuilderFunctionsPool
 
 
     /** */
-    public function prescComment($presc)
+    protected function prescComment(array $presc)
     {
         $prescCommentHTML =
         '<div class="form-floating mx-0 mt-2">
@@ -32,7 +32,7 @@ class PrescLaboBuilderFunctionsPool
 
 
     /** */
-    public function prescEnd($presc)
+    protected function prescEnd()
     {
         $prescEndHTML =
                 '</ul>

@@ -5,11 +5,14 @@ namespace HealthKerd\Model\medic\eventIdFinder;
 /** Model de la section home */
 class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
 {
+    /** */
     public function __construct()
     {
         parent::__construct();
     }
 
+
+    /** */
     public function comingEventsIds()
     {
         $stmt = "SELECT
@@ -27,6 +30,8 @@ class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
         return $result;
     }
 
+
+    /** */
     public function eventsIdsByUserId()
     {
         $stmt = "SELECT
@@ -41,6 +46,28 @@ class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
         return $result;
     }
 
+
+    /** */
+    public function eventsIdsFromOneDocId(string $docID)
+    {
+        $stmt =
+            "SELECT
+                medicEventID
+            FROM
+                medic_event_list
+            WHERE
+                docID = :docID
+            AND
+                userID = :userID;";
+        $this->query = $this->pdo->prepare($stmt);
+        $this->query->bindParam(':docID', $docID);
+        $this->query->bindParam(':userID', $_SESSION['userID']);
+
+        $result = $this->pdoPreparedSelectExecute('multi');
+        return $result;
+    }
+
+    /** */
     public function onlyOneEvent()
     {
         $stmt = "SELECT

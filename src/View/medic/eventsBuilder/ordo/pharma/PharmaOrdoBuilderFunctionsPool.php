@@ -2,7 +2,7 @@
 
 namespace HealthKerd\View\medic\eventsBuilder\ordo\pharma;
 
-class PharmaOrdoBuilderFunctionsPool
+abstract class PharmaOrdoBuilderFunctionsPool
 {
     /** */
     protected function ordoPharmaStarter(array $singleOrdo, string $medicEventID)

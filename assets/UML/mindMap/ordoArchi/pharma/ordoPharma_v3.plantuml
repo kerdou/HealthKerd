@@ -1,0 +1,19 @@
+@startmindmap
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+* diag/
+
+** ordoList/
+
+*** ordo(Pharma)/
+**** commentaire
+
+**** presc/
+***** treatPharma
+***** roleOnAffect
+***** medicAffect
+***** posologie
+
+@endmindmap

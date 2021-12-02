@@ -1,0 +1,118 @@
+@startuml
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+footer Page %page%
+
+participant "Controller \n Dispatch" as ControllerDispatch
+participant "Medic \n Main \n Controller" as MedicMainController
+participant "Doc \n Get \n Controller" as DocGetController
+participant "Event \n Id \n Finder" as EventIdFinder
+participant "Event \n Data \n Gatherer" as EventDataGatherer
+database MySQL
+participant "Medic \n Array \n Build \n Order" as MedicArrayBuildOrder
+participant "Events \n With \n One \n Doc \n Page \n Builder" as EventsWithOneDocPageBuilder
+participant "Events\nBuilder" as EventsBuilder
+participant Display
+
+autonumber
+
+
+ControllerDispatch -> MedicMainController : controller\n = medic
+
+MedicMainController -> DocGetController : subCtrlr\n = doc
+activate DocGetController
+
+DocGetController -> DocGetController : action = \nshowEventsWithOneDoc
+
+DocGetController -> EventIdFinder : Envoi ID du docteur
+activate EventIdFinder
+
+EventIdFinder -> MySQL : Requête ID du docteur
+activate MySQL
+
+MySQL --> EventIdFinder : Liste des events ID du docteur
+deactivate MySQL
+
+EventIdFinder --> DocGetController : Réception des ID des events
+deactivate EventIdFinder
+
+DocGetController -> EventDataGatherer : Envoi des ID des events
+activate EventDataGatherer
+
+EventDataGatherer -> MySQL : 1ére salve de requêtes
+activate MySQL
+
+MySQL --> EventDataGatherer : Retour de 1ére salve
+deactivate MySQL
+
+EventDataGatherer -> EventDataGatherer : Extraction des IDs
+
+EventDataGatherer -> MySQL : 2éme salve de requêtes
+activate MySQL
+
+MySQL --> EventDataGatherer : Retour de 1éme salve
+deactivate MySQL
+
+EventDataGatherer -> EventDataGatherer : Extraction des IDs
+...
+
+EventDataGatherer -> MySQL : 7éme salve de requêtes
+activate MySQL
+
+MySQL --> EventDataGatherer : Retour de 7éme salve
+deactivate MySQL
+
+EventDataGatherer --> DocGetController : Renvoi de données \nen provenance\ndes 41 tables
+deactivate EventDataGatherer
+
+
+
+newpage
+
+
+DocGetController -> MedicArrayBuildOrder : Envoi des données des 41 tables
+activate MedicArrayBuildOrder
+
+MedicArrayBuildOrder -> MedicArrayBuildOrder : Réassemblage\n des données \n pour chaque\n event
+
+MedicArrayBuildOrder --> DocGetController : Renvoi des données rangées par event
+deactivate MedicArrayBuildOrder
+
+DocGetController -> EventsWithOneDocPageBuilder : Envoi des données rangées par event
+deactivate DocGetController
+activate EventsWithOneDocPageBuilder
+
+
+
+
+EventsWithOneDocPageBuilder -> EventsBuilder : Envoi des\ndonnées\npour les\nevents\nà venir
+activate EventsBuilder
+
+EventsBuilder -> EventsBuilder : Construction\ndes accordéons\ndes events
+
+EventsBuilder -> EventsBuilder : Construction\ndu contenu\ndes accordéons\nd'events
+
+EventsBuilder --> EventsWithOneDocPageBuilder : Renvoi des\naccodéons\nd'events\nà venir
+deactivate EventsBuilder
+
+
+
+newpage
+
+
+EventsWithOneDocPageBuilder -> EventsBuilder : Envoi des\ndonnées\npour les\nevents\npassés
+activate EventsBuilder
+
+EventsBuilder -> EventsBuilder : Construction\ndes accordéons\ndes events
+
+EventsBuilder -> EventsBuilder : Construction\ndu contenu\ndes accordéons\nd'events
+
+EventsBuilder --> EventsWithOneDocPageBuilder : Renvoi des\naccodéons\nd'events\npassés
+deactivate EventsBuilder
+
+EventsWithOneDocPageBuilder -> Display : Affichage de la page
+
+
+@enduml

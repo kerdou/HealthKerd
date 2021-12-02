@@ -10,6 +10,7 @@ class DiagBuilder extends DiagBuilderFunctionsPool
     private object|null $laboOrdoObj;
     private object|null $vaxOrdoObj;
 
+    /** */
     public function __construct()
     {
         $this->pharmaOrdoObj = new \HealthKerd\View\medic\eventsBuilder\ordo\pharma\PharmaOrdoBuilder();
@@ -19,6 +20,7 @@ class DiagBuilder extends DiagBuilderFunctionsPool
         $this->vaxOrdoObj = new \HealthKerd\View\medic\eventsBuilder\ordo\vax\VaxOrdoBuilder();
     }
 
+    /** */
     public function diagBuilder(array $value)
     {
         //echo '<pre>';

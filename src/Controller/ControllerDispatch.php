@@ -77,8 +77,13 @@ class ControllerDispatch extends GetAndPostCleaner
                 $controllerObj = new \HealthKerd\Controller\home\HomeGetController();
                 $controllerObj->displayHomePage();
                 break;
+            case 'medic': // controleur général de la partie 'medic'
+                $controllerObj = new \HealthKerd\Controller\medic\MedicMainController();
+                $controllerObj->subContReceiver($this->cleanedUpGet, $this->cleanedUpPost);
+                break;
             default:
-                // nada
+                $controllerObj = new \HealthKerd\Controller\home\HomeGetController();
+                $controllerObj->displayHomePage();
         }
     }
 }

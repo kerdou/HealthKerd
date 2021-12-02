@@ -58,6 +58,31 @@ abstract class ModelInChief
     }
 
 
+    /** Création du string se trouvant derriere le WHERE du stmt
+     * * S'il y a plus d'une clé à chercher, on crée les 'columnName = id' necessaires et on les rassemble entre des OR
+     * * S'il n'y a qu'une seule clé, on crée un unique 'columnName = id'
+     * @param  array  $idList       Liste des clés à inspecter
+     * @param  string $idColumnName Nom de la colonne à chercher dans la table
+     * @return string               Renvoie du string des 'columnName = id' rassemblés
+    */
+    protected function stmtWhereBuilder(array $idList, string $idColumnName)
+    {
+        $whereString = '';
+        $whereStringBuildUpArray = array();
+
+        if (count($idList) > 1) {
+            foreach ($idList as $id) {
+                array_push($whereStringBuildUpArray, ' ' . $idColumnName . ' = ' . $id);
+            }
+            $whereString = implode(' OR', $whereStringBuildUpArray);
+        } elseif (count($idList) == 1) {
+            $whereString = ' ' . $idColumnName . ' = ' . $idList[0];
+        }
+
+        return $whereString;
+    }
+
+
     /** Execution de SELECT préparé, 2 modes de Fetch possible suivante le nombre de résultats attendu
      * @param string $fetchMode Défini le type de Fetch: single ou multi
      * @return array Données renvoyées par la DB
@@ -66,6 +91,7 @@ abstract class ModelInChief
     {
         try {
             $this->query->execute();
+            $result = array();
 
             switch ($fetchMode) {
                 case 'single':
@@ -83,6 +109,7 @@ abstract class ModelInChief
             throw $queryError; // permet d'arrêter le script et d'ajouter l'erreur dans les logs Apache (merci Reno!)
         }
     }
+
 
 
     /** Execution de SELECT non préparé, 2 modes de Fetch possible suivante le nombre de résultats attendu
@@ -119,20 +146,15 @@ abstract class ModelInChief
      */
     protected function pdoEventSelectMultiQuery(string $stmt, array $dest)
     {
-        $query = $this->pdo->query($stmt);
+        $rawResult = $this->pdo->query($stmt);
         $resultsArray = array();
-
-        //echo '<pre>';
-        //print_r($query);
-        //echo '</pre>';
 
         // séparation des réponses et placement dans $resultsArray
         // $dest permet uniquement de connaitre le nombre de requetes à traiter
         foreach ($dest as $destKey => $destValue) {
-            $fetchedResult = $query->fetchAll(\PDO::FETCH_ASSOC);
-            //var_dump($fetchedResult);
+            $fetchedResult = $rawResult->fetchAll(\PDO::FETCH_ASSOC);
             array_push($resultsArray, $fetchedResult);
-            $query->nextRowset();
+            $rawResult->nextRowset();
         }
         return $resultsArray;
     }

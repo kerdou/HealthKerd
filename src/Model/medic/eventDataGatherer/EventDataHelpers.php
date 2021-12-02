@@ -75,7 +75,6 @@ abstract class EventDataHelpers extends EventDataGathererPdoManager
     private function dataStoreArrayPrepPhase2()
     {
         foreach ($this->dataStore as $key => $value) {
-            $this->dataStore[$key]['idListToUse'] = array();
             $this->dataStore[$key]['extractedIdList'] = array();
             $this->dataStore[$key]['pdoStmt'] = '';
             $this->dataStore[$key]['pdoResult'] = array();

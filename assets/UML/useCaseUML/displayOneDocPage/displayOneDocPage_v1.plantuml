@@ -1,0 +1,17 @@
+@startuml
+
+left to right direction
+actor User as U
+
+rectangle HealthKerd {
+    usecase (Cliquer sur le lien\n menant à la fiche d'un\n professionnel de santé) as UC1
+    UC1 ..> (Affichage de la page\n du professionnel\n de santé) : include
+    (Affichage de la page\n du professionnel\n de santé) <.. (Combinaison des\n données avant\n affichage) : extend
+    UC1 ..> (Récupération des\n données du\n professionnel de santé) : include
+    UC1 ..> (Récupération des\n spécialités du\n professionnel de santé) : include
+}
+
+U --> UC1
+
+
+@enduml

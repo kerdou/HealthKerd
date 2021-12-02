@@ -2,7 +2,7 @@
 
 namespace HealthKerd\View\medic\eventsBuilder\diag;
 
-class DiagBuilderFunctionsPool
+abstract class DiagBuilderFunctionsPool
 {
     /** */
     protected function diagAccordionStart(array $value)

@@ -2,7 +2,7 @@
 
 namespace HealthKerd\View\medic\eventsBuilder;
 
-class EventsBuilderFunctionPool
+abstract class EventsBuilderFunctionPool
 {
 
     /** */

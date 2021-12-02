@@ -38,7 +38,7 @@ abstract class SpecificStmtStore extends EventDataHelpers
                 INNER JOIN doc_office_list ON medic_event_list.docOfficeID = doc_office_list.docOfficeID
                 WHERE
                     ' . $whereString . '
-                ; ';
+                ;';
 
             $this->dataStore['medic_event_list']['pdoStmt'] = $stmt;
             $this->pdoStmtAndDestInsertionInCue($this->dataStore['medic_event_list']['pdoStmt'], 'medic_event_list/pdoResult');

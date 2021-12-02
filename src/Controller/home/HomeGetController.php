@@ -24,8 +24,8 @@ class HomeGetController
 
     public function displayHomePage()
     {
-        //$medicEventsIdResult = $this->medicEventIdFinder->comingEventsIds();
-        $medicEventsIdResult = $this->medicEventIdFinder->eventsIdsByUserId();
+        $medicEventsIdResult = $this->medicEventIdFinder->comingEventsIds();
+        //$medicEventsIdResult = $this->medicEventIdFinder->eventsIdsByUserId();
         //$medicEventsIdResult = $this->medicEventIdFinder->onlyOneEvent();
         //var_dump($medicEventsIdResult);
         $medicEventsIdList = array();
