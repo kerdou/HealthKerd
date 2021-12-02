@@ -48,17 +48,30 @@ function windowResize() {
 // When the user scrolls down 20px from the top of the document, show the button
 window.onscroll = function() {scrollFunction();};
 
+/**   */
 function scrollFunction() {
   if (document.body.scrollTop > 20 ||
     document.documentElement.scrollTop > 20) {
+    document.getElementById("scrollUpButton").style.visibility = 'visible';
     document.getElementById("scrollUpButton").style.opacity = 1;
+    document.getElementById("scrollUpButton").style.pointer = 'cursor';
   } else {
     document.getElementById("scrollUpButton").style.opacity = 0;
+
+    // retard de visiblity=hiden et pointer=none pour garantir une disparition fluide du scrollUpButton
+    setTimeout(function(){
+      // le if évite d'avoir des changements intempestifs d'état
+      if (document.getElementById("scrollUpButton").style.opacity == 0) {
+        document.getElementById("scrollUpButton").style.visibility = 'hidden';
+        document.getElementById("scrollUpButton").style.pointer = 'none';
+      }},
+      300
+    );
   }
 }
 
 
-
+// remonte l'écran quand la fonction est activée
 function scrollToTop() {
     if (scrollUpButton.style.opacity == 1) {
         document.body.scrollTop = 0; // For Safari
@@ -73,7 +86,7 @@ function textAreaRidonliListenersAddition() {
   let ridonList = Array.from(document.getElementsByClassName('textarea-ridonli'));
 
   ridonList.forEach(element => {
-    element.addEventListener('scroll', textAreaScrollDown)
+    element.addEventListener('scroll', textAreaScrollDown);
   });
 }
 
