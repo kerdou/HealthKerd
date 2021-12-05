@@ -55,7 +55,7 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
                 userID = :userID;";
         $docQuery = $this->pdo->prepare($docStmt);
 
-        $speMedicstmt =
+        $speMedicStmt =
             "SELECT
                 doc_spemedic_relation.*,
                 spe_medic_full_list.name
@@ -63,11 +63,21 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
                 doc_spemedic_relation
             INNER JOIN spe_medic_full_list ON doc_spemedic_relation.speMedicID = spe_medic_full_list.speMedicID
             WHERE docID = :docID;";
-        $speMedicQuery = $this->pdo->prepare($speMedicstmt);
+        $speMedicQuery = $this->pdo->prepare($speMedicStmt);
+
+        $docOfficestmt =
+            "SELECT
+                doc_docoffice_relation.*,
+                doc_office_list.name,
+                doc_office_list.cityName
+            FROM
+                doc_docoffice_relation
+            INNER JOIN doc_office_list ON doc_docoffice_relation.docOfficeID = doc_office_list.docOfficeID
+            WHERE docID = :docID;";
+        $docOfficeQuery = $this->pdo->prepare($docOfficestmt);
 
 
         $this->pdo->beginTransaction(); // permet de faire plusieurs requetes préparées en une passe
-
 
         // gestion de la requete pour le doc
         $docQuery->bindParam(':docID', $docID);
@@ -81,13 +91,19 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
         $speMedicQuery->execute();
         $speResult = $speMedicQuery->fetchAll(\PDO::FETCH_ASSOC);
 
+
+        // gestion de la requetes pour le docOffice
+        $docOfficeQuery->bindParam(':docID', $docID);
+        $docOfficeQuery->execute();
+        $docOfficeResult = $docOfficeQuery->fetchAll(\PDO::FETCH_ASSOC);
+
         $this->pdo->commit(); // execution des requetes
 
         // fermeture des connexions à la DB
         $docQuery->closeCursor();
         $speMedicQuery->closeCursor();
 
-        return $result = ['doc' => $docResult, 'speMedic' => $speResult];
+        return $result = ['doc' => $docResult, 'speMedic' => $speResult, 'docOffice' => $docOfficeResult];
     }
 
 

@@ -45,7 +45,7 @@ class HomePageBuilder extends \HealthKerd\View\common\ViewInChief
     private function buildOrder()
     {
         //$this->pageContent .= file_get_contents(__DIR__ . '../../../../public/html/test/modalButtonTest.html');
-        $this->builtContentHTML .= "<h3>&Eacute;vénements médicaux à venir</h3>";
+        $this->builtContentHTML .= '<h3>&Eacute;vénements médicaux à venir: ' . sizeof($this->eventsData['futureEvents']) . '</h3>';
         $this->builtContentHTML .= $this->futureEventsHTML;
 
 

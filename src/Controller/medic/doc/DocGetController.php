@@ -7,13 +7,16 @@ class DocGetController extends DocCommonController
 {
     private object $docView;
     private array $cleanedUpGet;
-    private array $docList = array();
+    private array $docList;
     private array $speMedicList = array();
+    private array $docOfficeList = array();
 
     /** */
     public function __construct()
     {
         parent::__construct();
+        $this->docList = array();
+        $this->speMedicList = array();
     }
 
     public function __destruct()
@@ -72,10 +75,30 @@ class DocGetController extends DocCommonController
     /** */
     private function displayOneDoc(string $docID)
     {
-        $docAndSpeDatas = $this->docModel->getOneDoc($docID);
+        $mixedDataResult = $this->docModel->getOneDoc($docID);
+
+        array_push($this->docList, $mixedDataResult['doc']);
+        $this->speMedicList = $mixedDataResult['speMedic'];
+        $this->docOfficeList = $mixedDataResult['docOffice'];
+
+        foreach ($this->docList as $key => $value) {
+            $this->docList[$key]['fullNameSentence'] = '';
+            $this->docList[$key]['speMedicList'] = array();
+            $this->docList[$key]['docOfficeList'] = array();
+        }
+
+        $this->docTitleAddition();
+        $this->docFullNameSentenceCreator();
+        $this->speMedicAdditionToDocs();
+        $this->docOfficeAddition();
+
+        //echo '<pre>';
+        //print_r($mixedDataResult);
+        //print_r($this->docList);
+        //echo '</pre>';
 
         $this->docView = new \HealthKerd\View\medic\doc\oneDoc\OneDocPageBuilder();
-        $this->docView->dataReceiver($docAndSpeDatas);
+        $this->docView->dataReceiver($this->docList[0]);
     }
 
     /** */
@@ -230,6 +253,18 @@ class DocGetController extends DocCommonController
         }
     }
 
+
+    /** */
+    private function docOfficeAddition()
+    {
+        foreach ($this->docList as $docKey => $docValue) {
+            foreach ($this->docOfficeList as $officeKey => $officeValue) {
+                if ($docValue['docID'] == $officeValue['docID']) {
+                    array_push($this->docList[$docKey]['docOfficeList'], $officeValue);
+                }
+            }
+        }
+    }
 
     /** */
     private function speMedicBadgeListBuildUp()

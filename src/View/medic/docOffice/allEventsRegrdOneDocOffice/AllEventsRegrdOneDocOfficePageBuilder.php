@@ -1,8 +1,8 @@
 <?php
 
-namespace HealthKerd\View\medic\doc\eventsWithOneDoc;
+namespace HealthKerd\View\medic\docOffice\allEventsRegrdOneDocOffice;
 
-class EventsWithOneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
+class AllEventsRegrdOneDocOfficePageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
     private array|null $eventsData = array();

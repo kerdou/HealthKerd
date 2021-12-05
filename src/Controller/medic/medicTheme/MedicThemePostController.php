@@ -1,9 +1,9 @@
 <?php
 
-namespace HealthKerd\Controller\medic\doc;
+namespace HealthKerd\Controller\medic\medicTheme;
 
 /** Controleur de la section 'accueil' */
-class DocPostController extends DocCommonController
+class MedicThemePostController extends MedicThemeCommonController
 {
     public function __construct()
     {
@@ -20,14 +20,8 @@ class DocPostController extends DocCommonController
     {
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
-                case 'addDoc':
-                    //
-                    break;
-                case 'editDoc':
-                    //
-                    break;
-                case 'removeDoc':
-                    //
+                case 'todo':
+                    //$this->displayLoginPage();
                     break;
                 default:
                     //echo "<script>window.location = 'index.php';</script>";

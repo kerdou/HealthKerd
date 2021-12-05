@@ -16,16 +16,39 @@ class MedicMainController
         if (isset($cleanedUpGet['subCtrlr'])) {
             switch ($cleanedUpGet['subCtrlr']) {
                 case 'allEventsDisp':
-                    $docController = new \HealthKerd\Controller\medic\allEvents\AllEventsGetController();
-                    $docController->displayAllEvents();
+                    $allEventsController = new \HealthKerd\Controller\medic\allEvents\AllEventsGetController();
+                    $allEventsController->displayAllEvents();
                     break;
+
                 case 'doc':
                     $docController = new \HealthKerd\Controller\medic\doc\DocGetController();
                     $docController->actionReceiver($cleanedUpGet);
                     break;
+
                 case 'docPost':
                         // TO DO
                     break;
+
+                case 'docOffice':
+                    $eventDocOfficeController = new \HealthKerd\Controller\medic\docOffice\DocOfficeGetController();
+                    $eventDocOfficeController->actionReceiver($cleanedUpGet);
+                    break;
+
+                case 'medicTheme':
+                    $medicThemeController = new \HealthKerd\Controller\medic\medicTheme\MedicThemeGetController();
+                    $medicThemeController->actionReceiver($cleanedUpGet);
+                    break;
+
+                case 'eventCat':
+                    $eventCatController = new \HealthKerd\Controller\medic\eventCat\EventCatGetController();
+                    $eventCatController->actionReceiver($cleanedUpGet);
+                    break;
+
+                case 'speMedic':
+                    $speMedicController = new \HealthKerd\Controller\medic\speMedic\SpeMedicGetController();
+                    $speMedicController->actionReceiver($cleanedUpGet);
+                    break;
+
                 default:
                     echo "<script>window.location = 'index.php';</script>";
             }

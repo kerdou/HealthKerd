@@ -55,13 +55,8 @@ class EventsBuilder extends EventsBuilderFunctionPool
                 $eventArray['eventSubject'] = $this->eventSubject($value['title']);
             }
 
-
             $eventArray['eventDateTime'] = $this->eventDateTime($value['time']);
             $eventArray['eventDocOffice'] = $this->eventDocOffice($value['docOffice']);
-
-
-
-
 
             $eventArray['eventContentButton'] = $this->eventContentButton($value);
             $eventArray['eventAccordHeaderEnd'] = $this->eventAccordHeaderEnd();

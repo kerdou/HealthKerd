@@ -2,6 +2,7 @@ window.addEventListener('load', operationsAtLoad);
 
 /* Copie du contenu du sidebar dans le off canvas sidebar au chargement de la page */
 function operationsAtLoad() {
+  if (document.body.contains(document.getElementById('my-sidebar'))) {
     let mySideBarContent = document.getElementById('my-sidebar').innerHTML;
     let myOffCanvasSidebar = document.getElementById('my-offcanvas-sidebar');
     myOffCanvasSidebar.innerHTML = mySideBarContent;
@@ -12,6 +13,7 @@ function operationsAtLoad() {
     //scrollUpButton = document.getElementById("scrollUpButton");
     //scrollUpButton.addEventListener('click', scrollToTop); // When the user clicks on the button, scroll to the top of the document
     document.getElementById("scrollUpButton").addEventListener('click', scrollToTop);
+  }
 }
 
 

@@ -19,16 +19,17 @@ class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
     /** */
     public function comingEventsIds()
     {
-        $stmt = "SELECT
-                    medicEventID
-                FROM
-                    medic_event_list
-                WHERE
-                    userID = " . $_SESSION['userID'] . "
-                    AND
-                    dateTime >= CURRENT_DATE
-                ORDER BY
-                    dateTime;";
+        $stmt =
+            "SELECT
+                medicEventID
+            FROM
+                medic_event_list
+            WHERE
+                userID = " . $_SESSION['userID'] . "
+                AND
+                dateTime >= CURRENT_DATE
+            ORDER BY
+                dateTime;";
 
         $result = $this->pdoRawSelectExecute($stmt, 'multi');
         return $result;
@@ -38,18 +39,60 @@ class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
     /** */
     public function eventsIdsByUserId()
     {
-        $stmt = "SELECT
-                    medicEventID
-                FROM
-                    medic_event_list
-                WHERE
-                    userID = " . $_SESSION['userID'] . "
-                ;";
+        $stmt =
+            "SELECT
+                medicEventID
+            FROM
+                medic_event_list
+            WHERE
+                userID = " . $_SESSION['userID'] . "
+            ;";
 
         $result = $this->pdoRawSelectExecute($stmt, 'multi');
         return $result;
     }
 
+
+    /** */
+    public function eventsIdsbyCatId(string $medicEventCatID)
+    {
+        $stmt =
+            "SELECT
+                medicEventID
+            FROM
+                medic_event_list
+            WHERE
+                medicEventCatID = :medicEventCatID
+            AND
+                userID = :userID;";
+        $this->query = $this->pdo->prepare($stmt);
+        $this->query->bindParam(':medicEventCatID', $medicEventCatID);
+        $this->query->bindParam(':userID', $_SESSION['userID']);
+
+        $result = $this->pdoPreparedSelectExecute('multi');
+        return $result;
+    }
+
+
+    /** */
+    public function eventsIdsByDocOfficeId(string $docOfficeID)
+    {
+        $stmt =
+            "SELECT
+                medicEventID
+            FROM
+                medic_event_list
+            WHERE
+                docOfficeID = :docOfficeID
+            AND
+                userID = :userID;";
+        $this->query = $this->pdo->prepare($stmt);
+        $this->query->bindParam(':docOfficeID', $docOfficeID);
+        $this->query->bindParam(':userID', $_SESSION['userID']);
+
+        $result = $this->pdoPreparedSelectExecute('multi');
+        return $result;
+    }
 
     /** */
     public function eventsIdsFromOneDocId(string $docID)
@@ -71,16 +114,18 @@ class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
         return $result;
     }
 
+
     /** */
     public function onlyOneEvent()
     {
-        $stmt = "SELECT
-                    medicEventID
-                FROM
-                    medic_event_list
-                WHERE
-                    medicEventID = 54
-                ;";
+        $stmt =
+            "SELECT
+                medicEventID
+            FROM
+                medic_event_list
+            WHERE
+                medicEventID = 54
+            ;";
 
         $result = $this->pdoRawSelectExecute($stmt, 'multi');
         return $result;

@@ -1,31 +1,60 @@
 <?php
 
-namespace HealthKerd\Controller\medic\allEvents;
+namespace HealthKerd\Controller\medic\eventCat;
 
 /** Controleur de la section 'accueil' */
-class AllEventsGetController
+class EventCatGetController extends EventCatCommonController
 {
+    private array $cleanedUpGet;
+
     private object $medicEventIdFinder; // Modéle spéclialisé dans la recherche d'ID d'events médicaux
     private object $medicEventDataGatherer;
     private object $medicEventArrayBuildOrder;
-    private object $allEventsView; // Affichage des tableaux de la section accueil
+    private object $catView;
 
+
+    /** */
     public function __construct()
     {
+        parent::__construct();
         date_default_timezone_set('Europe/Paris');
         $this->medicEventIdFinder = new \HealthKerd\Model\medic\eventIdFinder\EventIdFinder();
         $this->medicEventDataGatherer = new \HealthKerd\Model\medic\eventDataGatherer\EventDataGatherer();
         $this->medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicArrayBuildOrder();
-        $this->allEventsView = new \HealthKerd\View\medic\allEvents\AllEventsPageBuilder();
     }
 
     public function __destruct()
     {
     }
 
-    public function displayAllEvents()
+    /** */
+    public function actionReceiver(array $cleanedUpGet)
     {
-        $medicEventsIdResult = $this->medicEventIdFinder->eventsIdsByUserId();
+        $this->cleanedUpGet = $cleanedUpGet;
+
+        if (isset($cleanedUpGet['action'])) {
+            switch ($cleanedUpGet['action']) {
+                case 'dispAllEventCats':
+                    $eventCatsList = $this->eventCatModel->gatherAllEventsCats();
+
+                    $this->catView = new \HealthKerd\View\medic\eventCats\eventCatsList\EventCatsListPageBuilder();
+                    $this->catView->dataReceiver($eventCatsList);
+                    break;
+                case 'dispAllEventsRegrdOneCat':
+                    $this->dispAllEventsRegardingOneCat();
+                    break;
+                default:
+                    //$this->displayAllDocList();
+            }
+        } else {
+            //$this->displayAllDocList();
+        }
+    }
+
+    /** */
+    public function dispAllEventsRegardingOneCat()
+    {
+        $medicEventsIdResult = $this->medicEventIdFinder->eventsIdsbyCatId($this->cleanedUpGet['medicEventCatID']);
         $medicEventsIdList = array();
 
         // conversion des ID d'event en integer
@@ -45,6 +74,7 @@ class AllEventsGetController
         //var_dump($medicEvtProcessedDataStore);
         //echo '</pre>';
 
-        $this->allEventsView->dataReceiver($medicEvtProcessedDataStore);
+        $this->catView = new \HealthKerd\View\medic\eventCats\allEventsRegardingOneCat\allEventsRegardingOneCatPageBuilder();
+        $this->catView->dataReceiver($medicEvtProcessedDataStore);
     }
 }

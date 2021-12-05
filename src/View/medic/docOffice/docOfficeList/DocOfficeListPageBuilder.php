@@ -1,13 +1,12 @@
 <?php
 
-namespace HealthKerd\View\medic\doc\oneDoc;
+namespace HealthKerd\View\medic\docOffice\docOfficeList;
 
-class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
+class DocOfficeListPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
     private string $builtContentHTML = '';
-    private array $docDataArray = array();
-
+    private array $docOfficeList = array();
 
 
 
@@ -21,21 +20,14 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         */
     }
 
-
     public function __destruct()
     {
     }
 
-
     /** PLOP */
-    public function dataReceiver(array $docDataArray)
+    public function dataReceiver(array $docOfficeList)
     {
-        $this->docDataArray = $docDataArray;
-
-
-        var_dump($this->docDataArray);
-
-
+        $this->docOfficeList = $docOfficeList;
         $this->buildOrder();
     }
 
@@ -43,16 +35,16 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
     /** */
     private function buildOrder()
     {
-        $this->builtContentHTML .= '<h2>' . $this->docDataArray['fullNameSentence'] . '</h2>';
-        $this->builtContentHTML .= '<div>';
-        $this->builtContentHTML .= $this->speMedicBadgesBuilder($this->docDataArray['speMedicList']);
+        $this->builtContentHTML .= '<div class="p-2">';
+
+        $this->builtContentHTML .= '<h3>Liste des cabinets médicaux: ' . sizeof($this->docOfficeList) . '</h3>';
+        $this->builtContentHTML .= '<div class= "d-flex flex-column flex-lg-row flex-wrap">';
+        $this->builtContentHTML .= $this->docOfficeCardsBuilder($this->docOfficeList);
         $this->builtContentHTML .= '</div>';
-        $this->builtContentHTML .= '<a href="index.php?controller=medic&subCtrlr=doc&action=showEventsWithOneDoc&docID=' . $this->docDataArray['docID'] . '" class="btn bg-primary">Voir RDV</a>';
-        $this->builtContentHTML .= '<p>Tel: ' . $this->docDataArray['tel'] . '</p>';
-        $this->builtContentHTML .= '<p>Adresse mail: ' . $this->docDataArray['mail'] . '</p>';
-        $this->builtContentHTML .= '<p>Page web: ' . $this->docDataArray['webPage'] . '</p>';
-        $this->builtContentHTML .= '<p>Page DoctoLib: ' . $this->docDataArray['doctolibPage'] . '</p>';
-        $this->builtContentHTML .= '<p>Commentaires: ' . $this->docDataArray['comment'] . '</p>';
+
+
+        $this->builtContentHTML .= '</div>';
+
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
         //$this->pageSetup($this->pageSettingsList); // configuration de la page
@@ -61,27 +53,26 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
 
 
     /** */
-    private function speMedicBadgesBuilder(array $speMedicBadgeList)
+    private function docOfficeCardsBuilder(array $docOfficeList)
     {
-        //var_dump($speMedicBadgeList);
-        $allBadgesHTMLString = '';
-        $allBadgesHTMLArray = array();
+        $cardHTMLString = '';
+        $cardHTMLArray = array();
 
-        foreach ($speMedicBadgeList as $speValue) {
-            $singleBadgeHTML = '<a href="#" class="badge bg-warning me-1 mb-1 text-white">' . $speValue['name'] . '</a>';
-            array_push($allBadgesHTMLArray, $singleBadgeHTML);
+        foreach ($docOfficeList as $officeData) {
+            $completeCard = $this->cardBuilder($officeData);
+            array_push($cardHTMLArray, $completeCard);
         }
 
-        foreach ($allBadgesHTMLArray as $cardHTMLPortion) {
-            $allBadgesHTMLString .= $cardHTMLPortion;
+        foreach ($cardHTMLArray as $cardHTML) {
+            $cardHTMLString .= $cardHTML;
         }
 
-        return $allBadgesHTMLString;
+        return $cardHTMLString;
     }
 
 
     /** */
-    private function officeCardBuilder(array $officeData)
+    private function cardBuilder(array $officeData)
     {
         $cardHTML =
         '<a href="index.php?controller=medic&subCtrlr=docOffice&action=dispEventsWithOneDocOffice&docOfficeID=' . $officeData['docOfficeID'] . '" class="col-12 col-lg-4 flex-fill rounded-3 mb-3 me-lg-3">

@@ -1,12 +1,20 @@
-window.addEventListener('load', navContentCopy);
+window.addEventListener('load', operationsAtLoad);
 
 /* Copie du contenu du sidebar dans le off canvas sidebar au chargement de la page */
-function navContentCopy() {
+function operationsAtLoad() {
+  if (document.body.contains(document.getElementById('my-sidebar'))) {
     let mySideBarContent = document.getElementById('my-sidebar').innerHTML;
     let myOffCanvasSidebar = document.getElementById('my-offcanvas-sidebar');
     myOffCanvasSidebar.innerHTML = mySideBarContent;
-}
 
+    textAreaRidonliListenersAddition(); // Pour faire disparaitre "Informations complémentaires" au scroll des textarea
+
+    // obligé de gérer ça dés le chargement de la page pour éviter des erreurs aprés des rechargements avec F5
+    //scrollUpButton = document.getElementById("scrollUpButton");
+    //scrollUpButton.addEventListener('click', scrollToTop); // When the user clicks on the button, scroll to the top of the document
+    document.getElementById("scrollUpButton").addEventListener('click', scrollToTop);
+  }
+}
 
 
 
@@ -39,28 +47,51 @@ function windowResize() {
 
 
 
-
-/* Scroll to top button */
-//Get the button:
-scrollUpButton = document.getElementById("scrollUpButton");
-
 // When the user scrolls down 20px from the top of the document, show the button
-window.onscroll = function() {scrollFunction()};
+window.onscroll = function() {scrollFunction();};
 
+/**   */
 function scrollFunction() {
-  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-    scrollUpButton.style.opacity = 1;
+  if (document.body.scrollTop > 20 ||
+    document.documentElement.scrollTop > 20) {
+    document.getElementById("scrollUpButton").style.visibility = 'visible';
+    document.getElementById("scrollUpButton").style.opacity = 1;
+    document.getElementById("scrollUpButton").style.pointer = 'cursor';
   } else {
-    scrollUpButton.style.opacity = 0;
+    document.getElementById("scrollUpButton").style.opacity = 0;
+
+    // retard de visiblity=hiden et pointer=none pour garantir une disparition fluide du scrollUpButton
+    setTimeout(function(){
+      // le if évite d'avoir des changements intempestifs d'état
+      if (document.getElementById("scrollUpButton").style.opacity == 0) {
+        document.getElementById("scrollUpButton").style.visibility = 'hidden';
+        document.getElementById("scrollUpButton").style.pointer = 'none';
+      }},
+      300
+    );
   }
 }
 
-// When the user clicks on the button, scroll to the top of the document
-scrollUpButton.addEventListener('click', scrollToTop);
 
+// remonte l'écran quand la fonction est activée
 function scrollToTop() {
     if (scrollUpButton.style.opacity == 1) {
         document.body.scrollTop = 0; // For Safari
         document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
     }
+}
+
+
+
+// Pour faire disparaitre "Informations complémentaires" au scroll des textarea
+function textAreaRidonliListenersAddition() {
+  let ridonList = Array.from(document.getElementsByClassName('textarea-ridonli'));
+
+  ridonList.forEach(element => {
+    element.addEventListener('scroll', textAreaScrollDown);
+  });
+}
+
+function textAreaScrollDown() {
+  this.nextElementSibling.style.opacity = 0;
 }

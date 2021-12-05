@@ -1,8 +1,8 @@
 <?php
 
-namespace HealthKerd\View\medic\doc\eventsWithOneDoc;
+namespace HealthKerd\View\medic\medicTheme\allEventsRegrdOneTheme;
 
-class EventsWithOneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
+class AllEventsRegrdOneThemePageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
     private array|null $eventsData = array();
@@ -25,6 +25,7 @@ class EventsWithOneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
     public function __destruct()
     {
     }
+
 
     /** */
     public function dataReceiver(array $medicEvtProcessedDataStore)

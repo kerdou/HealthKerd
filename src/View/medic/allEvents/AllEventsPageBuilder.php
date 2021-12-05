@@ -49,12 +49,12 @@ class AllEventsPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function buildOrder()
     {
         if (sizeof($this->eventsData['futureEvents']) > 0) {
-            $this->builtContentHTML .= "<h3>&Eacute;vénements médicaux à venir</h3>";
+            $this->builtContentHTML .= '<h3>&Eacute;vénements médicaux à venir: ' . sizeof($this->eventsData['futureEvents']) . '</h3>';
             $this->builtContentHTML .= $this->futureEventsHTML;
         }
 
         if (sizeof($this->eventsData['pastEvents']) > 0) {
-            $this->builtContentHTML .= "<h3>&Eacute;vénements médicaux passés</h3>";
+            $this->builtContentHTML .= '<h3>&Eacute;vénements médicaux passés: ' . sizeof($this->eventsData['pastEvents']) . '</h3>';
             $this->builtContentHTML .= $this->pastEventsHTML;
         }
 

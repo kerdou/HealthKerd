@@ -39,13 +39,13 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
         $this->builtContentHTML .= '<div class="p-2">';
 
-        $this->builtContentHTML .= '<h3>Professionnels de santé consultés:</h3>';
+        $this->builtContentHTML .= '<h3>Professionnels de santé consultés: ' . sizeof($this->docList) . '</h3>';
         $this->builtContentHTML .= '<div class= "d-flex flex-column flex-lg-row flex-wrap">';
         $this->builtContentHTML .= $this->docCardsBuilder($this->docList);
         $this->builtContentHTML .= $this->addDocButton();
         $this->builtContentHTML .= '</div>';
 
-        $this->builtContentHTML .= '<h3 class="d-flex flew-wrap mt-3">Spécialités médicales consultées:</h3>';
+        $this->builtContentHTML .= '<h3 class="d-flex flew-wrap mt-3">Spécialités médicales consultées: ' . sizeof($this->speMedicBadgeList) . '</h3>';
         $this->builtContentHTML .= '<div>';
         $this->builtContentHTML .= $this->speMedicBadgesBuilder($this->speMedicBadgeList);
         $this->builtContentHTML .= '</div>';
