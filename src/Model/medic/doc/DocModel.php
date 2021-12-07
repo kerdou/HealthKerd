@@ -42,7 +42,7 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
      * @param array $postArray Contient les paramètres du $_POST
      * @return array Renvoie les infos du user
      */
-    public function getOneDoc($docID)
+    public function getOneDocForPageDisplay($docID)
     {
         $docStmt =
             "SELECT
@@ -130,6 +130,27 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
     }
 
 
+    public function getOneDocForFormDisplay($docID)
+    {
+        $docStmt =
+            "SELECT
+                *
+            FROM
+                doc_list
+            WHERE
+                docID = :docID
+            HAVING
+                userID = :userID;";
+        $docQuery = $this->pdo->prepare($docStmt);
+
+        // gestion de la requete pour le doc
+        $docQuery->bindParam(':docID', $docID);
+        $docQuery->bindParam(':userID', $_SESSION['userID']);
+        $docQuery->execute();
+        $docResult = $docQuery->fetch(\PDO::FETCH_ASSOC);
+
+        return $docResult;
+    }
 
 
     /** */
@@ -147,6 +168,25 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
             WHERE " . $whereString . ";";
 
         $result = $this->pdoRawSelectExecute($stmt, 'multi');
+
+        return $result;
+    }
+
+
+    /** */
+    public function getNewDocID()
+    {
+        $stmt =
+            "SELECT
+                docID
+            FROM
+                doc_list
+            WHERE " . $_SESSION['userID'] . "
+            ORDER BY docID
+            DESC LIMIT 1
+            ;";
+
+        $result = $this->pdoRawSelectExecute($stmt, 'single');
 
         return $result;
     }

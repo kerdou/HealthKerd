@@ -26,7 +26,8 @@ class MedicMainController
                     break;
 
                 case 'docPost':
-                        // TO DO
+                    $docPostController = new \HealthKerd\Controller\medic\doc\DocPostController();
+                    $docPostController->actionReceiver($cleanedUpGet, $cleanedUpPost);
                     break;
 
                 case 'docOffice':

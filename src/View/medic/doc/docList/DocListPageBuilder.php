@@ -131,7 +131,7 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function addDocButton()
     {
         $addDocButtonHTML =
-            '<a href="#" class="col-12 col-lg-4 flex-fill rounded-3 mb-3 me-lg-3">
+            '<a href="index.php?controller=medic&subCtrlr=doc&action=showDocAddForm" class="col-12 col-lg-4 flex-fill rounded-3 mb-3 me-lg-3">
                 <div class="card h-100">
                     <div class="card-body d-flex flex-row">
                         <div class="me-3">
