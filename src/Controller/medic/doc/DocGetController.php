@@ -7,16 +7,19 @@ class DocGetController extends DocCommonController
 {
     private object $docView;
     private array $cleanedUpGet;
-    private array $docList;
+    private array $docList = array();
     private array $speMedicList = array();
     private array $docOfficeList = array();
+    private array $medicEventList = array();
+    private array $pastEvents = array();
+    private array $futureEvents = array();
+    private array $dataWorkbench = array();
+
 
     /** */
     public function __construct()
     {
         parent::__construct();
-        $this->docList = array();
-        $this->speMedicList = array();
     }
 
     public function __destruct()
@@ -80,21 +83,43 @@ class DocGetController extends DocCommonController
         array_push($this->docList, $mixedDataResult['doc']);
         $this->speMedicList = $mixedDataResult['speMedic'];
         $this->docOfficeList = $mixedDataResult['docOffice'];
+        $this->medicEventList = $mixedDataResult['medicEvent'];
 
         foreach ($this->docList as $key => $value) {
             $this->docList[$key]['fullNameSentence'] = '';
             $this->docList[$key]['speMedicList'] = array();
             $this->docList[$key]['docOfficeList'] = array();
+            $this->docList[$key]['medicEvent'] = array();
         }
 
+
+        // pour le doc
         $this->docTitleAddition();
         $this->docFullNameSentenceCreator();
+
+        // pour les spemdecis
         $this->speMedicAdditionToDocs();
+
+        // pour le docOffice
         $this->docOfficeAddition();
+
+        // pour les medicEvents
+        $this->dateAndTimeCreator();
+        $this->medicEventArrayTimeModifier();
+        $this->timeManagement();
+        $this->eventTimeDispatcher();
+        $this->pastAndFutureEventsTimeSorting();
+        $this->eventsSummaryCreation();
+
 
         //echo '<pre>';
         //print_r($mixedDataResult);
+        //print_r($this->medicEventList);
         //print_r($this->docList);
+        //echo '<h2>pastEvents</h2>';
+        //print_r($this->pastEvents);
+        //echo '<h2>futureEvents</h2>';
+        //print_r($this->futureEvents);
         //echo '</pre>';
 
         $this->docView = new \HealthKerd\View\medic\doc\oneDoc\OneDocPageBuilder();
@@ -295,5 +320,125 @@ class DocGetController extends DocCommonController
 
         //var_dump($speMedicBadgeList);
         return $speMedicBadgeList;
+    }
+
+
+
+    /** Création et stockage de toutes les données temporelles
+     * @param array $dateAndTime Stocke toutes les données temporelles
+     */
+    private function dateAndTimeCreator()
+    {
+        setlocale(LC_TIME, 'fr_FR', 'fra');
+        $this->dataWorkbench['dateAndTime']['timezoneObj'] = timezone_open('Europe/Paris');
+        $this->dataWorkbench['dateAndTime']['nowTimeObj'] = date_create('now', $this->dataWorkbench['dateAndTime']['timezoneObj']);
+
+        $this->dataWorkbench['dateAndTime']['todayEarlyTimeObj'] = date_time_set($this->dataWorkbench['dateAndTime']['nowTimeObj'], 0, 0, 0, 0);
+        $this->dataWorkbench['dateAndTime']['todayEarlyTimeOffset'] = date_offset_get($this->dataWorkbench['dateAndTime']['todayEarlyTimeObj']);
+        $this->dataWorkbench['dateAndTime']['todayEarlyTimestamp'] = date_timestamp_get($this->dataWorkbench['dateAndTime']['todayEarlyTimeObj']) + $this->dataWorkbench['dateAndTime']['todayEarlyTimeOffset'];
+
+        $this->dataWorkbench['dateAndTime']['todayLateTimeObj'] = date_time_set($this->dataWorkbench['dateAndTime']['nowTimeObj'], 23, 59, 59, 999999);
+        $this->dataWorkbench['dateAndTime']['todayLateTimeOffset'] = date_offset_get($this->dataWorkbench['dateAndTime']['todayLateTimeObj']);
+        $this->dataWorkbench['dateAndTime']['todayLateTimestamp'] = date_timestamp_get($this->dataWorkbench['dateAndTime']['todayLateTimeObj'])  + $this->dataWorkbench['dateAndTime']['todayLateTimeOffset'];
+    }
+
+
+
+    private function medicEventArrayTimeModifier()
+    {
+        foreach ($this->medicEventList as $eventKey => $eventValue) {
+            $this->medicEventList[$eventKey]['time']['dateTime'] = $eventValue['dateTime'];
+            $this->medicEventList[$eventKey]['time']['timestamp'] = '';
+            $this->medicEventList[$eventKey]['time']['frenchDate'] = '';
+            $this->medicEventList[$eventKey]['time']['time'] = '';
+        }
+    }
+
+
+
+    /**
+     *
+     */
+    private function timeManagement()
+    {
+        foreach ($this->medicEventList as $eventKey => $value) {
+            $dateObj = date_create($value['time']['dateTime'], $this->dataWorkbench['dateAndTime']['timezoneObj']);
+            $UTCOffset = date_offset_get($dateObj); // récupération de l'offset de timezone
+            $timestamp = date_timestamp_get($dateObj) + $UTCOffset; // on ajout l'écart de timezone au timestamp pour qu'il soit correct
+            $this->medicEventList[$eventKey]['time']['timestamp'] = $timestamp;
+            $this->medicEventList[$eventKey]['time']['frenchDate'] = utf8_encode(ucwords(gmstrftime('%A %e %B %Y', $timestamp))); // utf8_encode() pour s'assurer que les accents passent bien
+            $this->medicEventList[$eventKey]['time']['time'] = gmstrftime('%H:%M', $timestamp);
+        }
+    }
+
+
+
+    /** Tri des events dans 2 arrays par rapport à leur timestamp */
+    private function eventTimeDispatcher()
+    {
+        foreach ($this->medicEventList as $key => $value) {
+            if ($value['time']['timestamp'] < $this->dataWorkbench['dateAndTime']['todayEarlyTimestamp']) {
+                array_push($this->pastEvents, $value);
+            } elseif ($value['time']['timestamp'] >= $this->dataWorkbench['dateAndTime']['todayEarlyTimestamp']) {
+                array_push($this->futureEvents, $value);
+            }
+        }
+    }
+
+
+    /**
+     *
+     */
+    private function pastAndFutureEventsTimeSorting()
+    {
+        uasort($this->pastEvents, array($this, "incrTimestampEventSorting"));
+        uasort($this->futureEvents, array($this, "incrTimestampEventSorting"));
+    }
+
+
+    /** Tri des events en ordre croissant par timestamp */
+    private function incrTimestampEventSorting($firstValue, $secondValue)
+    {
+        if ($firstValue['time']['timestamp'] == $secondValue['time']['timestamp']) {
+            return 0;
+        }
+        return ($firstValue['time']['timestamp'] < $secondValue['time']['timestamp']) ? -1 : 1;
+    }
+
+
+    /** Tri des events en ordre décroissant par timestamp */
+    private function decrTimestampEventSorting($firstValue, $secondValue)
+    {
+        if ($firstValue['time']['timestamp'] == $secondValue['time']['timestamp']) {
+            return 0;
+        }
+        return ($firstValue['time']['timestamp'] > $secondValue['time']['timestamp']) ? -1 : 1;
+    }
+
+
+    private function eventsSummaryCreation()
+    {
+        $pastEventsQty = sizeof($this->pastEvents);
+        $futureEventsQty = sizeof($this->futureEvents);
+
+        $this->docList[0]['medicEvent']['qty']['past'] = $pastEventsQty;
+        $this->docList[0]['medicEvent']['qty']['coming'] = $futureEventsQty;
+        $this->docList[0]['medicEvent']['qty']['total'] = sizeof($this->medicEventList);
+
+
+        if ($pastEventsQty > 0) {
+            $this->docList[0]['medicEvent']['dates']['first'] = $this->pastEvents[0]['time']['frenchDate'];
+
+            $this->docList[0]['medicEvent']['dates']['last'] = $this->pastEvents[$pastEventsQty - 1]['time']['frenchDate'];
+        } else {
+            $this->docList[0]['medicEvent']['dates']['first'] = 'Aucun';
+            $this->docList[0]['medicEvent']['dates']['last'] = 'Aucun';
+        }
+
+        if ($futureEventsQty > 0) {
+            $this->docList[0]['medicEvent']['dates']['next'] = $this->futureEvents[0]['time']['frenchDate'];
+        } else {
+            $this->docList[0]['medicEvent']['dates']['next'] = 'Aucun';
+        }
     }
 }

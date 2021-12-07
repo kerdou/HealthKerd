@@ -77,6 +77,17 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
         $docOfficeQuery = $this->pdo->prepare($docOfficestmt);
 
 
+        $medicEventStmt =
+            "SELECT
+                *
+            FROM
+                medic_event_list
+            WHERE
+                docID = :docID
+            AND
+                userID = :userID;";
+        $medicEventQuery = $this->pdo->prepare($medicEventStmt);
+
         $this->pdo->beginTransaction(); // permet de faire plusieurs requetes préparées en une passe
 
         // gestion de la requete pour le doc
@@ -92,10 +103,17 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
         $speResult = $speMedicQuery->fetchAll(\PDO::FETCH_ASSOC);
 
 
-        // gestion de la requetes pour le docOffice
+        // gestion de la requete pour le docOffice
         $docOfficeQuery->bindParam(':docID', $docID);
         $docOfficeQuery->execute();
         $docOfficeResult = $docOfficeQuery->fetchAll(\PDO::FETCH_ASSOC);
+
+
+        // gestion de la requete pour les events
+        $medicEventQuery->bindParam(':docID', $docID);
+        $medicEventQuery->bindParam(':userID', $_SESSION['userID']);
+        $medicEventQuery->execute();
+        $medicEventResult = $medicEventQuery->fetchAll(\PDO::FETCH_ASSOC);
 
         $this->pdo->commit(); // execution des requetes
 
@@ -103,7 +121,12 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
         $docQuery->closeCursor();
         $speMedicQuery->closeCursor();
 
-        return $result = ['doc' => $docResult, 'speMedic' => $speResult, 'docOffice' => $docOfficeResult];
+        return $result = [
+            'doc' => $docResult,
+            'speMedic' => $speResult,
+            'docOffice' => $docOfficeResult,
+            'medicEvent' => $medicEventResult
+        ];
     }
 
 
