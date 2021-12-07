@@ -9,6 +9,7 @@ class DocPostController extends DocCommonController
     private array $cleanedUpPost = array();
 
     private object $docPostModel;
+    private object $docFormChecker;
 
 
     public function __construct()
@@ -31,23 +32,42 @@ class DocPostController extends DocCommonController
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
                 case 'addDoc':
-                    $pdoErrorMessage = $this->docPostModel->addDoc($this->cleanedUpPost);
+                    $checksArray = array();
+                    $this->docFormChecker = new \HealthKerd\Controller\medic\doc\DocFormChecker();
+                    $checksArray = $this->docFormChecker->docFormChecks($this->cleanedUpPost);
 
-                    $newDocIDArray = $this->docModel->getNewDocID();
-                    $newDocID = $newDocIDArray['docID'];
+                    if (in_array(false, $checksArray)) {
+                        $docView = new \HealthKerd\View\medic\doc\docForm\DocFailedAddFormPageBuilder();
+                        $docView->dataReceiver($this->cleanedUpPost, $checksArray);
+                    } else {
+                        $pdoErrorMessage = $this->docPostModel->addDoc($this->cleanedUpPost);
 
-                    if (strlen($pdoErrorMessage) == 0) {
-                        $this->docPostModel->addOfficeAndSpeMedic($newDocID);
+                        $newDocIDArray = $this->docModel->getNewDocID();
+                        $newDocID = $newDocIDArray['docID'];
+
+                        if (strlen($pdoErrorMessage) == 0) {
+                            $this->docPostModel->addOfficeAndSpeMedic($newDocID);
+                        }
+
+                        echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $newDocID . "';</script>";
                     }
-
-
-                    echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $newDocID . "';</script>";
                     break;
 
                 case 'editDoc':
-                    $pdoErrorMessage = $this->docPostModel->editDoc($this->cleanedUpPost, $this->cleanedUpGet['docID']);
+                    $checksArray = array();
+                    $this->docFormChecker = new \HealthKerd\Controller\medic\doc\DocFormChecker();
+                    $checksArray = $this->docFormChecker->docFormChecks($this->cleanedUpPost);
 
-                    echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $this->cleanedUpGet['docID'] . "';</script>";
+                    if (in_array(false, $checksArray)) {
+                        $docView = new \HealthKerd\View\medic\doc\docForm\DocFailedEditFormPageBuilder();
+                        $docView->dataReceiver($this->cleanedUpPost, $checksArray, $this->cleanedUpGet['docID']);
+                    } else {
+                        $pdoErrorMessage = $this->docPostModel->editDoc($this->cleanedUpPost, $this->cleanedUpGet['docID']);
+                        echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $this->cleanedUpGet['docID'] . "';</script>";
+                    }
+
+
+
                     break;
 
                 case 'removeDoc':

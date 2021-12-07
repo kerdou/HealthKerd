@@ -5,7 +5,6 @@ namespace HealthKerd\Controller\medic\doc;
 /** Controleur de la section 'accueil' */
 class DocGetController extends DocGetControllerFunctionsPool
 {
-
     protected array $cleanedUpGet;
     protected array $docList = array();
     protected array $speMedicList = array();
