@@ -38,10 +38,10 @@ class MedicThemeGetController extends MedicThemeCommonController
                     break;
 
                 default:
-                    //$this->displayAllDocList();
+                    echo "<script> window.location.replace('index.php?controller=medic&subCtrlr=medicTheme&action=dispAllMedicThemes') </script>";
             }
         } else {
-            //$this->displayAllDocList();
+            echo "<script> window.location.replace('index.php?controller=medic&subCtrlr=medicTheme&action=dispAllMedicThemes') </script>";
         }
     }
 

@@ -23,10 +23,10 @@ class UserAccountGetController
                     echo '<h1>CREATION FORM DISPLAY!!!!!!!!!!</h1>';
                     break;
                 default:
-                    //echo "<script>window.location = 'index.php';</script>";
+                    echo "<script>window.location = 'index.php';</script>";
             }
         } else {
-            //echo "<script>window.location = 'index.php';</script>";
+            echo "<script>window.location = 'index.php';</script>";
         }
     }
 }

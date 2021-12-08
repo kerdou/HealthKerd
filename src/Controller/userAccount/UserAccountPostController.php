@@ -23,10 +23,10 @@ class UserAccountPostController
                     break;
                 default:
                     echo '<h1>CREATION DE COMPTE DEFAULT!!!!</h1>';
-                    //echo "<script>window.location = 'index.php';</script>";
+                    echo "<script>window.location = 'index.php';</script>";
             }
         } else {
-            //echo "<script>window.location = 'index.php';</script>";
+            echo "<script>window.location = 'index.php';</script>";
         }
     }
 }

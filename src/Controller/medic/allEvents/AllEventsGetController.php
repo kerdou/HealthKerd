@@ -40,11 +40,6 @@ class AllEventsGetController
         unset($medicEvtOriginalDataStore);
         $medicEvtOriginalDataStore = array();
 
-        //echo '<pre>';
-        //print_r($medicEvtProcessedDataStore);
-        //var_dump($medicEvtProcessedDataStore);
-        //echo '</pre>';
-
         $this->allEventsView->dataReceiver($medicEvtProcessedDataStore);
     }
 }

@@ -24,10 +24,10 @@ class DocOfficePostController extends DocOfficeCommonController
                     //$this->displayLoginPage();
                     break;
                 default:
-                    //echo "<script>window.location = 'index.php';</script>";
+                    echo "<script>window.location = 'index.php';</script>";
             }
         } else {
-            //echo "<script>window.location = 'index.php';</script>";
+            echo "<script>window.location = 'index.php';</script>";
         }
     }
 }

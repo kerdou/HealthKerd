@@ -44,10 +44,10 @@ class EventCatGetController extends EventCatCommonController
                     $this->dispAllEventsRegardingOneCat();
                     break;
                 default:
-                    //$this->displayAllDocList();
+                    echo "<script> window.location.replace('index.php?controller=medic&subCtrlr=eventCat&action=dispAllEventCats') </script>";
             }
         } else {
-            //$this->displayAllDocList();
+            echo "<script> window.location.replace('index.php?controller=medic&subCtrlr=eventCat&action=dispAllEventCats') </script>";
         }
     }
 
