@@ -14,11 +14,10 @@ class EventsWithOneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
     public function __construct()
     {
         parent::__construct();
-        /*
+
         $this->pageSettingsList = array(
-            "pageTitle" => "Page de connexion"
+            "pageTitle" => "&Eacute;vénements médicaux liés à un professionnel de santé"
         );
-        */
     }
 
 
@@ -61,7 +60,7 @@ class EventsWithOneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         }
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
-        //$this->pageSetup($this->pageSettingsList); // configuration de la page
+        $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 }

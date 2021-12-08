@@ -74,7 +74,7 @@ class EventCatGetController extends EventCatCommonController
         //var_dump($medicEvtProcessedDataStore);
         //echo '</pre>';
 
-        $this->catView = new \HealthKerd\View\medic\eventCats\allEventsRegardingOneCat\allEventsRegardingOneCatPageBuilder();
+        $this->catView = new \HealthKerd\View\medic\eventCats\allEventsRegardingOneCat\AllEventsRegardingOneCatPageBuilder();
         $this->catView->dataReceiver($medicEvtProcessedDataStore);
     }
 }

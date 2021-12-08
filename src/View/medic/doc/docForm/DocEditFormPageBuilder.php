@@ -12,11 +12,10 @@ class DocEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     public function __construct()
     {
         parent::__construct();
-        /*
+
         $this->pageSettingsList = array(
-            "pageTitle" => "Page de connexion"
+            "pageTitle" => "Modification d'un professionnel de santé"
         );
-        */
     }
 
 
@@ -37,8 +36,8 @@ class DocEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function buildOrder()
     {
         $this->builtContentHTML .= file_get_contents(__DIR__ . '../../../../../../templates/medic/doc/docFormTop.html');
-        $this->builtContentHTML .= '<button type="submit" id="formValButton" name="formValButton" class="btn btn-secondary me-2" value="{formValButtonValue}">{formValButtonText}</button>';
-        $this->builtContentHTML .= '<button type="reset" id="formResetButton" name="formResetButton" class="btn btn-secondary me-2">Réinitialiser</button>';
+        $this->builtContentHTML .= '<button type="button" id="formSubmitButton" name="formSubmitButton" class="btn btn-secondary me-2" value="{formSubmitButtonValue}">{formSubmitButtonText}</button>';
+        $this->builtContentHTML .= '<button type="button" id="formResetButton" name="formResetButton" class="btn btn-secondary me-2">Réinitialiser</button>';
         $this->builtContentHTML .= '<a href="{formSupprButtonValue}" id="formSupprButton" name="formSupprButton" class="btn btn-secondary me-2" >Supprimer</a>';
         $this->builtContentHTML .= file_get_contents(__DIR__ . '../../../../../../templates/medic/doc/docFormBot.html');
 
@@ -49,11 +48,9 @@ class DocEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->checkStatusArray['none'] = ($this->docData['title'] == 'none') ? 'checked' : '';
 
         $this->stringReplacer();
-        //var_dump($this->builtContentHTML);
-
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
-        //$this->pageSetup($this->pageSettingsList); // configuration de la page
+        $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 
@@ -126,8 +123,8 @@ class DocEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
 
 
         // Bouton de Modification
-        $this->builtContentHTML = str_replace('{formValButtonValue}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{formValButtonText}', 'Modifier', $this->builtContentHTML);
+        $this->builtContentHTML = str_replace('{formSubmitButtonValue}', '', $this->builtContentHTML);
+        $this->builtContentHTML = str_replace('{formSubmitButtonText}', 'Modifier', $this->builtContentHTML);
 
         // Bouton de suppression de compte {formSupprButtonValue}
         $this->builtContentHTML = str_replace('{formSupprButtonValue}', "index.php?controller=medic&subCtrlr=doc&action=showDocDeleteForm&docID=" . $this->docData['docID'] . "", $this->builtContentHTML);

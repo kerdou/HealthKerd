@@ -14,11 +14,10 @@ class AllEventsRegardOneSpePageBuilder extends \HealthKerd\View\common\ViewInChi
     public function __construct()
     {
         parent::__construct();
-        /*
+
         $this->pageSettingsList = array(
-            "pageTitle" => "Page de connexion"
+            "pageTitle" => "&Eacute;vénements médicaux liés à une spécialité médicale"
         );
-        */
     }
 
 
@@ -57,11 +56,11 @@ class AllEventsRegardOneSpePageBuilder extends \HealthKerd\View\common\ViewInChi
         }
 
         if ((sizeof($this->eventsData['futureEvents']) == 0)  &&  (sizeof($this->eventsData['pastEvents']) == 0)) {
-            $this->builtContentHTML .= "<h3>Aucun événement médical lié à ce professionnel de santé trouvé</h3>";
+            $this->builtContentHTML .= "<h3>Aucun événement médical lié à cette spécialité médicale trouvé</h3>";
         }
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
-        //$this->pageSetup($this->pageSettingsList); // configuration de la page
+        $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 }

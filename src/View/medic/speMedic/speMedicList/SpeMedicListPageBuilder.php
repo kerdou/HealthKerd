@@ -13,11 +13,10 @@ class SpeMedicListPageBuilder extends \HealthKerd\View\common\ViewInChief
     public function __construct()
     {
         parent::__construct();
-        /*
+
         $this->pageSettingsList = array(
-            "pageTitle" => "Page de connexion"
+            "pageTitle" => "Spécialités médicales consultées"
         );
-        */
     }
 
     public function __destruct()
@@ -47,7 +46,7 @@ class SpeMedicListPageBuilder extends \HealthKerd\View\common\ViewInChief
 
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
-        //$this->pageSetup($this->pageSettingsList); // configuration de la page
+        $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 

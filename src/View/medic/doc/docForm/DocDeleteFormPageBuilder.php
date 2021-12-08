@@ -12,11 +12,10 @@ class DocDeleteFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     public function __construct()
     {
         parent::__construct();
-        /*
+
         $this->pageSettingsList = array(
-            "pageTitle" => "Page de connexion"
+            "pageTitle" => "Suppression d'un professionnel de santé"
         );
-        */
     }
 
 
@@ -37,7 +36,7 @@ class DocDeleteFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function buildOrder()
     {
         $this->builtContentHTML .= file_get_contents(__DIR__ . '../../../../../../templates/medic/doc/docFormTop.html');
-        $this->builtContentHTML .= '<button type="submit" id="formValButton" name="formValButton" class="btn btn-secondary me-2" value="{formValButtonValue}">{formValButtonText}</button>';
+        $this->builtContentHTML .= '<button type="button" id="formSubmitButton" name="formSubmitButton" class="btn btn-secondary me-2" value="{formSubmitButtonValue}">{formSubmitButtonText}</button>';
         $this->builtContentHTML .= file_get_contents(__DIR__ . '../../../../../../templates/medic/doc/docFormBot.html');
 
         $this->checkStatusArray['dr'] = ($this->docData['title'] == 'dr') ? 'checked' : '';
@@ -50,7 +49,7 @@ class DocDeleteFormPageBuilder extends \HealthKerd\View\common\ViewInChief
 
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
-        //$this->pageSetup($this->pageSettingsList); // configuration de la page
+        $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 
@@ -129,8 +128,8 @@ class DocDeleteFormPageBuilder extends \HealthKerd\View\common\ViewInChief
 
 
         // Bouton de suppression
-        $this->builtContentHTML = str_replace('{formValButtonValue}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{formValButtonText}', 'Supprimer', $this->builtContentHTML);
+        $this->builtContentHTML = str_replace('{formSubmitButtonValue}', '', $this->builtContentHTML);
+        $this->builtContentHTML = str_replace('{formSubmitButtonText}', 'Supprimer', $this->builtContentHTML);
 
         // Bouton d'annulation
         $this->builtContentHTML = str_replace('{cancelHref}', "index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $this->docData['docID'] . "", $this->builtContentHTML);

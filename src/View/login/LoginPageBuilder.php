@@ -19,7 +19,6 @@ class LoginPageBuilder extends \HealthKerd\View\common\ViewInChief
 
     public function buildOrder()
     {
-        //$this->pageContent = '<h1>WELCOME TO LOGIN PAGE!!!!!</h1>';
         $this->pageContent = file_get_contents(__DIR__ . '../../../../public/html/login/login.html');
 
         $this->pageDisplay();

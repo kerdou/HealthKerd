@@ -15,11 +15,10 @@ class HomePageBuilder extends \HealthKerd\View\common\ViewInChief
     public function __construct()
     {
         parent::__construct();
-        /*
+
         $this->pageSettingsList = array(
-            "pageTitle" => "Page de connexion"
+            "pageTitle" => "Accueil"
         );
-        */
     }
 
     public function __destruct()
@@ -29,10 +28,6 @@ class HomePageBuilder extends \HealthKerd\View\common\ViewInChief
 
     public function dataReceiver(array $medicEvtProcessedDataStore)
     {
-        //echo '<pre>';
-        //print_r($medicEvtProcessedDataStore);
-        //echo '</pre>';
-
         $this->eventsData = $medicEvtProcessedDataStore;
         $this->eventsBuilder = new \HealthKerd\View\medic\eventsBuilder\EventsBuilder();
         $this->futureEventsHTML = $this->eventsBuilder->eventBuildOrder($this->eventsData['futureEvents']);
@@ -44,13 +39,12 @@ class HomePageBuilder extends \HealthKerd\View\common\ViewInChief
 
     private function buildOrder()
     {
-        //$this->pageContent .= file_get_contents(__DIR__ . '../../../../public/html/test/modalButtonTest.html');
         $this->builtContentHTML .= '<h3>&Eacute;vénements médicaux à venir: ' . sizeof($this->eventsData['futureEvents']) . '</h3>';
         $this->builtContentHTML .= $this->futureEventsHTML;
 
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
-        //$this->pageSetup($this->pageSettingsList); // configuration de la page
+        $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 }

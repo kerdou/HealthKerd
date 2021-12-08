@@ -16,11 +16,10 @@ class AllEventsPageBuilder extends \HealthKerd\View\common\ViewInChief
     public function __construct()
     {
         parent::__construct();
-        /*
+
         $this->pageSettingsList = array(
-            "pageTitle" => "Page de connexion"
+            "pageTitle" => "Liste de tous les événements"
         );
-        */
     }
 
 
@@ -63,7 +62,7 @@ class AllEventsPageBuilder extends \HealthKerd\View\common\ViewInChief
         }
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
-        //$this->pageSetup($this->pageSettingsList); // configuration de la page
+        $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 }
