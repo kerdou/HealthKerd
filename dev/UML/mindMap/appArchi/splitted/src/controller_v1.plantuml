@@ -1,0 +1,55 @@
+@startmindmap
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+* Controller/
+
+** home/
+***_ HomeGetController.php
+
+** login/
+***_ LoginCommonController.php
+***_ LoginGetController.php
+***_ LoginPostController.php
+
+** medic/
+*** allEvents/
+****_ AllEventsGetController.php
+
+*** doc/
+****_ DocCommonController.php
+****_ DocFormChecker.php
+****_ DocGetController.php
+****_ DocGetControllerFunctionsPool.php
+****_ DocPostController.php
+
+*** docOffice/
+****_ docOfficeCommonController.php
+****_ docOfficeGetController.php
+****_ docOfficePostController.php
+
+*** eventCat/
+****_ EventCatCommonController.php
+****_ EventCatGetController.php
+****_ EventCatPostController.php
+
+*** medicTheme/
+****_ MedicThemeCommonController.php
+****_ MedicThemeGetController.php
+****_ MedicThemePostController.php
+
+*** speMedic/
+****_ SpeMedicGetController.php
+
+***_ MedicMainController.php
+
+** userAccount/
+***_ UserAccountGetController.php
+***_ UserAccountPostController.php
+
+**_ ControllerDispatch.php
+**_ GetAndPostCleaner.php
+
+@endmindmap

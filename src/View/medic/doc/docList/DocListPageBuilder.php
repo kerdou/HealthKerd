@@ -2,14 +2,14 @@
 
 namespace HealthKerd\View\medic\doc\docList;
 
+/** Assemblage de la liste des docteurs avant affichage
+ */
 class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
     private string $builtContentHTML = '';
     private array $docList = array();
     private array $speMedicBadgeList = array();
-
-
 
     public function __construct()
     {
@@ -24,7 +24,10 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
     }
 
-    /** PLOP */
+    /** Recoit les données des docteurs et les datas des badges de spécialités médicales
+     * @param array $docList            Données des docteurs
+     * @param array $speMedicBadgeList  Données des badges de spécialités médicales
+     */
     public function dataReceiver(array $docList, array $speMedicBadgeList)
     {
         $this->docList = $docList;
@@ -32,25 +35,25 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->buildOrder();
     }
 
-
-    /** */
+    /** Assemblage des blocs HTML
+     * Puis configuration de la page et affichage du contenu
+     */
     private function buildOrder()
     {
-        $this->builtContentHTML .= '<div class="p-2">';
+        $this->builtContentHTML .= '<div class="p-2">'; // début de la DIV de contenu
 
         $this->builtContentHTML .= '<h3>Professionnels de santé consultés: ' . sizeof($this->docList) . '</h3>';
-        $this->builtContentHTML .= '<div class= "d-flex flex-column flex-lg-row flex-wrap">';
-        $this->builtContentHTML .= $this->docCardsBuilder($this->docList);
-        $this->builtContentHTML .= $this->addDocButton();
-        $this->builtContentHTML .= '</div>';
+        $this->builtContentHTML .= '<div class= "d-flex flex-column flex-lg-row flex-wrap">'; // début de la DIV des docteurs
+        $this->builtContentHTML .= $this->docCardsBuilder($this->docList); // cards des docteurs
+        $this->builtContentHTML .= $this->addDocButton(); // bouton d'ajout de docteur
+        $this->builtContentHTML .= '</div>'; // fin de la DIV des docteurs
 
         $this->builtContentHTML .= '<h3 class="d-flex flew-wrap mt-3">Spécialités médicales consultées: ' . sizeof($this->speMedicBadgeList) . '</h3>';
-        $this->builtContentHTML .= '<div>';
-        $this->builtContentHTML .= $this->speMedicBadgesBuilder($this->speMedicBadgeList);
-        $this->builtContentHTML .= '</div>';
+        $this->builtContentHTML .= '<div>'; // début de la DIV des badges de spécialités médicales
+        $this->builtContentHTML .= $this->speMedicBadgesBuilder($this->speMedicBadgeList); // badges de spécialités médicales
+        $this->builtContentHTML .= '</div>'; // fin de la DIV des badges de spécialités médicales
 
-
-        $this->builtContentHTML .= '</div>';
+        $this->builtContentHTML .= '</div>'; // fin de la DIV de contenu
 
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
@@ -58,8 +61,10 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageDisplay();
     }
 
-
-    /** */
+    /** Construction des cards des docteurs
+     * @param array $docList    Données des docteurs
+     * @return string           HTML de l'ensemble des cards des docteurs
+    */
     private function docCardsBuilder(array $docList)
     {
         $cardHTMLString = '';
@@ -81,8 +86,10 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $cardHTMLString;
     }
 
-
-    /** */
+    /** Partie haute d'une card de docteur
+     * @param array $docData    Données d'un seul docteur
+     * @return string           HTML de la partie haute d'une card de docteur
+    */
     private function cardTop(array $docData)
     {
         $cardTopHTML =
@@ -94,8 +101,10 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $cardTopHTML;
     }
 
-
-    /** */
+    /** Badges de spé médicale au sein d'une card de docteur
+     * @param array $docData    Données d'un seul docteur
+     * @return string           HTML des badges de spé medic d'un docteur
+    */
     private function cardSpeMedicBadgesBuilder(array $docData)
     {
         $allBadgesHTMLString = '';
@@ -113,8 +122,9 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $allBadgesHTMLString;
     }
 
-
-    /** */
+    /** Partie basse d'une card de docteur
+     * @return string   HTML de la partie basse d'une card de docteur
+    */
     private function cardBottom()
     {
         $cardBottomHTML =
@@ -125,8 +135,9 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $cardBottomHTML;
     }
 
-
-    /** */
+    /** Bouton d'ajout de docteur
+     * @return string   HTML de bouton d'ajout de docteur
+     */
     private function addDocButton()
     {
         $addDocButtonHTML =
@@ -147,8 +158,10 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $addDocButtonHTML;
     }
 
-
-    /** */
+    /** Création de la liste des badges de spé medic
+     * @param array $speMedicBadgeList  Liste de spécialités médicales
+     * @return string                   HTML des badges de spé medic
+    */
     private function speMedicBadgesBuilder(array $speMedicBadgeList)
     {
         //var_dump($speMedicBadgeList);

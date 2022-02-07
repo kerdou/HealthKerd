@@ -1,0 +1,40 @@
+@startmindmap
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+* Processor/
+
+** medic/
+
+*** care/
+****_ CareSessionsOrganizer.php
+
+*** diag/
+****_ DiagConclusionsOrganizer.php
+****_ DiagListOrganizer.php
+****_ DiagThemesOrganizer.php
+
+*** event/
+****_ EventDataOrganizer.php
+****_ EventFinalContentMerger.php
+
+*** ordo/
+****_ OrdoGatherAndSorting.php
+****_ OrdoLaboOrganizer.php
+****_ OrdoPharmaOrganizer.php
+****_ OrdoSightOrganizer.php
+****_ OrdoVaxOrganizer.php
+
+*** presc/
+****_ PrescOrdoLaboOrganizer.php
+****_ PrescOrdoPharmaOrganizer.php
+****_ PrescOrdoVaxOrganizer.php
+
+*** vax/
+****_ VaxSessionsOrganizer.php
+
+***_ MedicArrayBuildOrder.php
+
+@endmindmap

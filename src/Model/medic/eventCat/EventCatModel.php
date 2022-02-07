@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Model\medic\eventCat;
 
-/** Model de la section 'client' */
+/** Model GET des catégories d'events
+ */
 class EventCatModel extends \HealthKerd\Model\common\ModelInChief
 {
     public function __construct()
@@ -14,9 +15,10 @@ class EventCatModel extends \HealthKerd\Model\common\ModelInChief
     {
     }
 
-    /** Récupération des identifiants dans la base selon le userLogin envoyé par le user
-     * @param array $postArray Contient les paramètres du $_POST
-     * @return array Renvoie les infos du user
+    /** Récuperer les données de toutes les catégories d'events utilisées par un user
+     * -----
+     * * Requête préparée
+     * @return array        Liste des infos de toutes les spécialités médicales concernées
      */
     public function gatherAllEventsCats()
     {

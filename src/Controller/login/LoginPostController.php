@@ -18,13 +18,15 @@ class LoginPostController extends LoginCommonController
     {
     }
 
-    /** Récupére [$_POST['action']] et lance l'affichage de la page voulue */
+    /** recoit POST['action'] et lance la suite
+     * @param array $cleanedUpPost   Infos nettoyées provenants du POST
+     * @return void
+     */
     public function actionReceiver(array $cleanedUpPost)
     {
         if (isset($cleanedUpPost['action'])) {
             switch ($cleanedUpPost['action']) {
                 case 'logMeIn':
-                    //echo '<h1>LOGIN!!!!</h1>';
                     $userData = $this->loginModel->checkUserLogs($cleanedUpPost);
 
                     if (!empty($userData)) {
@@ -39,11 +41,12 @@ class LoginPostController extends LoginCommonController
                     }
 
                     break;
-                default:
-                    //echo '<h1>LOGIN DEFAULT!!!!</h1>';
+
+                default: // si $cleanedUpPost['action'] ne correspond à aucun cas de figure, on repart vers le controlleur maître
                     echo "<script>window.location = 'index.php';</script>";
             }
         } else {
+            // si $cleanedUpPost['action'] n'est pas défini, on repart vers le controlleur maître
             echo "<script>window.location = 'index.php';</script>";
         }
     }

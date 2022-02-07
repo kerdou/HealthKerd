@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Controller\medic\eventCat;
 
-/** Controleur de la section 'accueil' */
+/** Contrôleur POST des catégories d'events
+*/
 class EventCatPostController extends EventCatCommonController
 {
     public function __construct()
@@ -15,7 +16,10 @@ class EventCatPostController extends EventCatCommonController
     {
     }
 
-
+    /** recoit GET['action'] et lance la suite
+     * @param array $cleanedUpGet   Infos nettoyées provenants du GET
+     * @return void
+     */
     public function actionReceiver(array $cleanedUpGet)
     {
         if (isset($cleanedUpGet['action'])) {

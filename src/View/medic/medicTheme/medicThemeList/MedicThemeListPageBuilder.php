@@ -2,13 +2,13 @@
 
 namespace HealthKerd\View\medic\medicTheme\medicThemeList;
 
+/** Construction puis affichage de la page listant tous les thèmes médicaux d'un user
+ */
 class MedicThemeListPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
     private string $builtContentHTML = '';
     private array $medicThemeList = array();
-
-
 
     public function __construct()
     {
@@ -23,15 +23,17 @@ class MedicThemeListPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
     }
 
-    /** */
+    /** Recoit les données des thèmes médicaux d'un user puis lance la construction des blocs HTML
+     * @param array $medicThemeList     Données des thèmes médicaux
+    */
     public function dataReceiver(array $medicThemeList)
     {
         $this->medicThemeList = $medicThemeList;
         $this->buildOrder();
     }
 
-
-    /** */
+    /** Construction de la liste des thèmes médicaux
+    */
     private function buildOrder()
     {
         $this->builtContentHTML .= '<div class="p-2">';
@@ -41,17 +43,17 @@ class MedicThemeListPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->builtContentHTML .= $this->medicThemeCardsBuilder($this->medicThemeList);
         $this->builtContentHTML .= '</div>';
 
-
         $this->builtContentHTML .= '</div>';
-
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
         $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 
-
-    /** */
+    /** Création de l'ensemble des cards de thémes médicaux
+     * @param array $medicThemeList     Liste des données de tous les thémes médicaux
+     * @return string                   HTML des cards
+     */
     private function medicThemeCardsBuilder(array $medicThemeList)
     {
         $cardHTMLString = '';
@@ -69,8 +71,10 @@ class MedicThemeListPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $cardHTMLString;
     }
 
-
-    /** */
+    /** Création d'une card de théme médical
+     * @param array $medicThemeList     Données d'un théme médical
+     * @return string                   HTML de la card d'un théme médical
+    */
     private function cardBuilder(array $medicThemeList)
     {
         $cardHTML =

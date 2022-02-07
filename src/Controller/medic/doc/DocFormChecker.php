@@ -2,8 +2,14 @@
 
 namespace HealthKerd\Controller\medic\doc;
 
+/** Contrôles fait sur les données entrées dans les champs des formulaires des docteurs
+ */
 class DocFormChecker
 {
+    /** Méthodes de contrôles des données envoyées aux formulaires des docteurs
+     * @param array $cleanedUpPost      Liste des données entrantes
+     * @return array                    Statut de conformité des entrées
+     */
     public function docFormChecks(array $cleanedUpPost)
     {
         $checksArray = array();

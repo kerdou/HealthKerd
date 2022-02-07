@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Controller\medic\docOffice;
 
-/** Controleur de la section 'accueil' */
+/** Contrôleur GET des cabinets médicaux
+ */
 class DocOfficeGetController extends DocOfficeCommonController
 {
     private array $cleanedUpGet;
@@ -15,43 +16,48 @@ class DocOfficeGetController extends DocOfficeCommonController
     private object $medicEventArrayBuildOrder;
     private object $docOfficeView;
 
-    /** */
     public function __construct()
     {
         parent::__construct();
         date_default_timezone_set('Europe/Paris');
         $this->medicEventIdFinder = new \HealthKerd\Model\medic\eventIdFinder\EventIdFinder();
         $this->medicEventDataGatherer = new \HealthKerd\Model\medic\eventDataGatherer\EventDataGatherer();
-        $this->medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicArrayBuildOrder();
+        $this->medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicEventArrayBuildOrder();
     }
 
     public function __destruct()
     {
     }
 
-    /** */
+    /** recoit GET['action'] et lance la suite
+     * @param array $cleanedUpGet   Infos nettoyées provenants du GET
+     * @return void
+     */
     public function actionReceiver(array $cleanedUpGet)
     {
         $this->cleanedUpGet = $cleanedUpGet;
 
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
-                case 'allDocOfficesListDisp':
+                case 'allDocOfficesListDisp': // affichage de la liste des cabinets médicaux
                     $this->displayAllDocOfficesList();
                     break;
-                case 'dispEventsWithOneDocOffice':
+
+                case 'dispEventsWithOneDocOffice': // affichage des events liés à un cabinet médical en particulier
                     $this->displayEventsWithOneDocOffice();
                     break;
-                default:
+
+                default: // si GET['action'] ne correspond à aucun cas de figure, on repart vers la liste des cabinets médicaux
                     $this->displayAllDocOfficesList();
             }
         } else {
+            // si GET['action'] n'est pas défini, on repart vers la liste des cabinets médicaux
             $this->displayAllDocOfficesList();
         }
     }
 
-
-    /** */
+    /** Affichage de la liste des cabinets médicaux
+     */
     private function displayAllDocOfficesList()
     {
         $this->docOfficeList = $this->docOfficeModel->gatherAllDocOffices();
@@ -60,8 +66,8 @@ class DocOfficeGetController extends DocOfficeCommonController
         $this->docOfficeView->dataReceiver($this->docOfficeList);
     }
 
-
-    /** */
+    /** Affichage des events liés à un cabinet médical en particulier
+    */
     private function displayEventsWithOneDocOffice()
     {
         $medicEventsIdResult = $this->medicEventIdFinder->eventsIdsByDocOfficeId($this->cleanedUpGet['docOfficeID']);

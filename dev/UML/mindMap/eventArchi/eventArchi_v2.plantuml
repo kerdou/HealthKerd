@@ -1,0 +1,60 @@
+@startmindmap
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+
+
+* event/
+
+**_ dateTime
+
+**_ isWithPro
+
+**_ user
+
+**_ category
+
+**_ doc
+
+**_ docOffice
+
+** content/
+
+*** diag/
+****_ diagSymptoms
+****_ diagCheckPoints
+****_ diagConclusions
+****_ diagMedicThemes
+**** ordoList/
+***** ordoPharma/
+******_ prescPharma
+
+***** ordoLabo/
+******_ prescLabo
+
+***** ordoSight/
+
+***** ordoVax/
+******_ prescVax
+
+
+*** treatPharmaSession/
+
+*** treatPharmaUsageMod/
+
+*** careSession/
+
+*** careUsageMod/
+
+*** laboNoOrdoSamplingSession/
+
+*** laboOrdoSamplingSession/
+
+*** vaxSession/
+
+*** vaxUsageMod/
+
+
+@endmindmap

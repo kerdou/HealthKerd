@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Controller\medic\eventCat;
 
-/** Controleur de la section 'accueil' */
+/** Classe regroupant les attributs et méthodes communs aux contrôleurs GET et POST des catégories d'events
+ */
 abstract class EventCatCommonController
 {
     protected object $eventCatModel;

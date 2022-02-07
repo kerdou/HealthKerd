@@ -1,0 +1,187 @@
+@startuml
+title <b>Model</b>
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+
+package Model {
+    package common {
+        abstract class ModelInChief {
+            # $pdo : object
+            #  $query : object
+            --
+            + __construct()
+            # pdoInit()
+            # stmtWhereBuilder()
+            # pdoPreparedSelectExecute()
+            # pdoRawSelectExecute()
+            # pdoEventSelectMultiQuery()
+            # pdoPreparedInsertUpdateDeleteExecute()
+        }
+
+    }
+
+
+    package home {
+        class HomeModel extends ModelInChief {
+
+        }
+    }
+
+
+    package login {
+        class LoginModel extends ModelInChief {
+            + __destruct()
+            + checkUserLogs()
+        }
+    }
+
+
+    package medic {
+        package allEvents///medic {
+
+        }
+
+
+        package doc///medic {
+            class DocModel extends ModelInChief {
+                + __construct()
+                + __destruct()
+                + gatherAllDocs()
+                + getOneDocForPageDisplay()
+                + getOneDocForFormDisplay()
+                + gatherDocSpeMedicRelation()
+                + getNewDocID()
+            }
+
+            class DocPostModel extends ModelInChief {
+                + __construct()
+                + __destruct()
+                + addDoc()
+                + addOfficeAndSpeMedic()
+                + editDoc()
+                + deleteDoc()
+                + deleteOfficeAndSpeMedic()
+            }
+        }
+
+
+        package docOffice///medic {
+            class DocOfficeModel extends ModelInChief {
+                + __construct()
+                + __destruct()
+                + gatherAllDocOffices()
+            }
+        }
+
+        package eventCat///medic {
+            class EventCatModel extends ModelInChief {
+                + __construct()
+                + __destruct()
+                + gatherAllEventsCats()
+            }
+        }
+
+
+        package eventDataGatherer///medic {
+            abstract class EventDataGathererPdoManager extends ModelInChief {
+                # $pdoBufferArray : array
+                --
+                + __construct()
+                # pdoBufferArrayReinit()
+                # pdoStmtAndDestInsertionInCue()
+                # pdoStmtAndDestProcessing()
+                # pdoQueryExec()
+                # pdoResultWriter()
+            }
+
+            abstract class EventDataHelpers extends EventDataGathererPdoManager{
+                + __construct()
+                - dataStoreArrayPrepPhase1()
+                - dataStoreArrayPrepPhase2()
+                # gatherAll()
+                # dualColumnGatherAll()
+                # gatherAllFromUsagePhase()
+                # idExtractor()
+                # docIDExtractor()
+            }
+
+            abstract class SpecificStmtStore extends EventDataHelpers {
+                + __construct()
+                # medicEventList()
+                # docList()
+                # docOfficeList()
+                # prescPharmaListOnlyOrdoPharmaIds()
+                # ordoVaxSlotsOnlyOrdoVaxIds()
+                # treatPharmaNames()
+                # medicAffectNames()
+                # medicEventAffectsRelation()
+                # medicEventThemesRelation()
+                # medicEventSpemedicRelation()
+            }
+
+            class EventDataGatherer extends SpecificStmtStore {
+                # $dataStore : array
+                # $eventsIdList : array
+                --
+                + __construct()
+                + eventIdReceiver()
+                - gatherWave1PdoPrep()
+                - idExtractionFromWave1()
+                - gatherWave2PdoPrep()
+                - idExtractionFromWave2()
+                - gatherWave3PdoPrep()
+                - idExtractionFromWave3()
+                - gatherWave4PdoPrep()
+                - idExtractionFromWave4()
+                - gatherWave5PdoPrep()
+                - idExtractionFromWave5()
+                - gatherWave6PdoPrep()
+                - idExtractionFromWave6()
+                - gatherWave7PdoPrep()
+            }
+        }
+
+
+        package eventIdFinder///medic {
+            class EventIdFinder extends ModelInChief {
+                + __construct()
+                + comingEventsIds()
+                + eventsIdsByUserId()
+                + eventsIdsFromOneDocId()
+                + onlyOneEvent()
+            }
+
+        }
+
+
+        package medicTheme///medic {
+            class MedicThemeModel extends ModelInChief {
+                + __construct()
+                + __destruct()
+                + medicThemeByEventsIds()
+                + gatherMedicEventMedicThemeRelation()
+            }
+        }
+
+
+        package speMedic///medic {
+            class SpeMedicModel extends ModelInChief {
+                + __construct()
+                + __destruct()
+                + speMedicByEventsIds()
+                + gatherMedicEventSpeMedicRelation()
+            }
+        }
+    }
+
+    package userAccount {
+
+    }
+}
+
+
+
+@enduml

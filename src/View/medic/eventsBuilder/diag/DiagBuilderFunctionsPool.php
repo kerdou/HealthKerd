@@ -2,14 +2,18 @@
 
 namespace HealthKerd\View\medic\eventsBuilder\diag;
 
+/** Dépot des méthodes servant à la construction de l'accordéon de diagnostic
+ */
 abstract class DiagBuilderFunctionsPool
 {
     public function __destruct()
     {
     }
 
-
-    /** */
+    /** Début de l'accordéon de diagnostic
+     * @param array $value      Données du diagnostic
+     * @return string           HTML du début de l'accordéon de diagnostic
+     */
     protected function diagAccordionStart(array $value)
     {
         $diagAccordionStartHTML =
@@ -32,7 +36,10 @@ abstract class DiagBuilderFunctionsPool
         return $diagAccordionStartHTML;
     }
 
-
+    /** Construction des <li> des symptômes des diagnostics
+     * @param array $symptoms       Liste des symptômes
+     * @return string               <li> des symptômes concaténés
+     */
     protected function diagSymptomsBuilder(array $symptoms)
     {
         $diagSymptHTML = '';
@@ -52,12 +59,12 @@ abstract class DiagBuilderFunctionsPool
             $diagSymptHTML = '<li class="">Aucun symptôme signalé</li>';
         }
 
-
         return $diagSymptHTML;
     }
 
-
-    /** */
+    /** Bloc intermédiaire entre le <ul> des diagnostics et le <ul> des points de contrôle du diagnostic
+     * @return string       HTML du bloc intermédiaire
+     */
     protected function diagBetweenSymptAndChecks()
     {
         $diagBetweenSymptAndChecksHTML =
@@ -71,8 +78,10 @@ abstract class DiagBuilderFunctionsPool
         return $diagBetweenSymptAndChecksHTML;
     }
 
-
-    /** */
+    /** Construction des <li> de points de contrôle du diagnostic
+     * @param array $checks     Liste des points de contrôle du diagnostic
+     * @return string           <li> des points de contrôle concaténés
+     */
     protected function diagChecks(array $checks)
     {
         $diagChecksHTML = '';
@@ -94,8 +103,9 @@ abstract class DiagBuilderFunctionsPool
         return $diagChecksHTML;
     }
 
-
-    /** */
+    /** Bloc intermédiaire entre le <ul> des points de contrôle et le <h5> des conclusions du diagnostic
+     * @return string       HTML du bloc intermédiaire
+     */
     protected function diagBetweenChecksAndConclu()
     {
         $diagBetweenChecksAndConcluHTML =
@@ -109,16 +119,19 @@ abstract class DiagBuilderFunctionsPool
         return $diagBetweenChecksAndConcluHTML;
     }
 
-
-    /** */
+    /** Construction du début du <ul> des conclusions de diagnostics et de chacun de ses <li>
+     * * Lance également sickDetailedStatusBadge() pour la construction des statuts des maladies
+     * @param array $conclu     Liste des conslusions des diagnostics
+     * @return string           HTML du début du <ul> et des <li> concaténés
+     */
     protected function diagConclu(array $conclu)
     {
         $concluHTML = '';
         $concluArray = array();
 
         foreach ($conclu as $value) {
-            $affectBadge = '<a href="#" class="badge bg-danger mb-1 me-1 text-white ">' . $value['affectName'] . '</a>';
-            $sickStatusBadge = $this->sickDetailedStatusBadge($value['sickStatus']['detailed']);
+            $affectBadge = '<a href="#" class="badge bg-danger mb-1 me-1 text-white ">' . $value['medicAffectName'] . '</a>';
+            $sickStatusBadge = $this->sickDetailedStatusBadge($value['sickDetailedStatus']);
             $li =
                 '<li class="d-flex flex-row justify-content-start flex-wrap">'
                     . $affectBadge . ''
@@ -142,8 +155,10 @@ abstract class DiagBuilderFunctionsPool
         return $concluHTML;
     }
 
-
-    /** */
+    /** Conversion des strings de statut des maladie puis création de leur badges
+     * @param string $sickDetailedStatus    Statut de la maladie
+     * @return string                       DIV du badge de la maladie
+     */
     private function sickDetailedStatusBadge(string $sickDetailedStatus)
     {
         $sickStatusString = '';
@@ -183,8 +198,10 @@ abstract class DiagBuilderFunctionsPool
         return $sickStatusBadge;
     }
 
-
-    /** */
+    /** Fin du <ul> des conclusions du diagnostic puis création de la <div> de commentaire
+     * @param array $value      Données du diagnostic
+     * @return string           HTML de la fin du <ul> des conclusions de diagnostic suivi de a <div> de commentaire
+     */
     protected function diagComment(array $value)
     {
         $diagCommentHTML =
@@ -200,12 +217,13 @@ abstract class DiagBuilderFunctionsPool
         return $diagCommentHTML;
     }
 
-
-    /** */
+    /** Fin de l'accordéon de diagnostic
+     * @return string       HTML des fins de <div>
+     */
     protected function diagAccordionEnd()
     {
         $diagAccordionEndHTML =
-                '</div> <!-- END OF DIAG ACCORDION BODY -->
+                    '</div> <!-- END OF DIAG ACCORDION BODY -->
                 </div> <!-- END OF DIAG ACCORDION CONTENT -->
             </div> <!-- END OF DIAG ACCORDION ITEM -->
         </div> <!-- END OF DIAG ACCORDION -->';

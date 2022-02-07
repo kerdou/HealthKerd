@@ -22,5 +22,6 @@
     "liveSassCompile.settings.autoprefix": [
         "> 1%",
         "last 2 versions"
-    ]
+    ],
+    "phpcs.standard": "./phpCodeSnifferOwnRuleset.xml"
 }

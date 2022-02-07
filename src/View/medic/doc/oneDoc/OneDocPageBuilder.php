@@ -2,6 +2,9 @@
 
 namespace HealthKerd\View\medic\doc\oneDoc;
 
+/** Construction puis affichage de la page d'un seul docteur
+ * Certains blocs ne s'affichent que s'ils contiennent des données
+ */
 class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
@@ -24,19 +27,18 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
 
         $this->tempContent['contactContent'] = '';
 
-
         $this->pageSettingsList = array(
             "pageTitle" => "Informations liées à un professionnel de santé"
         );
     }
 
-
     public function __destruct()
     {
     }
 
-
-    /** PLOP */
+    /** Recoit les données d'un docteur puis lance la construction de la page avant de l'afficher
+     * @param array $docDataArray   Ensemble des données d'un docteur
+     */
     public function dataReceiver(array $docDataArray)
     {
         $this->docDataArray = $docDataArray;
@@ -44,8 +46,8 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->buildOrder();
     }
 
-
-    /** */
+    /** Génération de tous les blocs HTML et stockage dans $builtContentArray avant affichage
+    */
     private function buildOrder()
     {
         $this->builtContentArray['generalDivStart'] = '<div class="p-2"> <!-- GENERAL DIV START -->';
@@ -71,30 +73,35 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
             $this->builtContentHTML .= $portions;
         }
 
-
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
         $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 
-
-    /** */
+    /** Génération des blocs de contenu de contact suivant leur présence ou leur absence
+     * Gére les contenus suivants:
+     * * Numéro de tel
+     * * Adresse mail
+     * * Page perso
+     * * Page sur Doctolib
+    */
     private function tempContentManagement()
     {
+        // génération du bloc du numéro de tel s'il existe
         if (strlen($this->docDataArray['tel'] > 0)) {
             $this->tempContent['telPortion'] = $this->telPortionBuilder();
         } else {
             $this->tempContent['telPortion'] = '';
         }
 
-
+        // génération du bloc de l'adresse mail si elle existe
         if (strlen($this->docDataArray['mail'] > 0)) {
             $this->tempContent['MailPortion'] = $this->mailPortionBuilder();
         } else {
             $this->tempContent['MailPortion'] = '';
         }
 
-
+        // le bloc ['phoneAndMailContent'] se crée uniquement s'il y a un numéro de tel ou une adresse mail
         if (
             strlen($this->tempContent['telPortion']) > 0 ||
             strlen($this->tempContent['MailPortion']) > 0
@@ -105,17 +112,17 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
             $this->tempContent['phoneAndMailContent'] .= '</div> <!-- PHONE AND MAIL END -->';
         }
 
-
+        // génération du bloc de l'adresse de site perso s'il y en a une
         if (strlen($this->docDataArray['webPage'] > 0)) {
             $this->tempContent['persoWebPagePortion'] = $this->persoWebPagePortion();
         }
 
-
+        // génération du bloc de l'adresse de la page Doctolib du doc s'il y en a une
         if (strlen($this->docDataArray['doctolibPage'] > 0)) {
             $this->tempContent['doctoLibPagePortion'] = $this->doctoLibPagePortion();
         }
 
-
+        // le bloc ['websitesContent'] se crée uniquement s'il y a une une adresse de site perso ou une adresse Doctolib
         if (
             strlen($this->tempContent['persoWebPagePortion']) > 0 ||
             strlen($this->tempContent['doctoLibPagePortion']) > 0
@@ -126,7 +133,7 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
             $this->tempContent['websitesContent'] .= '</div> <!-- WEBSITES END -->';
         }
 
-
+        // le bloc ['contactContent'] se crée uniquement si les blocs ['phoneAndMailContent'] ou ['websitesContent'] existent
         if (
             (strlen($this->tempContent['phoneAndMailContent']) > 0) ||
             (strlen($this->tempContent['websitesContent']) > 0)
@@ -138,19 +145,19 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         }
     }
 
-
-    /** */
+    /** Génération du bloc du nom du docteur
+     * * L'affichage du bouton de modification du docteur n'est pas systématique
+     * @return string    HTML du bloc de nom du docteur
+    */
     private function docNameBuilder()
     {
         $docNameTopBuilderHTML =
             '<div class="d-flex flex-row"> <!-- DOC NAME START -->
                 <h2>' . $this->docDataArray['fullNameSentence'] .  '</h2>';
 
-
         $docNameMidBuilderHTML = '';
 
-
-
+        // affichage du bouton de modification du docteur uniquement s'il n'est pas verrouillé
         if ($this->docDataArray['isLocked'] == false) {
             $docNameMidBuilderHTML =
                 '<a href="index.php?controller=medic&subCtrlr=doc&action=showDocEditForm&docID=' . $this->docDataArray['docID'] .  '" class="d-flex flex-column justify-content-center ms-3">
@@ -166,8 +173,10 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $docNameTopBuilderHTML . $docNameMidBuilderHTML . $docNameBotBuilderHTML;
     }
 
-
-    /** */
+    /** Génération du bloc de spécialités médicales
+     * @param array $speMedicBadgeList  Liste des spécialités médicales du doc
+     * @return string                   HTML des badges de spécialités médicales
+    */
     private function speMedicBadgesBuilder(array $speMedicBadgeList)
     {
         //var_dump($speMedicBadgeList);
@@ -188,8 +197,9 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $speMedicDivStart . $allBadgesHTMLString . $speMedicDivEnd;
     }
 
-
-    /** */
+    /** Génération du bloc de numéro de téléphone
+     * @return string   HTML du bloc de numéro de téléphone
+    */
     private function telPortionBuilder()
     {
         $telPortionBuilderHTML =
@@ -203,8 +213,9 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $telPortionBuilderHTML;
     }
 
-
-    /** */
+    /** Génération du bloc d'adresse mail
+     * @return string   HTML du bloc d'adresse mail
+    */
     private function mailPortionBuilder()
     {
         $mailPortionBuilderHTML =
@@ -218,8 +229,9 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $mailPortionBuilderHTML;
     }
 
-
-    /** */
+    /** Génération du bloc de page perso
+     * @return string   HTML du bloc de page perso
+    */
     private function persoWebPagePortion()
     {
         $persoWebPagePortionHTML =
@@ -233,8 +245,9 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $persoWebPagePortionHTML;
     }
 
-
-    /** */
+    /** Génération du bloc de page Doctolib
+     * @return string   HTML du bloc de page Doctolib
+    */
     private function doctoLibPagePortion()
     {
         $doctoLibPagePortionHTML =
@@ -249,8 +262,9 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $doctoLibPagePortionHTML;
     }
 
-
-    /** */
+    /** Génération du bloc de commentaire
+     * @return string   HTML du bloc de commentaire
+    */
     private function commentBuilder()
     {
         $commentBuilderHTML =
@@ -262,8 +276,9 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $commentBuilderHTML;
     }
 
-
-    /** */
+    /** Génération du bloc faisant le bilan du nombre et des dates des rendez-vous
+     * @return string   HTML du bloc de bilan des rendez-vous
+    */
     private function medicEventsReport()
     {
         $medicEventsReportHTML =
@@ -323,8 +338,9 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $medicEventsReportHTML;
     }
 
-
-    /** */
+    /** Génératon des blocs de cabinets médicaux
+     * @return string   HTML des blocs de cabinets médicaux générés
+    */
     private function officeCardBuilder(array $officeData)
     {
         $allCardsHTML = '';
@@ -353,7 +369,6 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
 
             array_push($allCardsArray, $cardSingleHTML);
         }
-
 
         foreach ($allCardsArray as $HTMLPortion) {
             $allCardsHTML .= $HTMLPortion;

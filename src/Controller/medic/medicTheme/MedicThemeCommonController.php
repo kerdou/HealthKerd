@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Controller\medic\medicTheme;
 
-/** Controleur de la section 'accueil' */
+/** Classe regroupant les attributs et méthodes communs aux contrôleurs GET et POST des thémes médicaux
+ */
 abstract class MedicThemeCommonController
 {
     protected object $medicThemeModel;

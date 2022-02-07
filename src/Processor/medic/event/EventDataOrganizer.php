@@ -2,56 +2,64 @@
 
 namespace HealthKerd\Processor\medic\event;
 
+/** Réorganisation et remplissage des données à l'échelon 'event' et pas les contenus */
 class EventDataOrganizer
 {
-    private array|null $eventArray = array();
-    private array|null $dateAndTime = array();
-    private array|null $docOfficeList = array();
-    private array|null $medicEventThemesRelation = array();
-    private array|null $medicEventSpemedicRelation = array();
-    private array|null $docSpemedicRelation = array();
-    private array|null $speMedicFullList = array();
-    private array|null $docList = array();
+    private array $eventArray = array();
+    private array $dateAndTime = array();
+    private array $medicEventThemesRelation = array();
+    private array $medicEventSpemedicRelation = array();
+    private array $docList = array();
 
-    /**
-     *
+    public function __destruct()
+    {
+    }
+
+    /** Ordre de réagencement et remplissage des données à l'échelon 'event' et pas les contenus
+     * @param array $eventArray                     Liste des events
+     * @param array $medicEventThemesRelation       Liste des thèmes médicaux de l'event
+     * @param array $medicEventSpemedicRelation     Liste des spécialités médicales de l'event
+     * @param array $docList                        Données des docteurs
+     * @param array $dateAndTime                    Informations de temps de la journée en cours
+     * @return array                                Contenu réorgnisé et remplit
      */
     public function eventGeneralBuildOrder(
-        array|null $eventArray,
-        array|null $dateAndTime,
-        array|null $docOfficeList,
-        array|null $medicEventThemesRelation,
-        array|null $medicEventSpemedicRelation,
-        array|null $docSpemedicRelation,
-        array|null $speMedicFullList,
-        array|null $docList
+        array $eventArray,
+        array $medicEventThemesRelation,
+        array $medicEventSpemedicRelation,
+        array $docList,
+        array $dateAndTime
     ) {
         $this->eventArray = $eventArray;
-        $this->dateAndTime = $dateAndTime;
-        $this->docOfficeList = $docOfficeList;
         $this->medicEventThemesRelation = $medicEventThemesRelation;
         $this->medicEventSpemedicRelation = $medicEventSpemedicRelation;
-        $this->docSpemedicRelation = $docSpemedicRelation;
-        $this->speMedicFullList = $speMedicFullList;
         $this->docList = $docList;
+        $this->dateAndTime = $dateAndTime;
 
         $this->contentOrganizer();
-        $this->docTitleAndFullNameAddition();
-        $this->docSpeMedicAddition();
         $this->timeManagement();
         $this->eventThemesAddition();
         $this->eventSpeMedicAddition();
-        $this->docOfficeDataAdder();
+        $this->docManagement();
 
         //echo '<pre>';
-        //print_r($this->eventArray);
+        //    var_dump($this->docList);
+        //    print_r($this->speMedicFullList);
+        //    print_r($this->eventArray);
         //echo '</pre>';
 
         return $this->eventArray;
     }
 
-    /**
-     *
+    /** Réagencement des données des events pour plus facilement retrouver les données
+     * * général
+     * * time
+     * * medic theme
+     * * event spe medic
+     * * doc
+     * * docOffice
+     * * content
+     * * contentType
      */
     private function contentOrganizer()
     {
@@ -59,7 +67,7 @@ class EventDataOrganizer
 
         foreach ($this->eventArray as $value) {
             //echo '<pre>';
-            //print_r($value);
+            //  print_r($value);
             //echo '</pre>';
 
             $tempArray = array();
@@ -77,65 +85,21 @@ class EventDataOrganizer
             $tempArray['eventMedicThemes'] = array();
             $tempArray['eventSpeMedic'] = array();
 
-            $tempArray['user']['userID'] = $value['userID'];
-            $tempArray['user']['firstName'] = $value['userFirstName'];
-            $tempArray['user']['lastName'] = $value['userLastName'];
-
             $tempArray['category']['catID'] = $value['medicEventCatID'];
             $tempArray['category']['catName'] = $value['eventCatName'];
 
             $tempArray['doc']['attended']['docID'] = $value['docID'];
-            $tempArray['doc']['attended']['title'] = '';
-            $tempArray['doc']['attended']['firstName'] = $value['docFirstName'];
-            $tempArray['doc']['attended']['lastName'] = $value['docLastName'];
-            $tempArray['doc']['attended']['fullNameSentence'] = '';
-            $tempArray['doc']['attended']['speMedicIdList'] = array();
-            $tempArray['doc']['attended']['speMedicList'] = array();
-            $tempArray['doc']['attended']['booleans']['isMyMainDoc'] = 0;
-            $tempArray['doc']['attended']['booleans']['canVisitHome'] = 0;
-            $tempArray['doc']['attended']['booleans']['isRetired'] = 0;
-            $tempArray['doc']['attended']['booleans']['isBlacklisted'] = 0;
-
-            $tempArray['doc']['substit']['docID'] = $value['replacedDocID'];
-            $tempArray['doc']['substit']['title'] = '';
-            $tempArray['doc']['substit']['firstName'] = $value['substitDocFirstName'];
-            $tempArray['doc']['substit']['lastName'] = $value['substitDocLastName'];
-            $tempArray['doc']['substit']['fullNameSentence'] = '';
-            $tempArray['doc']['substit']['speMedicIdList'] = array();
-            $tempArray['doc']['substit']['speMedicList'] = array();
-            $tempArray['doc']['substit']['booleans']['isMyMainDoc'] = 0;
-            $tempArray['doc']['substit']['booleans']['canVisitHome'] = 0;
-            $tempArray['doc']['substit']['booleans']['isRetired'] = 0;
-            $tempArray['doc']['substit']['booleans']['isBlacklisted'] = 0;
-
+            $tempArray['doc']['replaced']['docID'] = $value['replacedDocID'];
             $tempArray['doc']['laboOrdoAttended']['docID'] = $value['laboOrdoDocID'];
-            $tempArray['doc']['laboOrdoAttended']['title'] = '';
-            $tempArray['doc']['laboOrdoAttended']['firstName'] = $value['laboOrdoDocFirstName'];
-            $tempArray['doc']['laboOrdoAttended']['lastName'] = $value['laboOrdoDocLastName'];
-            $tempArray['doc']['laboOrdoAttended']['fullNameSentence'] = '';
-            $tempArray['doc']['laboOrdoAttended']['speMedicIdList'] = array();
-            $tempArray['doc']['laboOrdoAttended']['speMedicList'] = array();
-            $tempArray['doc']['laboOrdoAttended']['booleans']['isMyMainDoc'] = 0;
-            $tempArray['doc']['laboOrdoAttended']['booleans']['canVisitHome'] = 0;
-            $tempArray['doc']['laboOrdoAttended']['booleans']['isRetired'] = 0;
-            $tempArray['doc']['laboOrdoAttended']['booleans']['isBlacklisted'] = 0;
-
-            $tempArray['doc']['laboOrdoSubstit']['docID'] = $value['laboOrdoReplacedDocDiagID'];
-            $tempArray['doc']['laboOrdoSubstit']['title'] = '';
-            $tempArray['doc']['laboOrdoSubstit']['firstName'] = $value['substitLaboOrdoDocFirstName'];
-            $tempArray['doc']['laboOrdoSubstit']['lastName'] = $value['substitLaboOrdoDocLastName'];
-            $tempArray['doc']['laboOrdoSubstit']['fullNameSentence'] = '';
-            $tempArray['doc']['laboOrdoSubstit']['speMedicIdList'] = array();
-            $tempArray['doc']['laboOrdoSubstit']['speMedicList'] = array();
-            $tempArray['doc']['laboOrdoSubstit']['booleans']['isMyMainDoc'] = 0;
-            $tempArray['doc']['laboOrdoSubstit']['booleans']['canVisitHome'] = 0;
-            $tempArray['doc']['laboOrdoSubstit']['booleans']['isRetired'] = 0;
-            $tempArray['doc']['laboOrdoSubstit']['booleans']['isBlacklisted'] = 0;
+            $tempArray['doc']['replacedLaboOrdo']['docID'] = $value['laboOrdoReplacedDocDiagID'];
 
             $tempArray['docOffice']['docOfficeID'] = $value['docOfficeID'];
-            $tempArray['docOffice']['name'] = $value['docOfficeName'];
             $tempArray['docOffice']['locationType'] = $value['locationType'];
-            $tempArray['docOffice']['data'] = array();
+            $tempArray['docOffice']['name'] = $value['docOfficeName'];
+            $tempArray['docOffice']['addr1'] = $value['docOfficeAddr1'];
+            $tempArray['docOffice']['addr2'] = $value['docOfficeAddr2'];
+            $tempArray['docOffice']['postCode'] = $value['docOfficePostCode'];
+            $tempArray['docOffice']['cityName'] = $value['docOfficeCityName'];
 
             $tempArray['content']['diag'] = array();
 
@@ -145,8 +109,8 @@ class EventDataOrganizer
             $tempArray['content']['careSession'] = array();
             $tempArray['content']['careUsageMod'] = array();
 
-            $tempArray['content']['laboNoOrdoSampling'] = array();
-            $tempArray['content']['laboOrdoSampling'] = array();
+            $tempArray['content']['laboNoOrdoSamplingSession'] = array();
+            $tempArray['content']['laboOrdoSamplingSession'] = array();
 
             $tempArray['content']['vaxSession'] = array();
             $tempArray['content']['vaxUsageMod'] = array();
@@ -169,176 +133,10 @@ class EventDataOrganizer
         $this->eventArray = $localEventArray;
     }
 
-
-    /**
-     *
-     */
-    private function docTitleAndFullNameAddition()
-    {
-        $docPresenceTypes = ['attended', 'substit', 'laboOrdoAttended', 'laboOrdoSubstit'];
-
-        foreach ($docPresenceTypes as $value) {
-            $this->docTitleAddition($value);
-            $this->docFullNameSentenceCreator($value);
-        }
-    }
-
-
-    /**
-     *
-     */
-    private function docTitleAddition(string $docPresence)
-    {
-        foreach ($this->eventArray as $eventKey => $eventValue) {
-            foreach ($this->docList as $docKey => $docValue) {
-                if ($eventValue['doc'][$docPresence]['docID'] == $docValue['docID']) {
-                    switch ($docValue['title']) {
-                        case 'dr':
-                            $this->eventArray[$eventKey]['doc'][$docPresence]['title'] = 'Dr ';
-                            break;
-                        case 'mr':
-                            $this->eventArray[$eventKey]['doc'][$docPresence]['title'] = 'Mr ';
-                            break;
-                        case 'mrs':
-                            $this->eventArray[$eventKey]['doc'][$docPresence]['title'] = 'Mme ';
-                            break;
-                        case 'ms':
-                            $this->eventArray[$eventKey]['doc'][$docPresence]['title'] = 'Mlle ';
-                            break;
-                        case 'none':
-                            $this->eventArray[$eventKey]['doc'][$docPresence]['title'] = '';
-                            break;
-                    }
-                }
-            }
-        }
-    }
-
-
-    /**
-     *
-     */
-    private function docFullNameSentenceCreator(string $docPresence)
-    {
-        foreach ($this->eventArray as $eventKey => $eventValue) {
-            $docIdIsOK = false;
-            $titleType = '';
-            $hasFirstName = false;
-
-            // on vérifie qu'il ne s'agisse pas d'un slot de doc vide
-            if ($eventValue['doc'][$docPresence]['docID'] != '0') {
-                $docIdIsOK = true;
-            }
-
-            // on vérifie le titre, seuls les cas des 'dr' et des 'none' sont vraiment ciblés
-            if ($eventValue['doc'][$docPresence]['title'] == 'Dr ') {
-                $titleType = 'dr';
-            } elseif ($eventValue['doc'][$docPresence]['title'] == '') {
-                $titleType = 'none';
-            } else {
-                $titleType = 'other';
-            }
-
-            // on vérifie la présence du prénom
-            if (strlen($eventValue['doc'][$docPresence]['firstName']) > 0) {
-                $hasFirstName = true;
-            } else {
-                $hasFirstName = false;
-            }
-
-            // les tests se déclenchent uniquement si ce n'est pas un docID == 0
-            if ($docIdIsOK == true) {
-                if ($titleType == 'dr' && $hasFirstName == true) {
-                    // si le title est 'dr' et qu'il y a un prénom alors 'fullNameSentence' = title + prénom + nom
-                    $this->eventArray[$eventKey]['doc'][$docPresence]['fullNameSentence'] =
-                    $this->eventArray[$eventKey]['doc'][$docPresence]['title'] .
-                    ucwords($this->eventArray[$eventKey]['doc'][$docPresence]['firstName']) .
-                    ' ' .
-                    ucwords($this->eventArray[$eventKey]['doc'][$docPresence]['lastName']);
-                } elseif ($titleType == 'dr' && $hasFirstName == false) {
-                    // si title est 'dr' mais qu'il n'y a pas de prénom alors 'fullNameSentence' = title + nom
-                    $this->eventArray[$eventKey]['doc'][$docPresence]['fullNameSentence'] =
-                    $this->eventArray[$eventKey]['doc'][$docPresence]['title'] .
-                    ucwords($this->eventArray[$eventKey]['doc'][$docPresence]['lastName']);
-                } elseif ($titleType == 'other' && $hasFirstName == true) {
-                    // si pas 'dr' mais présence de prénom alors 'fullNameSentence' = prénom + nom
-                    $this->eventArray[$eventKey]['doc'][$docPresence]['fullNameSentence'] =
-                    ucwords($this->eventArray[$eventKey]['doc'][$docPresence]['firstName']) .
-                    ' ' .
-                    ucwords($this->eventArray[$eventKey]['doc'][$docPresence]['lastName']);
-                } elseif ($titleType == 'other' && $hasFirstName == false) {
-                    // si pas de 'dr' mais absence de prénom alors 'fullNameSentence' = title + nom
-                    $this->eventArray[$eventKey]['doc'][$docPresence]['fullNameSentence'] =
-                    $this->eventArray[$eventKey]['doc'][$docPresence]['title'] .
-                    ucwords($this->eventArray[$eventKey]['doc'][$docPresence]['lastName']);
-                } elseif ($titleType == 'none' && $hasFirstName == true) {
-                    // si le title est 'none' et qu'il y a un prénom alors 'fullNameSentence' = prénom + nom
-                    $this->eventArray[$eventKey]['doc'][$docPresence]['fullNameSentence'] =
-                    $this->eventArray[$eventKey]['doc'][$docPresence]['firstName'] .
-                    ' ' .
-                    $this->eventArray[$eventKey]['doc'][$docPresence]['lastName'];
-                } elseif ($titleType = 'none' && $hasFirstName == false) {
-                    // si le title est 'none' et qu'il n'y pas de prénom  alors 'fullNameSentence' = nom
-                    $this->eventArray[$eventKey]['doc'][$docPresence]['fullNameSentence'] =
-                    $this->eventArray[$eventKey]['doc'][$docPresence]['lastName'];
-                }
-            }
-        }
-    }
-
-
-    /**
-     *
-     */
-    private function docSpeMedicAddition()
-    {
-        $docPresenceTypes = ['attended', 'substit', 'laboOrdoAttended', 'laboOrdoSubstit'];
-
-        foreach ($docPresenceTypes as $value) {
-            $this->docSpeMedicIdAdder($value);
-            $this->docSpeMedicAdder($value);
-        }
-    }
-
-
-    /**
-     *
-     */
-    private function docSpeMedicIdAdder(string $docPresence)
-    {
-        foreach ($this->eventArray as $eventKey => $eventValue) {
-            foreach ($this->docSpemedicRelation as $speKey => $speValue) {
-                if ($eventValue['doc'][$docPresence]['docID'] == $speValue['docID']) {
-                    array_push(
-                        $this->eventArray[$eventKey]['doc'][$docPresence]['speMedicIdList'],
-                        $speValue['speMedicID']
-                    );
-                }
-            }
-        }
-    }
-
-    /**
-     *
-     */
-    private function docSpeMedicAdder(string $docPresence)
-    {
-        foreach ($this->eventArray as $eventKey => $eventValue) {
-            foreach ($eventValue['doc'][$docPresence]['speMedicIdList'] as $docSpeMedicKey => $docSpeMedicValue) {
-                foreach ($this->speMedicFullList as $speKey => $speValue) {
-                    if ($docSpeMedicValue == $speValue['speMedicID']) {
-                        array_push(
-                            $this->eventArray[$eventKey]['doc'][$docPresence]['speMedicList'],
-                            $speValue
-                        );
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     *
+    /** Gestion du temps pour chaque event et envoie dans infos dans $eventArray[$key]['time'][]
+     * * Création de timestamp
+     * * Création de date sous forme de phrase française. Ex: Lundi 28 Janvier 2022
+     * * Création d'heure au format HH:MM
      */
     private function timeManagement()
     {
@@ -352,8 +150,7 @@ class EventDataOrganizer
         }
     }
 
-    /**
-     *
+    /** Ajout des thèmes médicaux des events dans $eventArray[$eventKey]['eventMedicThemes'][]
      */
     private function eventThemesAddition()
     {
@@ -366,8 +163,7 @@ class EventDataOrganizer
         }
     }
 
-    /**
-     *
+    /** Ajout des spécialités médicales des events dans $eventArray[$eventKey]['eventSpeMedic'][]
      */
     private function eventSpeMedicAddition()
     {
@@ -380,16 +176,39 @@ class EventDataOrganizer
         }
     }
 
-    /**
-     *
+    /** Gestion des titres et spécialités médicales des docteurs dans les 4 types de présence possibles
+     * * attended: Docteur présent durant la session
+     * * replaced: Docteur remplacé durant la session
+     * * laboOrdoAttended: Docteur ayant prescrit une ordonnance de prélèvement médical ou une vaccination
+     * * replacedLaboOrdo: Docteur remplacé pendant la prescription d'une ordonnance de prélèvement médical ou une vaccination
      */
-    private function docOfficeDataAdder()
+    private function docManagement()
     {
+        $docPresenceTypes = ['attended', 'replaced', 'laboOrdoAttended', 'replacedLaboOrdo'];
+
         foreach ($this->eventArray as $eventKey => $eventValue) {
-            foreach ($this->docOfficeList as $officeKey => $officeValue) {
-                if ($eventValue['docOffice']['docOfficeID'] == $officeValue['docOfficeID']) {
-                    $this->eventArray[$eventKey]['docOffice']['data'] = $officeValue;
+            foreach ($docPresenceTypes as $presValue) {
+                if (strlen($eventValue['doc'][$presValue]['docID']) > 0) {
+                    $data = $this->docDataAdder($eventValue['doc'][$presValue]['docID']);
+
+                    // ajout des données uniquement si une correspondance est trouvée dans docDataAdder()
+                    if ($data != null) {
+                        $this->eventArray[$eventKey]['doc'][$presValue] = $data;
+                    }
                 }
+            }
+        }
+    }
+
+    /** Recherche des données de docteur pour la présence de docteur actuellement traitée
+     * @param string $docID     ID du docteur actuellement traité
+     * @return array            Données du docteur correspondant
+     */
+    private function docDataAdder(string $docID)
+    {
+        foreach ($this->docList as $docValue) {
+            if ($docID == $docValue['docID']) {
+                return $docValue;
             }
         }
     }

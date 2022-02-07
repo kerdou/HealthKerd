@@ -2,10 +2,9 @@
 
 namespace HealthKerd\Controller\medic\doc;
 
-/** Controleur de la section 'accueil' */
+/** Depot de fonctions pour alléger le fichier DocGetController */
 abstract class DocGetControllerFunctionsPool extends DocCommonController
 {
-    /** */
     public function __construct()
     {
         parent::__construct();
@@ -16,7 +15,10 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
     }
 
 
-    /** */
+    /** extraie les docID d'un Array
+     * @param array $docList    Liste des données des docteurs
+     * @return array            Liste des ID des docs
+     */
     protected function docIDsExtractor(array $docList)
     {
         $docIDList = array();
@@ -28,45 +30,36 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
         return $docIDList;
     }
 
-
-    /**
-     *
+    /** Récapitulatif des nombres et dates d'events passés et futurs
      */
-    protected function showEventsWithOneDoc(string $docID)
+    protected function eventsSummaryCreation()
     {
-        date_default_timezone_set('Europe/Paris');
-        $medicEventIdFinder = new \HealthKerd\Model\medic\eventIdFinder\EventIdFinder();
-        $medicEventDataGatherer = new \HealthKerd\Model\medic\eventDataGatherer\EventDataGatherer();
-        $medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicArrayBuildOrder();
-        $this->docView = new \HealthKerd\View\medic\doc\eventsWithOneDoc\EventsWithOneDocPageBuilder();
+        $pastEventsQty = sizeof($this->pastEvents);
+        $futureEventsQty = sizeof($this->futureEvents);
 
-        $medicEventsIdResult = array();
-        $medicEventsIdResult = $medicEventIdFinder->eventsIdsFromOneDocId($docID);
+        $this->docList[0]['medicEvent']['qty']['past'] = $pastEventsQty;
+        $this->docList[0]['medicEvent']['qty']['coming'] = $futureEventsQty;
+        $this->docList[0]['medicEvent']['qty']['total'] = sizeof($this->medicEventList);
 
-        // conversion des ID d'event en integer
-        $medicEventsIdList = array();
-        foreach ($medicEventsIdResult as $value) {
-            array_push($medicEventsIdList, intval($value['medicEventID']));
+
+        if ($pastEventsQty > 0) {
+            $this->docList[0]['medicEvent']['dates']['first'] = $this->pastEvents[0]['time']['frenchDate'];
+
+            $this->docList[0]['medicEvent']['dates']['last'] = $this->pastEvents[$pastEventsQty - 1]['time']['frenchDate'];
+        } else {
+            $this->docList[0]['medicEvent']['dates']['first'] = 'Aucun';
+            $this->docList[0]['medicEvent']['dates']['last'] = 'Aucun';
         }
 
-        $medicEvtOriginalDataStore = $medicEventDataGatherer->eventIdReceiver($medicEventsIdList);
-        $medicEvtProcessedDataStore = $medicEventArrayBuildOrder->eventDataReceiver($medicEvtOriginalDataStore);
-
-        //echo '<pre>';
-        //print_r($medicEvtOriginalDataStore);
-        //echo '</pre>';
-
-        // vidage de $medicEvtOriginalDataStore
-        unset($medicEvtOriginalDataStore);
-        $medicEvtOriginalDataStore = array();
-
-        $this->docView->dataReceiver($medicEvtProcessedDataStore);
+        if ($futureEventsQty > 0) {
+            $this->docList[0]['medicEvent']['dates']['next'] = $this->futureEvents[0]['time']['frenchDate'];
+        } else {
+            $this->docList[0]['medicEvent']['dates']['next'] = 'Aucun';
+        }
     }
 
-
-    /**
-     *
-     */
+    /** convertie et ajoute la civilité du dr dans docList[$docKey]['title']
+    */
     protected function docTitleAddition()
     {
         foreach ($this->docList as $docKey => $docValue) {
@@ -90,9 +83,10 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
         }
     }
 
-
-    /**
-     *
+    /** Création de la string contenant le titre, le prénom et le nom du doc pour l'ajouter dans docList[$docKey]['fullNameSentence']
+     * * Exemple: Dr Gregory House
+     * * Le résultat varie suivant la présence ou l'absence du titre de docteur
+     * * Le résultat varie suivant la présence ou l'absence du prénom
      */
     protected function docFullNameSentenceCreator()
     {
@@ -155,8 +149,8 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
         }
     }
 
-
-    /** */
+    /** ajoute les spécialités médicales des docteurs
+    */
     protected function speMedicAdditionToDocs()
     {
         foreach ($this->docList as $docKey => $docValue) {
@@ -168,8 +162,8 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
         }
     }
 
-
-    /** */
+    /** ajoute les informations du cabinet médical
+    */
     protected function docOfficeAddition()
     {
         foreach ($this->docList as $docKey => $docValue) {
@@ -181,7 +175,9 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
         }
     }
 
-    /** */
+    /** Création d'un array sans doublon contenant les spécialités médicales
+     * @return array    array de spécialités médicales et leurs ID (sans doublon)
+     */
     protected function speMedicBadgeListBuildUp()
     {
         $speMedicIDList = array();
@@ -212,28 +208,28 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
         return $speMedicBadgeList;
     }
 
-
-
-    /** Création et stockage de toutes les données temporelles
-     * @param array $dateAndTime Stocke toutes les données temporelles
-     */
+    /** Création et stockage de toutes les données temporelles d'aujourd'hui
+    */
     protected function dateAndTimeCreator()
     {
         setlocale(LC_TIME, 'fr_FR', 'fra');
         $this->dataWorkbench['dateAndTime']['timezoneObj'] = timezone_open('Europe/Paris');
         $this->dataWorkbench['dateAndTime']['nowTimeObj'] = date_create('now', $this->dataWorkbench['dateAndTime']['timezoneObj']);
 
+        // determine le début de la journée en tenant compte de la timezone
         $this->dataWorkbench['dateAndTime']['todayEarlyTimeObj'] = date_time_set($this->dataWorkbench['dateAndTime']['nowTimeObj'], 0, 0, 0, 0);
         $this->dataWorkbench['dateAndTime']['todayEarlyTimeOffset'] = date_offset_get($this->dataWorkbench['dateAndTime']['todayEarlyTimeObj']);
         $this->dataWorkbench['dateAndTime']['todayEarlyTimestamp'] = date_timestamp_get($this->dataWorkbench['dateAndTime']['todayEarlyTimeObj']) + $this->dataWorkbench['dateAndTime']['todayEarlyTimeOffset'];
 
+        // determine le fin de la journée en tenant compte de la timezone
         $this->dataWorkbench['dateAndTime']['todayLateTimeObj'] = date_time_set($this->dataWorkbench['dateAndTime']['nowTimeObj'], 23, 59, 59, 999999);
         $this->dataWorkbench['dateAndTime']['todayLateTimeOffset'] = date_offset_get($this->dataWorkbench['dateAndTime']['todayLateTimeObj']);
         $this->dataWorkbench['dateAndTime']['todayLateTimestamp'] = date_timestamp_get($this->dataWorkbench['dateAndTime']['todayLateTimeObj'])  + $this->dataWorkbench['dateAndTime']['todayLateTimeOffset'];
     }
 
-
-
+    /** Préparation de la partie ['time'] de l'event
+     *  * medicEventList[$eventKey]['time']['dateTime'] sert à stocker l'objet dateTime qui sera utilisé pour la création de toutes les autres données temporelles
+    */
     protected function medicEventArrayTimeModifier()
     {
         foreach ($this->medicEventList as $eventKey => $eventValue) {
@@ -244,15 +240,12 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
         }
     }
 
-
-
-    /**
-     *
+    /** Ajout du timestamp, de la date complete en français et de l'heure
      */
     protected function timeManagement()
     {
         foreach ($this->medicEventList as $eventKey => $value) {
-            $dateObj = date_create($value['time']['dateTime'], $this->dataWorkbench['dateAndTime']['timezoneObj']);
+            $dateObj = date_create($value['time']['dateTime'], $this->dataWorkbench['dateAndTime']['timezoneObj']); // création de l'objet dateTime en tenant compte du décalage horaire correspondant à la date de l'event
             $UTCOffset = date_offset_get($dateObj); // récupération de l'offset de timezone
             $timestamp = date_timestamp_get($dateObj) + $UTCOffset; // on ajout l'écart de timezone au timestamp pour qu'il soit correct
             $this->medicEventList[$eventKey]['time']['timestamp'] = $timestamp;
@@ -261,9 +254,8 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
         }
     }
 
-
-
-    /** Tri des events dans 2 arrays par rapport à leur timestamp */
+    /** Tri des events dans 2 arrays par rapport à leur timestamp
+    */
     protected function eventTimeDispatcher()
     {
         foreach ($this->medicEventList as $key => $value) {
@@ -275,9 +267,7 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
         }
     }
 
-
-    /**
-     *
+    /** Tri entre les events passés et futurs
      */
     protected function pastAndFutureEventsTimeSorting()
     {
@@ -286,7 +276,9 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
     }
 
 
-    /** Tri des events en ordre croissant par timestamp */
+    /** Tri des events en ordre croissant par timestamp
+     *
+    */
     protected function incrTimestampEventSorting($firstValue, $secondValue)
     {
         if ($firstValue['time']['timestamp'] == $secondValue['time']['timestamp']) {
@@ -303,32 +295,5 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
             return 0;
         }
         return ($firstValue['time']['timestamp'] > $secondValue['time']['timestamp']) ? -1 : 1;
-    }
-
-
-    protected function eventsSummaryCreation()
-    {
-        $pastEventsQty = sizeof($this->pastEvents);
-        $futureEventsQty = sizeof($this->futureEvents);
-
-        $this->docList[0]['medicEvent']['qty']['past'] = $pastEventsQty;
-        $this->docList[0]['medicEvent']['qty']['coming'] = $futureEventsQty;
-        $this->docList[0]['medicEvent']['qty']['total'] = sizeof($this->medicEventList);
-
-
-        if ($pastEventsQty > 0) {
-            $this->docList[0]['medicEvent']['dates']['first'] = $this->pastEvents[0]['time']['frenchDate'];
-
-            $this->docList[0]['medicEvent']['dates']['last'] = $this->pastEvents[$pastEventsQty - 1]['time']['frenchDate'];
-        } else {
-            $this->docList[0]['medicEvent']['dates']['first'] = 'Aucun';
-            $this->docList[0]['medicEvent']['dates']['last'] = 'Aucun';
-        }
-
-        if ($futureEventsQty > 0) {
-            $this->docList[0]['medicEvent']['dates']['next'] = $this->futureEvents[0]['time']['frenchDate'];
-        } else {
-            $this->docList[0]['medicEvent']['dates']['next'] = 'Aucun';
-        }
     }
 }

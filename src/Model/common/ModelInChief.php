@@ -2,13 +2,16 @@
 
 namespace HealthKerd\Model\common;
 
+/** Classe maître d'accés à la database MySQL via un PDO
+ */
 abstract class ModelInChief
 {
     protected object $pdo; // PDO d'accès à la BDD
     protected object $query; // Contient la requete à envoyer à la base, renvoi une exception en cas de problème
 
 
-    /** Construction du PDO */
+    /** Construction du PDO
+    */
     public function __construct()
     {
         require_once "dbSettings.php"; // fichier de configuration de la connexion à la DB
@@ -32,13 +35,11 @@ abstract class ModelInChief
         $this->pdoInit($host, $base, $user, $password);
     }
 
-
-
     /** Construction du PDO
-     * @param string $host      Adresse de l'hôte
-     * @param string $base      Nom de la DB
-     * @param string $user      Login de cnx au serveur SQL
-     * @param string $password  Mot de passe
+     * @param string $host          Adresse de l'hôte
+     * @param string $base          Nom de la DB
+     * @param string $user          Login de cnx au serveur SQL
+     * @param string $password      Mot de passe
      */
     protected function pdoInit(string $host, string $base, string $user, string $password)
     {
@@ -58,13 +59,12 @@ abstract class ModelInChief
         $this->pdo->exec("SET CHARACTER SET utf8");
     }
 
-
     /** Création du string se trouvant derriere le WHERE du stmt
      * * S'il y a plus d'une clé à chercher, on crée les 'columnName = id' necessaires et on les rassemble entre des OR
      * * S'il n'y a qu'une seule clé, on crée un unique 'columnName = id'
-     * @param  array  $idList       Liste des clés à inspecter
-     * @param  string $idColumnName Nom de la colonne à chercher dans la table
-     * @return string               Renvoie du string des 'columnName = id' rassemblés
+     * @param  array  $idList           Liste des clés à inspecter
+     * @param  string $idColumnName     Nom de la colonne à chercher dans la table
+     * @return string                   Renvoie du string des 'columnName = id' rassemblés
     */
     protected function stmtWhereBuilder(array $idList, string $idColumnName)
     {
@@ -73,20 +73,19 @@ abstract class ModelInChief
 
         if (count($idList) > 1) {
             foreach ($idList as $id) {
-                array_push($whereStringBuildUpArray, ' ' . $idColumnName . ' = ' . $id);
+                array_push($whereStringBuildUpArray, ' ' . $idColumnName . ' = ' . $id . ' ');
             }
             $whereString = implode(' OR', $whereStringBuildUpArray);
         } elseif (count($idList) == 1) {
-            $whereString = ' ' . $idColumnName . ' = ' . $idList[0];
+            $whereString = ' ' . $idColumnName . ' = ' . $idList[0] . ' ';
         }
 
         return $whereString;
     }
 
-
     /** Execution de SELECT préparé, 2 modes de Fetch possible suivante le nombre de résultats attendu
-     * @param string $fetchMode Défini le type de Fetch: single ou multi
-     * @return array Données renvoyées par la DB
+     * @param string $fetchMode     Défini le type de Fetch: single ou multi
+     * @return array                Données renvoyées par la DB
     */
     protected function pdoPreparedSelectExecute(string $fetchMode)
     {
@@ -111,12 +110,10 @@ abstract class ModelInChief
         }
     }
 
-
-
     /** Execution de SELECT non préparé, 2 modes de Fetch possible suivante le nombre de résultats attendu
-     * @param string $stmt      Requete envoyée
-     * @param string $fetchMode Défini le type de Fetch: single ou multi
-     * @return array Données renvoyées par la DB
+     * @param string $stmt          Requete envoyée
+     * @param string $fetchMode     Défini le type de Fetch: single ou multi
+     * @return array                Données renvoyées par la DB
      */
     protected function pdoRawSelectExecute(string $stmt, string $fetchMode)
     {
@@ -138,12 +135,10 @@ abstract class ModelInChief
         }
     }
 
-
     /** Connexion à la DB, reception des données et séparation avant renvoie par le return
-     * @param   object  $pdo        Objet de connexion à la DB
-     * @param   string  $stmt       Déclaration unifiée envoyée à la DB
-     * @param   array   $dest       Array permettant de connaitre le nombre de réponses attendues
-     * @return  array   $resulArray Contient toutes les réponses séparées     *
+     * @param string $stmt      Déclaration unifiée envoyée à la DB
+     * @param array $dest       Array permettant de connaitre le nombre de réponses attendues
+     * @return array            Contient toutes les réponses séparées
      */
     protected function pdoEventSelectMultiQuery(string $stmt, array $dest)
     {
@@ -159,7 +154,6 @@ abstract class ModelInChief
         }
         return $resultsArray;
     }
-
 
     /** Envoi de la requete à la BDD puis fermeture de la connexion après qu'elle ait réussi
      * Ne doit être utilisé que pour les INSERT, UPDATE et DELETE préparés

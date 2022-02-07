@@ -2,21 +2,22 @@
 
 namespace HealthKerd\Model\medic\eventIdFinder;
 
-/** Model de la section home */
+/** Classe dédiée à la recherche d'ID d'events
+ */
 class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
 {
-    /** */
     public function __construct()
     {
         parent::__construct();
     }
 
-
     public function __destruct()
     {
     }
 
-    /** */
+    /** Récupére les ID des events à venir d'un user
+     * @return array    Liste des ID des events à venir
+     */
     public function comingEventsIds()
     {
         $stmt =
@@ -35,8 +36,9 @@ class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
         return $result;
     }
 
-
-    /** */
+    /** Récupére les ID tous les events d'un user
+     * @return array    Liste des ID des events du user
+     */
     public function eventsIdsByUserId()
     {
         $stmt =
@@ -52,8 +54,12 @@ class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
         return $result;
     }
 
-
-    /** */
+    /** Récupére les ID des events d'un user par rapport à une catégorie
+     * -----
+     * * Requête préparée
+     * @param string $medicEventCatID   ID de la catégorie d'events
+     * @return array                    Liste des ID des events concernés
+     */
     public function eventsIdsbyCatId(string $medicEventCatID)
     {
         $stmt =
@@ -73,8 +79,12 @@ class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
         return $result;
     }
 
-
-    /** */
+    /** Récupére les ID des events d'un user par rapport à un cabinet médical
+     * -----
+     * * Requête préparée
+     * @param string $docOfficeID       ID du cabinet médical
+     * @return array                    Liste des ID d'events concernés
+     */
     public function eventsIdsByDocOfficeId(string $docOfficeID)
     {
         $stmt =
@@ -94,7 +104,12 @@ class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
         return $result;
     }
 
-    /** */
+    /** Récupére les ID des events d'un user par rapport à un docteur
+     * -----
+     * * Requête préparée
+     * @param string $medicEventCatID   ID de la catégorie d'events
+     * @return array                    Liste des ID d'events concernés
+     */
     public function eventsIdsFromOneDocId(string $docID)
     {
         $stmt =
@@ -114,8 +129,9 @@ class EventIdFinder extends \HealthKerd\Model\common\ModelInChief
         return $result;
     }
 
-
-    /** */
+    /** Méthode de test pour le développement, récupére un event en particulier
+     * @return array         Liste des ID d'events concernés
+     */
     public function onlyOneEvent()
     {
         $stmt =

@@ -1,0 +1,245 @@
+@startuml
+title <b>Processor</b>
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+
+package Processor {
+    package medic {
+        class MedicArrayBuildOrder {
+            - $originalDataStore : array
+            - $dataWorkbench : array
+            - $objectStore : array
+            - $processedDataArray : array
+            --
+            + __construct()
+            + __destruct()
+            + eventDataReceiver()
+            - dateAndTimeCreator()
+            - eventStartingManager()
+            - prescManager()
+            - ordoManager()
+            - diagManager()
+            - careSessionsManager()
+            - vaxSessionsManager()
+            - eventEndingManager()
+        }
+
+        package care///medic {
+            class CareSessionsOrganizer {
+                - $careSessionsList : array
+                - $careSessionElements : array
+                --
+                + careSessionsGeneralBuildOrder()
+                - careSessionsContentOrganizer()
+                - careElementsAddition()
+            }
+        }
+
+        package diag///medic {
+            class DiagConclusionsOrganizer {
+                - $diagConclusions : array
+                - $medicAffectList : array
+                --
+                + diagConclusionsGeneralBuildOrder()
+                - diagConclusionsOrganizer()
+                - diagConclusionsMerge()
+            }
+
+            class DiagListOrganizer {
+                - $diagList : array
+                - $diagCheckpoints : array
+                - $diagThemes : array
+                - $diagSymptoms : array
+                - $diagConclusions : array
+                - $ordoGlobalArray : array
+                --
+                + diagListArrayGeneralBuildOrder()
+                - diagListOrganizer()
+                - checkpointsAddition()
+                - themesAddition()
+                - symptomsAddition()
+                - conclusionsAddition()
+                - ordoAddition()
+            }
+
+            class DiagThemesOrganizer {
+                - $diagMedicThemesRelation : array
+                - $medicThemeList : array
+                --
+                + diagThemesGeneralBuildOrder()
+                - diagThemeMerge()
+            }
+        }
+
+        package event///medic {
+            class EventDataOrganizer {
+                - $eventArray : array
+                - $dateAndTime : array
+                - $docOfficeList : array
+                - $medicEventThemesRelation : array
+                - $medicEventSpemedicRelation : array
+                - $docSpemedicRelation : array
+                - $speMedicFullList : array
+                - $docList : array
+                --
+                + __destruct()
+                + eventGeneralBuildOrder()
+                - contentOrganizer()
+                - docTitleAndFullNameAddition()
+                - docTitleAddition()
+                - docFullNameSentenceCreator()
+                - docSpeMedicAddition()
+                - docSpeMedicIdAdder()
+                - docSpeMedicAdder()
+                - timeManagement()
+                - eventThemesAddition()
+                - eventSpeMedicAddition()
+                - docOfficeDataAdder()
+            }
+
+            class EventFinalContentMerger {
+                - $eventArray : array
+                - $todayEarlyTimestamp : int
+                - $diagList : array
+                - $careSessions : array
+                - $futureEvents : array
+                - $pastEvents : array
+                - $timeSortedEvents : array
+                --
+                + __destruct()
+                + eventContentMerger()
+                - diagContentMerger()
+                - careSessionsContentMerger()
+                - eventTimeDispatcher()
+                - pastAndFutureEventsTimeSorting()
+                - incrTimestampEventSorting()
+                - decrTimestampEventSorting()
+            }
+        }
+
+        package ordo///medic {
+            class OrdoGatherAndSorting {
+                - $ordoLabo : array
+                - $ordoPharma : array
+                - $ordoVax : array
+                - $ordoSight : array
+                - $ordoGlobalArray : array
+                --
+                + ordoArrayGeneralBuildOrder()
+                - allInOneArray()
+                - timestampSorting()
+            }
+
+            class OrdoLaboOrganizer {
+                - $ordoLaboList : array
+                - $dateAndTime : array
+                - $prescOrdoLabo : array
+                - $ordoLaboSlots : array
+                --
+                + ordoLaboGeneralBuildOrder()
+                - ordoLaboContentOrganizer()
+                - timeManagement()
+                - prescAdder()
+                - slotsAdder()
+            }
+
+            class OrdoPharmaOrganizer {
+                - $ordoPharmaList : array
+                - $dateAndTime : array
+                - $prescOrdoPharma : array
+                --
+                + ordoPharmaGeneralBuildOrder()
+                - timeManagement()
+                - prescAdder()
+            }
+
+            class OrdoSightOrganizer {
+                - $ordoSightList : array
+                - $dateAndTime : array
+                --
+                + ordoSightGeneralBuildOrder()
+                - ordoSightContentOrganizer()
+                - glassOrganizer()
+                - lensOrganizer()
+                - timeManagement()
+                - glassAndLensOrdoSentenceBuilder()
+                - perEyeSentenceBuilder()
+                - roundNumberExtender()
+            }
+
+            class OrdoVaxOrganizer {
+                - $ordoVaxList : array
+                - $dateAndTime : array
+                - $prescOrdoVax : array
+                - $ordoVaxSlots : array
+                --
+                + ordoVaxGeneralBuildOrder()
+                - ordoVaxContentOrganizer()
+                - timeManagement()
+                - prescAdder()
+                - slotsAdder()
+            }
+
+        }
+
+        package presc///medic {
+            class PrescOrdoLaboOrganizer {
+                - $prescLaboList : array
+                - $prescLaboElements : array
+                --
+                + prescOrdoLaboGeneralBuildOrder()
+                - prescContentOrganizer()
+                - prescElementsAddition()
+            }
+
+            class PrescOrdoPharmaOrganizer {
+                - $prescPharmaList : array
+                - $treatPharmaList : array
+                - $treatPharmaRoleOnAffect : array
+                - $medicAffectList : array
+                --
+                + prescOrdoPharmaGeneralBuildOrder()
+                - prescTreatContentOrganizer()
+                - treatContentOrganizer()
+                - roleContentOrganizer()
+                - affectContentOrganizer()
+                - roleAndAffectMerge()
+                - prescAndRoleMerge()
+                - prescAndTreatMerge()
+            }
+
+            class PrescOrdoVaxOrganizer {
+                - $prescVaxList : array
+                - $treatPharmaList : array
+                --
+                + prescOrdoVaxGeneralBuildOrder()
+                - treatmentAdder()
+            }
+        }
+
+        package vax///medic {
+            class VaxSessionsOrganizer {
+                - $vaxSessionsList : array
+                - $vaxSessionsSideEffects : array
+                --
+                + vaxSessionsGeneralBuildOrder()
+                - vaxSessionsContentOrganizer()
+                - vaxSideEffectsAddition()
+            }
+
+        }
+    }
+}
+
+MedicArrayBuildOrder -[hidden]-> EventDataOrganizer
+EventFinalContentMerger -[hidden]-> DiagThemesOrganizer
+DiagThemesOrganizer -[hidden]-> OrdoGatherAndSorting
+OrdoGatherAndSorting -[hidden]--> PrescOrdoLaboOrganizer
+DiagConclusionsOrganizer -[hidden] VaxSessionsOrganizer
+VaxSessionsOrganizer -[hidden] CareSessionsOrganizer
+
+
+@enduml

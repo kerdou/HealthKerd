@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Model\medic\medicTheme;
 
-/** Model de la section 'client' */
+/** Classe dédiée à la recherche de thèmes médicaux
+ */
 class MedicThemeModel extends \HealthKerd\Model\common\ModelInChief
 {
     public function __construct()
@@ -14,8 +15,10 @@ class MedicThemeModel extends \HealthKerd\Model\common\ModelInChief
     {
     }
 
-
-    /** */
+    /** Récupére les thèmes médicaux ainsi que leur nom liés à une liste d'events
+     * @param array $medicEventsIdList      Liste des events concernés
+     * @return array                        Liste des thèmes médicaux demandés
+     */
     public function medicThemeByEventsIds(array $medicEventsIdList)
     {
         $whereString = $this->stmtWhereBuilder($medicEventsIdList, 'medicEventID');
@@ -34,14 +37,16 @@ class MedicThemeModel extends \HealthKerd\Model\common\ModelInChief
         return $result;
     }
 
-
-    /** */
-    public function gatherMedicEventMedicThemeRelation(array $eventIDList)
+    /** Récupération de tous les thèmes médicaux trouvés dans les events d'un user
+     * @param array $medicEventsIdList      Liste des events d'un user
+     * @return array                        Liste des thèmes médicaux demandés
+     */
+    public function gatherMedicEventMedicThemeRelation(array $medicEventsIdList)
     {
-        $result = '';
+        $result = array();
 
-        if (sizeof($eventIDList)) {
-            $whereString = $this->stmtWhereBuilder($eventIDList, 'medicEventID');
+        if (sizeof($medicEventsIdList)) {
+            $whereString = $this->stmtWhereBuilder($medicEventsIdList, 'medicEventID');
 
             $stmt =
                 "SELECT

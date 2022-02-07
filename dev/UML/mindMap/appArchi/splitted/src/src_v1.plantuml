@@ -1,0 +1,17 @@
+@startmindmap
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+* src/
+
+** Controller/
+
+** Model/
+
+** Processor/
+
+** View/
+
+@endmindmap

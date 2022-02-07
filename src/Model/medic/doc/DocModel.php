@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Model\medic\doc;
 
-/** Model de la section 'client' */
+/** Modéle GET de récupération des données des docteurs et des autre données gravitant autour
+ */
 class DocModel extends \HealthKerd\Model\common\ModelInChief
 {
     public function __construct()
@@ -14,9 +15,14 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
     {
     }
 
-    /** Récupération des identifiants dans la base selon le userLogin envoyé par le user
-     * @param array $postArray Contient les paramètres du $_POST
-     * @return array Renvoie les infos du user
+    /** Récupération des données basiques de tous les docteurs d'un user
+     * * docID
+     * * Titre du doc
+     * * Prénom du doc
+     * * Nom de famille du doc
+     * ----
+     * * Requête préparée
+     * @return array    Renvoie de toutes les données
      */
     public function gatherAllDocs()
     {
@@ -37,12 +43,16 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
         return $result;
     }
 
-
-    /** Récupération des identifiants dans la base selon le userLogin envoyé par le user
-     * @param array $postArray Contient les paramètres du $_POST
-     * @return array Renvoie les infos du user
+    /** Récupération des données de la page d'informations concernant un docteur
+     * * Données du docteur
+     * * Ses spécialités médicales
+     * * Son/ses cabinets médicaux
+     * ------
+     * * Requête préparée
+     * @param string $docID     ID du docteur concerné
+     * @return array            Toutes les informations renvoyées par la base
      */
-    public function getOneDocForPageDisplay($docID)
+    public function getOneDocForPageDisplay(string $docID)
     {
         $docStmt =
             "SELECT
@@ -76,7 +86,6 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
             WHERE docID = :docID;";
         $docOfficeQuery = $this->pdo->prepare($docOfficestmt);
 
-
         $medicEventStmt =
             "SELECT
                 *
@@ -96,18 +105,15 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
         $docQuery->execute();
         $docResult = $docQuery->fetch(\PDO::FETCH_ASSOC);
 
-
         // gestion de la requete pour les speMedics
         $speMedicQuery->bindParam(':docID', $docID);
         $speMedicQuery->execute();
         $speResult = $speMedicQuery->fetchAll(\PDO::FETCH_ASSOC);
 
-
         // gestion de la requete pour le docOffice
         $docOfficeQuery->bindParam(':docID', $docID);
         $docOfficeQuery->execute();
         $docOfficeResult = $docOfficeQuery->fetchAll(\PDO::FETCH_ASSOC);
-
 
         // gestion de la requete pour les events
         $medicEventQuery->bindParam(':docID', $docID);
@@ -129,8 +135,12 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
         ];
     }
 
-
-    public function getOneDocForFormDisplay($docID)
+    /** Récupération de toutes les données d'un docteur pour l'affichage dans un formulaire
+     * * Requête préparée
+     * @param string $docID     ID du docteur
+     * @return array            Toutes les données du docteur depuis doc_list
+     */
+    public function getOneDocForFormDisplay(string $docID)
     {
         $docStmt =
             "SELECT
@@ -153,7 +163,10 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
     }
 
 
-    /** */
+    /** Récupération des spécialités médicales d'un docteur
+     * @param array $docIDList
+     * @return array
+    */
     public function gatherDocSpeMedicRelation(array $docIDList)
     {
         $whereString = $this->stmtWhereBuilder($docIDList, 'docID');
@@ -172,8 +185,9 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
         return $result;
     }
 
-
-    /** */
+    /** Récupération de l'ID du dernier docteur créé par le user
+     * @return string   Le docID
+    */
     public function getNewDocID()
     {
         $stmt =

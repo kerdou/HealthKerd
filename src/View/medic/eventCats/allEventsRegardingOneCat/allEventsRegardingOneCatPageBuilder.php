@@ -2,14 +2,15 @@
 
 namespace HealthKerd\View\medic\eventCats\allEventsRegardingOneCat;
 
+/** Construction et affichage de tous les events liés à une catégorie d'événements
+*/
 class AllEventsRegardingOneCatPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
-    private array|null $eventsData = array();
+    private array $eventsData = array();
     private string $builtContentHTML = '';
-    private string|null $pastEventsHTML = '';
-    private string|null $futureEventsHTML = '';
-
+    private string $pastEventsHTML = '';
+    private string $futureEventsHTML = '';
 
     public function __construct()
     {
@@ -20,12 +21,13 @@ class AllEventsRegardingOneCatPageBuilder extends \HealthKerd\View\common\ViewIn
         );
     }
 
-
     public function __destruct()
     {
     }
 
-    /** */
+    /** Recoit les données puis lance la création des events passés et futurs avant leur affichage
+     * @param array $medicEvtProcessedDataStore     Données des events
+    */
     public function dataReceiver(array $medicEvtProcessedDataStore)
     {
         $this->eventsData = $medicEvtProcessedDataStore;
@@ -39,10 +41,9 @@ class AllEventsRegardingOneCatPageBuilder extends \HealthKerd\View\common\ViewIn
         $this->buildOrder();
     }
 
-
-
-
-    /** */
+    /** Adaptation de la page suivant la présence ou l'absence des events passés et futurs
+     * Puis configuration de la page et affichage du contenu
+     */
     private function buildOrder()
     {
         if (sizeof($this->eventsData['futureEvents']) > 0) {

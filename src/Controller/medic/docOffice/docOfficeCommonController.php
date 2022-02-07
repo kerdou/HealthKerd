@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Controller\medic\docOffice;
 
-/** Controleur de la section 'accueil' */
+/** Classe regroupant les attributs et méthodes commun aux contrôleurs GET et POST des cabinets médicaux
+ */
 abstract class DocOfficeCommonController
 {
     protected object $docOfficeModel;

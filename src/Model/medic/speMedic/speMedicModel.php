@@ -2,7 +2,6 @@
 
 namespace HealthKerd\Model\medic\speMedic;
 
-/** Model de la section 'client' */
 class SpeMedicModel extends \HealthKerd\Model\common\ModelInChief
 {
     public function __construct()
@@ -14,8 +13,10 @@ class SpeMedicModel extends \HealthKerd\Model\common\ModelInChief
     {
     }
 
-
-
+    /** Récupére les spécialités médicales liées à une liste d'events
+     * @param array $medicEventsIdList      Liste des events concernés
+     * @return array                        Liste des thèmes médicaux demandés
+     */
     public function speMedicByEventsIds(array $medicEventsIdList)
     {
         $whereString = $this->stmtWhereBuilder($medicEventsIdList, 'medicEventID');
@@ -32,8 +33,10 @@ class SpeMedicModel extends \HealthKerd\Model\common\ModelInChief
         return $result;
     }
 
-
-    /** */
+    /** Récupére les spécialités médicales liées à une liste d'events
+     * @param array $medicEventsIdList      Liste des events concernés
+     * @return array                        Liste des thèmes médicaux demandés
+     */
     public function gatherMedicEventSpeMedicRelation(array $eventIDList)
     {
         $result = '';

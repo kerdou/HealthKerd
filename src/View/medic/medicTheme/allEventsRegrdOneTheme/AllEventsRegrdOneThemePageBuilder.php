@@ -2,13 +2,15 @@
 
 namespace HealthKerd\View\medic\medicTheme\allEventsRegrdOneTheme;
 
+/** Construction puis affichage de la page contenant tous les events (passés et futurs) d'un thème médical
+ */
 class AllEventsRegrdOneThemePageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
-    private array|null $eventsData = array();
+    private array $eventsData = array();
     private string $builtContentHTML = '';
-    private string|null $pastEventsHTML = '';
-    private string|null $futureEventsHTML = '';
+    private string $pastEventsHTML = '';
+    private string $futureEventsHTML = '';
 
 
     public function __construct()
@@ -20,13 +22,15 @@ class AllEventsRegrdOneThemePageBuilder extends \HealthKerd\View\common\ViewInCh
         );
     }
 
-
     public function __destruct()
     {
     }
 
-
-    /** */
+    /** Recoit les données de tous les rendez-vous puis lance la construction du HTML de ce contenu
+     * * On construit d'abord les events passés
+     * * On construit ensuite les events futurs
+     * @param array $medicEvtProcessedDataStore     Données réassamblées et réagencées dans le Processor pour faciliter la création du HTML
+     */
     public function dataReceiver(array $medicEvtProcessedDataStore)
     {
         $this->eventsData = $medicEvtProcessedDataStore;
@@ -40,10 +44,9 @@ class AllEventsRegrdOneThemePageBuilder extends \HealthKerd\View\common\ViewInCh
         $this->buildOrder();
     }
 
-
-
-
-    /** */
+    /** Adaptation de la page suivant la présence ou l'absence des events passés et futurs
+     * Puis configuration de la page et affichage du contenu
+     */
     private function buildOrder()
     {
         if (sizeof($this->eventsData['futureEvents']) > 0) {

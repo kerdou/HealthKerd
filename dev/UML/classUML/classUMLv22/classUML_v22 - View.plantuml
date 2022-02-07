@@ -1,0 +1,506 @@
+@startuml
+title <b>View</b>
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+package View {
+    package common {
+        abstract class ViewInChief {
+            # $topMainLayoutHTML : string
+            # $bottomMainLayoutHTML : string
+            # $pageContent : string
+            --
+            + __construct()
+            + __destruct()
+            # topMainLayoutAssembly()
+            # bottomMainLayoutAssembly()
+            # pageSetup()
+            # pageDisplay()
+        }
+    }
+
+    package home {
+        class HomePageBuilder extends ViewInChief {
+            - $pageSettingsList : array
+            - $eventsData : array
+            - $builtContentHTML : string
+            - $futureEventsHTML : string
+            - $eventsBuilder : object
+            --
+            + __construct()
+            + __destruct()
+            + dataReceiver()
+            - buildOrder()
+        }
+
+    }
+
+    package login {
+        class LoginPageBuilder extends ViewInChief {
+            - $pageSettingsList : array
+            --
+            + __construct()
+            + __destruct()
+            + buildOrder()
+        }
+    }
+
+    package medic {
+        package allEvents///medic {
+            class AllEventsPageBuilder extends ViewInChief {
+                - $pageSettingsList : array
+                - $eventsData : array
+                - $builtContentHTML : string
+                - $pastEventsHTML : string
+                - $futureEventsHTML : string
+                - $eventsBuilder : object
+                --
+                + __construct()
+                + __destruct()
+                + dataReceiver()
+                - buildOrder()
+            }
+        }
+
+        package doc///medic {
+            package docForm///doc///medic {
+                class DocAddFormPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - stringReplacer()
+                }
+
+                class DocDeleteFormPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $docData : array
+                    - $checkStatusArray : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - stringReplacer()
+                }
+
+                class DocEditFormPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $docData : array
+                    - $checkStatusArray : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - stringReplacer()
+                }
+
+                class DocFailedAddFormPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $docData : array
+                    - $checkStatusArray : array
+                    - $checksArray : array
+                    - $validityArray : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - stringReplacer()
+                }
+
+                class DocFailedEditFormPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $docData : array
+                    - $checkStatusArray : array
+                    - $checksArray : array
+                    - $validityArray : array
+                    - $docID : string
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - stringReplacer()
+                }
+            }
+
+
+            package docList///doc///medic {
+                class DocListPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $docList : array
+                    - $speMedicBadgeList : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + buildOrder()
+                    - docCardsBuilder()
+                    - cardTop()
+                    - cardSpeMedicBadgesBuilder()
+                    - cardBottom()
+                    - addDocButton()
+                    - speMedicBadgesBuilder()
+                }
+            }
+
+            package eventWithOneDoc///doc///medic {
+                class EventsWithOneDocPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $eventsData : array
+                    - $builtContentHTML : string
+                    - $pastEventsHTML : string
+                    - $futureEventsHTML : string
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                }
+            }
+
+            package oneDoc///doc///medic {
+                class OneDocPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $docDataArray : array
+                    - $speMedicBadgeList : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                }
+            }
+        }
+
+        package docOffice///medic {
+            package allEventsRegrdOneDocOffice///docOffice///medic {
+                class AllEventsRegrdOneDocOfficePageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $eventsData : array
+                    - $builtContentHTML : string
+                    - $pastEventsHTML : string
+                    - $futureEventsHTML : string
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    + dataReceiver()
+                    - buildOrder()
+                    - docOfficeCardsBuilder()
+                    - cardBuilder()
+
+
+                }
+            }
+
+            package docOfficeList///docOffice///medic {
+                class DocOfficeListPageBuilder extends ViewInChief {
+                        - $pageSettingsList : array
+                        - $builtContentHTML : string
+                        - $docOfficeList : array
+                        --
+                        + __construct()
+                        + __destruct()
+                        - buildOrder()
+                        - docOfficeCardsBuilder()
+                        - cardBuilder()
+                }
+            }
+        }
+
+        package eventCats///medic {
+            package allEventsRegardingOneCat///eventCats///medic {
+                class AllEventsRegardingOneCatPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $eventsData : array
+                    - $builtContentHTML : string
+                    - $pastEventsHTML : string
+                    - $futureEventsHTML : string
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                }
+            }
+
+            package eventCatsList///eventCats///medic {
+                class EventCatsListPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $eventCatsList : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - eventCatCardsBuilder()
+                    - cardBuild()
+                }
+            }
+        }
+
+
+        package medicTheme///medic {
+            package allEventsRegrdOneTheme///medicTheme///medic {
+                class AllEventsRegrdOneThemePageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $eventsData : array
+                    - $builtContentHTML : string
+                    - $pastEventsHTML : string
+                    - $futureEventsHTML : string
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                }
+            }
+
+            package medicThemeList///medicTheme///medic {
+                class MedicThemeListPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $medicThemeList : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - medicThemeCardsBuilder()
+                    - cardBuilder()
+                }
+            }
+        }
+
+        package speMedic///medic {
+            package AllEventsRegrdOneSpe///speMedic///medic {
+                class AllEventsRegardOneSpePageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $eventsData : array
+                    - $builtContentHTML : string
+                    - $pastEventsHTML : string
+                    - $futureEventsHTML : string
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+
+                }
+            }
+
+            package speMedicList///speMedic///medic {
+                class SpeMedicListPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $speMedicList : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - speMedicCardsBuilder()
+                    - cardBuilder()
+                }
+            }
+        }
+
+        package eventsBuilder///medic {
+            class EventsBuilder extends EventsBuilderFunctionPool {
+                - $eventsData : array
+                - $allEventsHTMLArray : array
+                - $allEventsFullHTML : string
+                - $diagAccordionObj : object
+                --
+                + __construct()
+                + __destruct()
+                + eventBuildOrder()
+            }
+
+            abstract class EventsBuilderFunctionPool {
+                + __destruct()
+                # eventAccordStart()
+                # eventAccordHeaderStart()
+                # docSpeMedicBadges()
+                # attendedPro()
+                # replacedPro()
+                # eventDateTime()
+                # eventDocOffice()
+                # eventSubject()
+                # eventCategory()
+                # medicThemeBadges()
+                # eventMedicTheme()
+                # eventContentButton()
+                # eventAccordHeaderEnd()
+                # eventAccordBodyStart()
+                # eventFullAddrAccordStart()
+                # eventFullAddrAccordContent()
+                # eventFullAddrAccordEnd()
+                # eventAccordComment()
+                # eventAccordBodyEnd()
+                # eventAccordEnd()
+            }
+
+            package diag///eventsBuilder///medic {
+                class DiagBuilder extends DiagBuilderFunctionsPool {
+                    - $pharmaOrdoObj : object
+                    - $glassOrdoObj : object
+                    - $lensOrdoObj : object
+                    - $laboOrdoObj : object
+                    - $vaxOrdoObj : object
+                    --
+                    + __construct()
+                    + __destruct()
+                    + diagBuilder()
+                    - pharmaOrdo()
+                    - glassOrdo()
+                    - lensOrdo()
+                    - laboOrdo()
+                    - vaxOrdo()
+                }
+
+                abstract class DiagBuilderFunctionsPool
+                {
+                    + __destruct()
+                    # diagAccordionStart()
+                    # diagSymptomsBuilder()
+                    # diagBetweenSymptAndChecks()
+                    # diagChecks()
+                    # diagBetweenChecksAndConclu()
+                    # diagConclu()
+                    # sickDetailedStatusBadge()
+                    # diagComment()
+                    # diagAccordionEnd()
+                }
+            }
+
+                package ordo///eventsBuilder///medic {
+                    package glass///ordo///eventsBuilder///medic {
+                        class GlassOrdoBuilder {
+                            + __destruct()
+                            + ordoBuilder()
+                        }
+                    }
+
+                package labo///ordo///eventsBuilder///medic {
+                    class LaboOrdoBuilder extends LaboOrdoBuilderFunctionsPool
+                    {
+                        - $prescLaboObj : object
+                        --
+                        + __construct()
+                        + __destruct()
+                        + ordoBuilder()
+                    }
+
+                    abstract class LaboOrdoBuilderFunctionsPool {
+                        + __destruct()
+                        # ordoLaboAccordionStart()
+                        # ordoLaboAccordionEnd()
+                    }
+                }
+
+                package lens///ordo///eventsBuilder///medic {
+                    class LensOrdoBuilder {
+                        + __destruct()
+                        + ordoBuilder()
+                    }
+
+                }
+
+                package pharma///ordo///eventsBuilder///medic {
+                    class PharmaOrdoBuilder extends PharmaOrdoBuilderFunctionsPool
+                    {
+                        - $pharmaPrescObj : object
+                        --
+                        + __construct()
+                        + __destruct()
+                        + ordoBuilder()
+                    }
+
+                    abstract class PharmaOrdoBuilderFunctionsPool {
+                        + __destruct()
+                        # ordoPharmaStarter()
+                        # ordoPharmaComment()
+                        # ordoPharmaEnd()
+                    }
+                }
+
+                package vax///ordo///eventsBuilder///medic {
+                    class VaxOrdoBuilder extends VaxOrdoBuilderFunctionsPool {
+                        - $prescVaxObj : object
+                        --
+                        + __construct()
+                        + __destruct()
+                        + ordoBuilder()
+                    }
+
+                    abstract class VaxOrdoBuilderFunctionsPool {
+                        + __destruct()
+                        # ordoVaxStarter()
+                        # ordoComment()
+                        # ordoVaxEnd()
+                    }
+                }
+            }
+
+            package presc///eventsBuilder///medic {
+                package labo///presc///eventsBuilder///medic {
+                    class PrescLaboBuilder extends PrescLaboBuilderFunctionsPool {
+                        + __destruct()
+                        + prescBuilder()
+                    }
+
+                    abstract class PrescLaboBuilderFunctionsPool {
+                        + __destruct()
+                        # prescStarter()
+                        # prescComment()
+                        # prescEnd()
+                    }
+                }
+
+                package pharma///presc///eventsBuilder///medic {
+                    class PharmaPrescBuilder {
+                        + __destruct()
+                        + prescBuilder()
+                    }
+                }
+
+                package vax///presc///eventsBuilder///medic {
+                    class PrescVaxBuilder {
+                        + __destruct()
+                        + prescBuilder()
+                    }
+                }
+            }
+        }
+    }
+
+    package userAccount {
+
+    }
+
+}
+
+
+OneDocPageBuilder -[hidden]--> EventsBuilderFunctionPool
+EventsBuilder -[hidden]-> DiagBuilderFunctionsPool
+DiagBuilder -[hidden]--> PharmaOrdoBuilderFunctionsPool
+VaxOrdoBuilder -[hidden]--> PrescVaxBuilder
+
+
+
+@enduml

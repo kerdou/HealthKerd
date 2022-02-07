@@ -1,0 +1,155 @@
+@startuml
+title <b>View - Medic only with Doc</b>
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+package View {
+    package common {
+        abstract class ViewInChief {
+            # $topMainLayoutHTML : string
+            # $bottomMainLayoutHTML : string
+            # $pageContent : string
+            --
+            + __construct()
+            + __destruct()
+            # topMainLayoutAssembly()
+            # bottomMainLayoutAssembly()
+            # pageSetup()
+            # pageDisplay()
+        }
+    }
+
+
+    package medic {
+        package doc///medic {
+            package docForm///doc///medic {
+                class DocAddFormPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - stringReplacer()
+                }
+
+                class DocDeleteFormPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $docData : array
+                    - $checkStatusArray : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - stringReplacer()
+                }
+
+                class DocEditFormPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $docData : array
+                    - $checkStatusArray : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - stringReplacer()
+                }
+
+                class DocFailedAddFormPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $docData : array
+                    - $checkStatusArray : array
+                    - $checksArray : array
+                    - $validityArray : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - stringReplacer()
+                }
+
+                class DocFailedEditFormPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $docData : array
+                    - $checkStatusArray : array
+                    - $checksArray : array
+                    - $validityArray : array
+                    - $docID : string
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                    - stringReplacer()
+                }
+            }
+
+
+            package docList///doc///medic {
+                class DocListPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $docList : array
+                    - $speMedicBadgeList : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + buildOrder()
+                    - docCardsBuilder()
+                    - cardTop()
+                    - cardSpeMedicBadgesBuilder()
+                    - cardBottom()
+                    - addDocButton()
+                    - speMedicBadgesBuilder()
+                }
+            }
+
+            package eventWithOneDoc///doc///medic {
+                class EventsWithOneDocPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $eventsData : array
+                    - $builtContentHTML : string
+                    - $pastEventsHTML : string
+                    - $futureEventsHTML : string
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                }
+            }
+
+            package oneDoc///doc///medic {
+                class OneDocPageBuilder extends ViewInChief {
+                    - $pageSettingsList : array
+                    - $builtContentHTML : string
+                    - $docDataArray : array
+                    - $speMedicBadgeList : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + dataReceiver()
+                    - buildOrder()
+                }
+            }
+        }
+
+
+
+}
+
+
+
+
+
+
+@enduml

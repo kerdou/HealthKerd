@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Model\medic\doc;
 
-/** Model de la section 'client' */
+/** Modéle POST de modification de la base vis à vis des docteurs
+ */
 class DocPostModel extends \HealthKerd\Model\common\ModelInChief
 {
     public function __construct()
@@ -14,7 +15,12 @@ class DocPostModel extends \HealthKerd\Model\common\ModelInChief
     {
     }
 
-    /** */
+    /** Ajout d'un docteur
+     * ----
+     * * Requête préparée
+     * @param array $cleanedUpPost      Données nettoyées et vérifiée du docteur à créer
+     * @return string                   Message d'erreur s'il y en a eu
+     */
     public function addDoc(array $cleanedUpPost)
     {
         $docStmt =
@@ -56,7 +62,12 @@ class DocPostModel extends \HealthKerd\Model\common\ModelInChief
         return $pdoErrorMessage;
     }
 
-
+    /** Ajout automatique d'un cabinet médical et de spécialités médicales suite à la création d'un docteur
+     * TODO Modifier pour ne pas assigner une spé médicale et un cabinet par défaut
+     * ----
+     * * Requête préparée
+     * @param string $newDocID      ID du docteur nouvellement créé
+     */
     public function addOfficeAndSpeMedic(string $newDocID)
     {
         $docOfficeStmt =
@@ -84,9 +95,13 @@ class DocPostModel extends \HealthKerd\Model\common\ModelInChief
         $this->pdo->commit(); // execution de la requete
     }
 
-
-
-    /** */
+    /** Modification d'un docteur
+     * ----
+     * * Requête préparée
+     * @param array $cleanedUpPost      Données nettoyées et vérifiée du docteur à modifier
+     * @param string $docID             ID du docteur
+     * @return string                   Message d'erreur s'il y en a eu
+     */
     public function editDoc(array $cleanedUpPost, string $docID)
     {
         $docStmt =
@@ -109,7 +124,6 @@ class DocPostModel extends \HealthKerd\Model\common\ModelInChief
 
         $this->query = $this->pdo->prepare($docStmt);
 
-
         $this->query->bindParam(':title', $cleanedUpPost['title']);
         $this->query->bindParam(':lastName', $cleanedUpPost['lastname']);
         $this->query->bindParam(':firstName', $cleanedUpPost['firstname']);
@@ -128,7 +142,12 @@ class DocPostModel extends \HealthKerd\Model\common\ModelInChief
         return $pdoErrorMessage;
     }
 
-
+    /** Suppression d'un docteur
+     * ----
+     * * Requête préparée
+     * @param string $docID             ID du docteur
+     * @return string                   Message d'erreur s'il y en a eu
+     */
     public function deleteDoc(string $docID)
     {
         $stmt =
@@ -152,8 +171,13 @@ class DocPostModel extends \HealthKerd\Model\common\ModelInChief
         return $pdoErrorMessage;
     }
 
-
-    public function deleteOfficeAndSpeMedic(string $newDocID)
+    /** Suppression automatique d'un cabinet médical et de spécialités médicales suite à la suppression d'un docteur
+     * TODO: Modifier pour repérer le spécialités médicales et les cabinets du docteur
+     * ----
+     * * Requête préparée
+     * @param string $docID      ID du docteur supprimé
+     */
+    public function deleteOfficeAndSpeMedic(string $docID)
     {
         $docOfficeStmt =
             "DELETE FROM
@@ -176,11 +200,11 @@ class DocPostModel extends \HealthKerd\Model\common\ModelInChief
         $this->pdo->beginTransaction(); // permet de faire plusieurs requetes préparées en une passe
 
         // gestion de la requete de docOffice
-        $docOfficeQuery->bindParam(':docID', $newDocID);
+        $docOfficeQuery->bindParam(':docID', $docID);
         $docOfficeQuery->execute();
 
         // gestion de la requete de speMedic
-        $speMedicQuery->bindParam(':docID', $newDocID);
+        $speMedicQuery->bindParam(':docID', $docID);
         $speMedicQuery->execute();
 
         $this->pdo->commit(); // execution de la requete

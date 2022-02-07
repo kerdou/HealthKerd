@@ -8,22 +8,29 @@ class LoginGetController extends LoginCommonController
     {
     }
 
-    /** Récupére [$_GET['action']] et lance l'affichage de la page voulue */
+
+    /** recoit GET['action'] et lance la suite
+     * @param array $cleanedUpGet   Infos nettoyées provenants du GET
+     * @return void
+     */
     public function actionReceiver(array $cleanedUpGet)
     {
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
-                case 'loginPage':
+                case 'loginPage': // affichage de la page de login
                     $this->displayLoginPage();
                     break;
-                case 'killSession':
+
+                case 'killSession': // coupure de session et renvoi vers la page de login
                     session_destroy();
                     echo "<script>window.location = 'index.php';</script>";
                     break;
-                default:
+
+                default: // si GET['action'] ne correspond à aucun cas de figure, on repart vers la page de login
                     $this->displayLoginPage();
             }
         } else {
+            // si GET['action'] n'est pas défini, on repart vers la page de login
             $this->displayLoginPage();
         }
     }

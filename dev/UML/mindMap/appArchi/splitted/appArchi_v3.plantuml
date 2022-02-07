@@ -1,0 +1,112 @@
+@startmindmap archi_v2
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+* root/
+
+** assets/
+    *** UML/
+        **** mindMap/
+            ***** folderArchi/
+                ******_ archi_vX.plantuml
+        **** classUML/
+        **** seqUML/
+        **** useCaseUML/
+    *** JS/
+    *** Sass/
+
+** public/
+    *** css/
+    *** html/
+    *** img/
+    *** js/
+    *** webfonts/
+    ***_ index.php
+
+** src/
+    *** Controller/
+        **** common/
+        **** home/
+            *****_ HomeCommonController.php
+            *****_ HomeGetController.php
+            *****_ HomePostController.php
+
+        **** login/
+            *****_ LoginCommonController.php
+            *****_ LoginGetController.php
+            *****_ LoginPostController.php
+
+        **** medic/
+            ***** allEvents/
+            ***** doc/
+                ******_ DocCommonController.php
+                ******_ DocGetController.php
+                ******_ DocPostController.php
+
+            ***** docOffice/
+                ******_ DocOfficeCommonController.php
+                ******_ DocOfficeGetController.php
+                ******_ DocOfficePostController.php
+
+            ***** eventIdFinder/
+            ***** eventDataProcessor/
+            ***** speMedic/
+                ******_ SpeMedicGetController.php
+
+            *****_ MedicController.php
+
+        **** userAccount/
+            *****_ UserAccountCommonController.php
+            *****_ UserAccountGetController.php
+            *****_ UserAccountPostController.php
+
+        ****_ ControllerDispatcher.php
+
+
+    *** Model/
+        **** common/
+        **** home/
+        **** login/
+        **** medic/
+            ***** allEvents/
+            ***** doc/
+            ***** docOffice/
+            ***** eventIdFinder/
+            ***** eventDataProcessor/
+            ***** speMedic/
+
+        **** userAccount/
+        ****_ ModelDispatcher.php
+
+    *** View/
+        **** common/
+        **** home/
+        **** login/
+        **** medic/
+            ***** allEvents/
+            ***** doc/
+            ***** docOffice/
+
+        **** userAccount/
+
+        ****_ ViewDispatcher.php
+
+
+
+** template/
+    *** home/
+    *** login/
+    *** medic/
+        **** allEvents/
+        **** doc/
+        **** docOffice/
+
+    *** userAccount/
+
+** tests/
+
+** vendor/
+
+@endmindmap

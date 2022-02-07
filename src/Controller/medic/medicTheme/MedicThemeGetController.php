@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Controller\medic\medicTheme;
 
-/** Controleur de la section 'accueil' */
+/** Contrôleur GET des thèmes médicaux
+*/
 class MedicThemeGetController extends MedicThemeCommonController
 {
     private array $cleanedUpGet;
@@ -11,7 +12,6 @@ class MedicThemeGetController extends MedicThemeCommonController
     private object $eventIdFinder;
     private object $medicThemeView;
 
-    /** */
     public function __construct()
     {
         parent::__construct();
@@ -22,34 +22,34 @@ class MedicThemeGetController extends MedicThemeCommonController
     {
     }
 
-    /** */
+     /** recoit GET['action'] et lance la suite
+     * @param array $cleanedUpGet   Infos nettoyées provenants du GET
+     * @return void
+     */
     public function actionReceiver(array $cleanedUpGet)
     {
         $this->cleanedUpGet = $cleanedUpGet;
 
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
-                case 'dispAllMedicThemes':
+                case 'dispAllMedicThemes': // affichage de tous les thèmes médicaux
                     $this->displayAllMedicThemes();
                     break;
 
-                case 'dispAllEventsRegrdOneTheme':
+                case 'dispAllEventsRegrdOneTheme': // affichage de tous les events par rapport à un thème médical
                     $this->displayAllEventsRegardingOneTheme();
                     break;
 
-                default:
+                default: // si le GET['action'] ne correspond à aucun cas de figure, on repart vers l'affichage de la liste des thèmes
                     echo "<script> window.location.replace('index.php?controller=medic&subCtrlr=medicTheme&action=dispAllMedicThemes') </script>";
             }
-        } else {
+        } else { // si le GET['action'] n'est pas défini, on repart vers l'affichage de la liste des thèmes
             echo "<script> window.location.replace('index.php?controller=medic&subCtrlr=medicTheme&action=dispAllMedicThemes') </script>";
         }
     }
 
-
-
-
-
-    /** */
+    /** Affichage de tous les thèmes médicaux
+    */
     private function displayAllMedicThemes()
     {
         $medicEventsIdResult = $this->eventIdFinder->eventsIdsByUserId();
@@ -66,8 +66,8 @@ class MedicThemeGetController extends MedicThemeCommonController
         $this->medicThemeView->dataReceiver($medicThemeUniqueList);
     }
 
-
-    /** */
+    /** Affichage de tous les events par rapport à un thème médical
+    */
     private function displayAllEventsRegardingOneTheme()
     {
         $medicThemeID = $this->cleanedUpGet['medicThemeID']; // ID de la spéMedic recherchée
@@ -95,7 +95,7 @@ class MedicThemeGetController extends MedicThemeCommonController
         $medicEventDataGatherer = new \HealthKerd\Model\medic\eventDataGatherer\EventDataGatherer();
         $medicEvtOriginalDataStore = $medicEventDataGatherer->eventIdReceiver($medicEventsIdList);
 
-        $medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicArrayBuildOrder();
+        $medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicEventArrayBuildOrder();
         $medicEvtProcessedDataStore = $medicEventArrayBuildOrder->eventDataReceiver($medicEvtOriginalDataStore);
 
         // vidage de $medicEvtOriginalDataStore
@@ -112,8 +112,9 @@ class MedicThemeGetController extends MedicThemeCommonController
         $this->medicThemeView->dataReceiver($medicEvtProcessedDataStore);
     }
 
-
-    /** */
+    /** Création de la liste des thémes médicaux sans doublons
+     * @return array    Liste des thèmes médicaux (sans doublons) avec leurs ID
+     */
     private function medicThemeListBuildUp()
     {
         $medicThemeIDList = array();

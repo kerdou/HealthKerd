@@ -2,29 +2,40 @@
 
 namespace HealthKerd\Processor\medic\event;
 
+/** Assemblage de tous les éléments de chaque event puis dispatch suivant qu'ils soient dans le passé ou à venir
+ */
 class EventFinalContentMerger
 {
-
-    private array|null $eventArray = array();
+    private array $eventArray = array();
     private int $todayEarlyTimestamp = 0;
 
-    private array|null $diagList = array();
-    private array|null $careSessions = array();
-    private array|null $vaxSessions = array();
+    private array $diagList = array();
+    private array $careSessions = array();
+    private array $vaxSessions = array();
 
-    private array|null $futureEvents = array();
-    private array|null $pastEvents = array();
-    private array|null $timeSortedEvents = array();
+    private array $futureEvents = array();
+    private array $pastEvents = array();
+    private array $timeSortedEvents = array();
 
-    /**
-     *
+
+    public function __destruct()
+    {
+    }
+
+    /** Assemblage de tous les éléments de chaque event puis dispatch dans $pastEvents ou $futureEvents
+     * @param array $eventArray         Liste des événements déjà assemblés
+     * @param int $todayEarlyTimestamp  Timestamp du début de journée
+     * @param array $diagList           Liste des diagnostics déjà assemblés
+     * @param array $careSessions       Liste des sessions de soin déjà assemblées
+     * @param array $vaxSessions        Liste des sessions de vaccination déjà assemblées
+     * @return array $timeSortedEvents  Toutes les données assemblées dans chaque event
      */
     public function eventContentMerger(
-        array|null $eventArray,
+        array $eventArray,
         int $todayEarlyTimestamp,
-        array|null $diagList,
-        array|null $careSessions,
-        array|null $vaxSessions
+        array $diagList,
+        array $careSessions,
+        array $vaxSessions
     ) {
         $this->eventArray = $eventArray;
         $this->todayEarlyTimestamp = $todayEarlyTimestamp;
@@ -39,19 +50,8 @@ class EventFinalContentMerger
         $this->eventTimeDispatcher();
         $this->pastAndFutureEventsTimeSorting();
 
-        $this->timeSortedEvents['containsEvents'] = false;
         $this->timeSortedEvents['pastEvents'] = $this->pastEvents;
         $this->timeSortedEvents['futureEvents'] = $this->futureEvents;
-
-
-        if (
-            sizeof($this->timeSortedEvents['pastEvents']) > 0 ||
-            sizeof($this->timeSortedEvents['futureEvents']) > 0
-        ) {
-            $this->timeSortedEvents['containsEvents'] = true;
-        } else {
-            $this->timeSortedEvents['containsEvents'] = false;
-        }
 
         //echo '<pre>';
         //print_r($this->eventArray);
@@ -63,9 +63,7 @@ class EventFinalContentMerger
         return $this->timeSortedEvents;
     }
 
-
-    /**
-     *
+    /** Ajout des diagnostics complétement assemblés au sein des events
      */
     private function diagContentMerger()
     {
@@ -78,9 +76,7 @@ class EventFinalContentMerger
         }
     }
 
-
-    /**
-     *
+    /** Ajout des sessions de soin complétement assemblées au sein des events
      */
     private function careSessionsContentMerger()
     {
@@ -93,9 +89,7 @@ class EventFinalContentMerger
         }
     }
 
-
-    /**
-     *
+    /** Ajout des sessions de vaccination complétement assemblées au sein des events
      */
     private function vaxSessionsContentMerger()
     {
@@ -108,8 +102,10 @@ class EventFinalContentMerger
         }
     }
 
-
-    /** Tri des events dans 2 arrays par rapport à leur timestamp */
+    /** Tri des events dans 2 arrays par rapport à leur timestamp
+     * Les events ayant un timestamp inférieur à celui de ce matin à 00:00 iront dans $passEvents
+     * Les events ayant un timestamp supérieur ou égal  celui de ce matin à 00:00 iront dans ^futureEvents
+     */
     private function eventTimeDispatcher()
     {
         foreach ($this->eventArray as $key => $value) {
@@ -121,9 +117,9 @@ class EventFinalContentMerger
         }
     }
 
-
-    /**
-     *
+    /** Tri des events par date et heure une fois qu'ils ont déjà été dispatchés dans $pastEvents et $futureEvents
+     * * Les $pastEvents sont triés par ordre décroissant de timestamp
+     * * Les $futureEvents sont triés par ordre croissant de timestamp
      */
     private function pastAndFutureEventsTimeSorting()
     {
@@ -131,9 +127,13 @@ class EventFinalContentMerger
         uasort($this->futureEvents, array($this, "incrTimestampEventSorting"));
     }
 
-
-    /** Tri des ordonnances en ordre croissant par timestamp */
-    private function incrTimestampEventSorting($firstValue, $secondValue)
+    /** Tri des events en ordre croissant par leurs timestamps
+     * Lancé depuis pastAndFutureEventsTimeSorting()
+     * @param array $firstValue     Premier timestamp à comparer
+     * @param array $secondValue    Second timestamp à comparer
+     * @return int                  Integer indiquant 0 si les 2 valeurs sont égales, -1 si $firstValue est plus petit, 1 si $firstValue est plus grand
+    */
+    private function incrTimestampEventSorting(array $firstValue, array $secondValue)
     {
         if ($firstValue['time']['timestamp'] == $secondValue['time']['timestamp']) {
             return 0;
@@ -141,8 +141,12 @@ class EventFinalContentMerger
         return ($firstValue['time']['timestamp'] < $secondValue['time']['timestamp']) ? -1 : 1;
     }
 
-
-    /** Tri des ordonnances en ordre décroissant par timestamp */
+    /** Tri des events en ordre décroissant par leurs timestamps
+     * Lancé depuis pastAndFutureEventsTimeSorting()
+     * @param array $firstValue     Premier timestamp à comparer
+     * @param array $secondValue    Second timestamp à comparer
+     * @return int                  Integer indiquant 0 si les 2 valeurs sont égales, -1 si $firstValue est plus grand, 1 si $firstValue est plus petit
+    */
     private function decrTimestampEventSorting($firstValue, $secondValue)
     {
         if ($firstValue['time']['timestamp'] == $secondValue['time']['timestamp']) {

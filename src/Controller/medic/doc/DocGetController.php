@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Controller\medic\doc;
 
-/** Controleur de la section 'accueil' */
+/** Contrôleur GET des docteurs
+ */
 class DocGetController extends DocGetControllerFunctionsPool
 {
     protected array $cleanedUpGet;
@@ -17,7 +18,6 @@ class DocGetController extends DocGetControllerFunctionsPool
     protected object $docView;
 
 
-    /** */
     public function __construct()
     {
         parent::__construct();
@@ -27,51 +27,56 @@ class DocGetController extends DocGetControllerFunctionsPool
     {
     }
 
-    /** */
+    /** recoit GET['action'] et lance la suite
+     * @param array $cleanedUpGet   Infos nettoyées provenants du GET
+     */
     public function actionReceiver(array $cleanedUpGet)
     {
         $this->cleanedUpGet = $cleanedUpGet;
 
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
-                case 'allDocsListDisp':
+                case 'allDocsListDisp': // affichage de la liste de tous les docs du user
                     $this->displayAllDocList();
                     break;
 
-                case 'dispOneDoc':
+                case 'dispOneDoc': // affichage de la fiche d'un seul doc
                     $docID = $cleanedUpGet['docID'];
                     $this->displayOneDoc($docID);
                     break;
 
-                case 'showEventsWithOneDoc':
+                case 'showEventsWithOneDoc': // affichage de tous les events liés à un doc
                     $docID = $cleanedUpGet['docID'];
                     $this->showEventsWithOneDoc($docID);
                     break;
 
-                case 'showDocAddForm':
+                case 'showDocAddForm': // affichage du formulaire d'ajout de doc
                     $this->showDocAddForm();
                     break;
 
-                case 'showDocEditForm':
+                case 'showDocEditForm': // affichage du formulaire de modif de doc
                     $docID = $cleanedUpGet['docID'];
                     $this->showDocEditForm($docID);
                     break;
 
-                case 'showDocDeleteForm':
+                case 'showDocDeleteForm': // affichage du formulaire de suppr de doc
                     $docID = $cleanedUpGet['docID'];
                     $this->showDocDeleteForm($docID);
                     break;
 
                 default:
+                    // si le Get['action'] ne correspond à rien, retour à l'affichage de la liste des docs
                     $this->displayAllDocList();
             }
         } else {
+            // si le Get['action'] n'est pas défini, retour à l'affichage de la liste des docs
             $this->displayAllDocList();
         }
     }
 
 
-    /** */
+    /** Affichage de la liste de tous les docs du user
+    */
     private function displayAllDocList()
     {
         $this->docList = $this->docModel->gatherAllDocs();
@@ -92,9 +97,9 @@ class DocGetController extends DocGetControllerFunctionsPool
         $this->docView->dataReceiver($this->docList, $speMedicBadgeList);
     }
 
-
-
-    /** */
+    /** Affichage de la fiche d'un seul doc
+     * @param string $docID
+    */
     private function displayOneDoc(string $docID)
     {
         $mixedDataResult = $this->docModel->getOneDocForPageDisplay($docID);
@@ -110,7 +115,6 @@ class DocGetController extends DocGetControllerFunctionsPool
             $this->docList[$key]['docOfficeList'] = array();
             $this->docList[$key]['medicEvent'] = array();
         }
-
 
         // pour le doc
         $this->docTitleAddition();
@@ -135,7 +139,42 @@ class DocGetController extends DocGetControllerFunctionsPool
     }
 
 
-    /** */
+    /** Affichage de tous les events liés à un doc
+     * @param string $docID
+    */
+    private function showEventsWithOneDoc(string $docID)
+    {
+        date_default_timezone_set('Europe/Paris');
+        $medicEventIdFinder = new \HealthKerd\Model\medic\eventIdFinder\EventIdFinder();
+        $medicEventDataGatherer = new \HealthKerd\Model\medic\eventDataGatherer\EventDataGatherer();
+        $medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicEventArrayBuildOrder();
+        $this->docView = new \HealthKerd\View\medic\doc\eventsWithOneDoc\EventsWithOneDocPageBuilder();
+
+        $medicEventsIdResult = array();
+        $medicEventsIdResult = $medicEventIdFinder->eventsIdsFromOneDocId($docID);
+
+        // conversion des ID d'event en integer
+        $medicEventsIdList = array();
+        foreach ($medicEventsIdResult as $value) {
+            array_push($medicEventsIdList, intval($value['medicEventID']));
+        }
+
+        $medicEvtOriginalDataStore = $medicEventDataGatherer->eventIdReceiver($medicEventsIdList);
+        $medicEvtProcessedDataStore = $medicEventArrayBuildOrder->eventDataReceiver($medicEvtOriginalDataStore);
+
+        //echo '<pre>';
+        //print_r($medicEvtOriginalDataStore);
+        //echo '</pre>';
+
+        // vidage de $medicEvtOriginalDataStore
+        unset($medicEvtOriginalDataStore);
+        $medicEvtOriginalDataStore = array();
+
+        $this->docView->dataReceiver($medicEvtProcessedDataStore);
+    }
+
+    /** Affichage du formulaire d'ajout de doc
+    */
     private function showDocAddForm()
     {
         $this->docView = new \HealthKerd\View\medic\doc\docForm\DocAddFormPageBuilder();
@@ -143,7 +182,9 @@ class DocGetController extends DocGetControllerFunctionsPool
     }
 
 
-    /** */
+    /** Affichage du formulaire de modif de doc
+     * @param string $docID
+    */
     private function showDocEditForm(string $docID)
     {
         $docData = $this->docModel->getOneDocForFormDisplay($docID);
@@ -152,7 +193,10 @@ class DocGetController extends DocGetControllerFunctionsPool
         $this->docView->dataReceiver($docData);
     }
 
-    /** */
+
+    /** Affichage du formulaire de suppr de doc
+     * @param string $docID
+    */
     private function showDocDeleteForm(string $docID)
     {
         $docData = $this->docModel->getOneDocForFormDisplay($docID);
@@ -160,6 +204,4 @@ class DocGetController extends DocGetControllerFunctionsPool
         $this->docView = new \HealthKerd\View\medic\doc\docForm\DocDeleteFormPageBuilder();
         $this->docView->dataReceiver($docData);
     }
-
-
 }

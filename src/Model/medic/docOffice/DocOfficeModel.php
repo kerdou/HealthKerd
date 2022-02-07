@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Model\medic\docOffice;
 
-/** Model de la section 'client' */
+/** Model GET des cabinets médicaux
+ */
 class DocOfficeModel extends \HealthKerd\Model\common\ModelInChief
 {
     public function __construct()
@@ -14,9 +15,10 @@ class DocOfficeModel extends \HealthKerd\Model\common\ModelInChief
     {
     }
 
-    /** Récupération des identifiants dans la base selon le userLogin envoyé par le user
-     * @param array $postArray Contient les paramètres du $_POST
-     * @return array Renvoie les infos du user
+    /** Récuperer les données basiques de tous les cabinets médicaux consultés par un user
+     * -----
+     * * Requête préparée
+     * @return array        Liste des infos de tous les cabinets médicaux concernés
      */
     public function gatherAllDocOffices()
     {

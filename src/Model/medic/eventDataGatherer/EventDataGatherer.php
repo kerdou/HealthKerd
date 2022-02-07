@@ -2,52 +2,99 @@
 
 namespace HealthKerd\Model\medic\eventDataGatherer;
 
-/** Model de la section home */
-class EventDataGatherer extends SpecificStmtStore
+/** Classe de récupération du contenu des events suivant les eventID demandés */
+class EventDataGatherer extends EventDataGathererPdoManager
 {
     protected array $dataStore = array(); // Stockage de l'ensemble des données reçues depuis la DB
-    protected array $eventsIdList = array(); // liste des ID events
+    protected array $eventsIdList = array(); // Liste des ID events
+
+    protected object $medicORM; // Instance de l'ORM de la partie médicale
+
 
     public function __construct()
     {
         parent::__construct();
+        $this->medicORM = new \HealthKerd\Model\medicORM\MedicORM();
     }
+
 
     public function __destruct()
     {
     }
 
-    /** 41 tables contactées en 7 passes */
+    /** Lance la génération des déclarations SQL auprès de l'ORM en fonction des eventIDs avant de les rassembler puis de lancer une requete unique à la base
+     * @param array $eventsIdList   Contient la liste des ID des events demandés
+     * @return array                Contient toutes les données des events demandés
+     */
     public function eventIdReceiver(array $eventsIdList)
     {
         //var_dump($eventsIdList);
 
         if (sizeof($eventsIdList) > 0) {
-            $this->gatherWave1PdoPrep($eventsIdList);
-            $this->pdoQueryExec();
+            // string injectée dans toutes les déclarations SQL pour indiquer tous les medic_event_list.medicEventID recherchés
+            $whereString = $this->stmtWhereBuilder($eventsIdList, 'medic_event_list.medicEventID');
 
-            $this->idExtractionFromWave1();
-            $this->gatherWave2PdoPrep();
-            $this->pdoQueryExec();
+            // données liées à l'event
+            $this->dataStore['medic_event_list']['pdoStmt'] = $this->medicORM->MedicEventList->stmtSelectForEvent($whereString);
+            $this->dataStore['medic_event_affects_relation']['pdoStmt'] = $this->medicORM->MedicEventAffectsRelation->stmtSelectForEvent($whereString);
+            $this->dataStore['medic_event_themes_relation']['pdoStmt'] = $this->medicORM->MedicEventThemesRelation->stmtSelectForEvent($whereString);
+            $this->dataStore['medic_event_spemedic_relation']['pdoStmt'] = $this->medicORM->MedicEventSpemedicRelation->stmtSelectForEvent($whereString);
 
-            $this->idExtractionFromWave2();
-            $this->gatherWave3PdoPrep();
-            $this->pdoQueryExec();
+            // spécialités médicales des docteurs
+            $this->dataStore['spe_medic_for_attended_docs_on_events']['pdoStmt'] = $this->medicORM->SpeMedicFullList->stmtSelectDistinctForAttendedDocsOnEvent($whereString);
+            $this->dataStore['spe_medic_for_replaced_docs_on_events']['pdoStmt'] = $this->medicORM->SpeMedicFullList->stmtSelectDistinctForReplacedDocsOnEvent($whereString);
+            $this->dataStore['spe_medic_for_attended_labo_ordo_docs_on_events']['pdoStmt'] = $this->medicORM->SpeMedicFullList->stmtSelectDistinctForLaboOrdoDocsOnEvent($whereString);
+            $this->dataStore['spe_medic_for_replaced_labo_ordo_docs_on_events']['pdoStmt'] = $this->medicORM->SpeMedicFullList->stmtSelectDistinctForReplacedLaboOrdoDocsOnEvent($whereString);
 
-            $this->idExtractionFromWave3();
-            $this->gatherWave4PdoPrep();
-            $this->pdoQueryExec();
+            // données des docteurs
+            $this->dataStore['doc_list_AttendedDoc']['pdoStmt'] = $this->medicORM->DocList->stmtSelectDistinctAttendedDocForEvent($whereString);
+            $this->dataStore['doc_list_ReplacedDoc']['pdoStmt'] = $this->medicORM->DocList->stmtSelectDistinctReplacedDocForEvent($whereString);
+            $this->dataStore['doc_list_LaboOrdoDoc']['pdoStmt'] = $this->medicORM->DocList->stmtSelectDistinctLaboOrdoDocForEvent($whereString);
+            $this->dataStore['doc_list_LaboOrdoReplacedDoc']['pdoStmt'] = $this->medicORM->DocList->stmtSelectDistinctLaboOrdoReplacedDocForEvent($whereString);
 
-            $this->idExtractionFromWave4();
-            $this->gatherWave5PdoPrep();
-            $this->pdoQueryExec();
+            // données des diagnostics
+            $this->dataStore['diag_list']['pdoStmt'] = $this->medicORM->DiagList->stmtSelectForEvent($whereString);
+            $this->dataStore['diag_symptoms']['pdoStmt'] = $this->medicORM->DiagSymptoms->stmtSelectForEvent($whereString);
+            $this->dataStore['diag_check_points']['pdoStmt'] = $this->medicORM->DiagCheckPoints->stmtSelectForEvent($whereString);
+            $this->dataStore['diag_conclusions']['pdoStmt'] = $this->medicORM->DiagConclusions->stmtSelectForEvent($whereString);
 
-            $this->idExtractionFromWave5();
-            $this->gatherWave6PdoPrep();
-            $this->pdoQueryExec();
+            // ordonnances pharmacologiques et presciptions
+            $this->dataStore['ordo_pharma_list']['pdoStmt'] = $this->medicORM->OrdoPharmaList->stmtSelectForEvent($whereString);
+            $this->dataStore['presc_pharma_list']['pdoStmt'] = $this->medicORM->PrescPharmaList->stmtSelectForEvent($whereString);
 
-            $this->idExtractionFromWave6();
-            $this->gatherWave7PdoPrep();
+            // ordonnances optiques
+            $this->dataStore['ordo_sight_list']['pdoStmt'] = $this->medicORM->OrdoSightList->stmtSelectForEvent($whereString);
+
+            // ordonnances de prélèvement en laboratoire médical et prescriptions
+            $this->dataStore['ordo_labo_list']['pdoStmt'] = $this->medicORM->OrdoLaboList->stmtSelectForEvent($whereString);
+            $this->dataStore['presc_labo_list']['pdoStmt'] = $this->medicORM->PrescLaboList->stmtSelectForEvent($whereString);
+            $this->dataStore['presc_labo_elements']['pdoStmt'] = $this->medicORM->PrescLaboElements->stmtSelectForEvent($whereString);
+            $this->dataStore['ordo_labo_slots_for_diags']['pdoStmt'] = $this->medicORM->OrdoLaboSlots->stmtSelectForDiagsOnEvent($whereString);
+
+            // ordonnances vaccinales
+            $this->dataStore['ordo_vax_list']['pdoStmt'] = $this->medicORM->OrdoVaxList->stmtSelectForEvent($whereString);
+            $this->dataStore['presc_vax_list']['pdoStmt'] = $this->medicORM->PrescVaxList->stmtSelectForEvent($whereString);
+            $this->dataStore['ordo_vax_slots_for_diags']['pdoStmt'] = $this->medicORM->OrdoVaxSlots->stmtSelectForDiagsOnEvent($whereString);
+
+            // sessions de soin
+            $this->dataStore['care_sessions_list']['pdoStmt'] = $this->medicORM->CareSessionsList->stmtSelectForEvent($whereString);
+            $this->dataStore['care_session_elements']['pdoStmt'] = $this->medicORM->CareSessionElements->stmtSelectForEvent($whereString);
+
+            // sessions de vaccination
+            $this->dataStore['vax_sessions_list']['pdoStmt'] = $this->medicORM->VaxSessionsList->stmtSelectForDiagsOnEvent($whereString);
+            $this->dataStore['vax_sessions_side_effects']['pdoStmt'] = $this->medicORM->VaxSessionsSideEffects->stmtSelectForEvent($whereString);
+            $this->dataStore['ordo_vax_slots_for_sessions']['pdoStmt'] = $this->medicORM->OrdoVaxSlots->stmtSelectForVaxSessionOnEvent($whereString);
+
+
+            // Lancement de l'injection des données dans le $pdoBufferArray
+            foreach ($this->dataStore as $key => $value) {
+                $this->pdoStmtAndDestInsertionInCue($value['pdoStmt'], $key . '/pdoResult');
+            }
+
+            /** Utilisation des données stockées dans le pdoBufferArray
+             * * Puis accés à la DB
+             * * Puis écriture des données renvoyées dans $dataStore
+            */
             $this->pdoQueryExec();
         }
 
@@ -57,361 +104,5 @@ class EventDataGatherer extends SpecificStmtStore
         //echo '</pre>';
 
         return $this->dataStore;
-    }
-
-
-    /** */
-    private function gatherWave1PdoPrep($eventsIdList)
-    {
-        $this->eventsIdList = $eventsIdList;
-        // medic events
-        $this->medicEventList($eventsIdList);
-
-        // relations
-        $this->medicEventAffectsRelation($eventsIdList);
-        $this->medicEventThemesRelation($eventsIdList);
-        $this->medicEventSpemedicRelation($eventsIdList);
-
-        // diag
-        $this->gatherAll('diag_list', $eventsIdList, 'medicEventID');
-
-        // treat pharma
-        $this->gatherAll('treat_pharma_sessions_list', $eventsIdList, 'medicEventID');
-
-        // vax
-        $this->gatherAll('vax_sessions_list', $eventsIdList, 'medicEventID');
-
-        // labo
-        $this->gatherAll('labo_ordo_sampling_sessions_list', $eventsIdList, 'medicEventID');
-        $this->gatherAll('labo_noordo_sampling_sessions_list', $eventsIdList, 'medicEventID');
-
-        // care
-        $this->gatherAll('care_sessions_list', $eventsIdList, 'medicEventID');
-    }
-
-
-    /** */
-    private function idExtractionFromWave1()
-    {
-        // medic_event_list
-        $this->dataStore['medic_event_list']['extractedIdList']['medicEventCatID'] = $this->idExtractor($this->dataStore['medic_event_list']['pdoResult'], 'medicEventCatID');
-        $this->dataStore['medic_event_list']['extractedIdList']['docID'] = $this->idExtractor($this->dataStore['medic_event_list']['pdoResult'], 'docID');
-        $this->dataStore['medic_event_list']['extractedIdList']['replacedDocID'] = $this->idExtractor($this->dataStore['medic_event_list']['pdoResult'], 'replacedDocID');
-        $this->dataStore['medic_event_list']['extractedIdList']['laboOrdoDocID'] = $this->idExtractor($this->dataStore['medic_event_list']['pdoResult'], 'laboOrdoDocID');
-        $this->dataStore['medic_event_list']['extractedIdList']['laboOrdoReplacedDocDiagID'] = $this->idExtractor($this->dataStore['medic_event_list']['pdoResult'], 'laboOrdoReplacedDocDiagID');
-        $this->dataStore['medic_event_list']['extractedIdList']['allUniqueDocs'] = $this->docIDExtractor(); // REGROUPEMENT DES ID DES DOCS!!!!
-        $this->dataStore['medic_event_list']['extractedIdList']['docOfficeID'] = $this->idExtractor($this->dataStore['medic_event_list']['pdoResult'], 'docOfficeID');
-
-        // medic_event_affects_relation
-        $this->dataStore['medic_event_affects_relation']['extractedIdList']['medicAffectID'] = $this->idExtractor($this->dataStore['medic_event_affects_relation']['pdoResult'], 'medicAffectID');
-
-        // medic_event_themes_relation
-        $this->dataStore['medic_event_themes_relation']['extractedIdList']['medicThemeID'] = $this->idExtractor($this->dataStore['medic_event_themes_relation']['pdoResult'], 'medicThemeID');
-
-        // medic_event_spemedic_relation
-        $this->dataStore['medic_event_spemedic_relation']['extractedIdList']['speMedicID'] = $this->idExtractor($this->dataStore['medic_event_spemedic_relation']['pdoResult'], 'speMedicID');
-
-        // diag_list
-        $this->dataStore['diag_list']['extractedIdList']['diagID'] = $this->idExtractor($this->dataStore['diag_list']['pdoResult'], 'diagID');
-
-        // treat_pharma_usage_phase
-        $this->dataStore['treat_pharma_usage_phase']['extractedIdList']['treatPharmaUsagePhaseID'] = $this->idExtractor($this->dataStore['treat_pharma_usage_phase']['pdoResult'], 'treatPharmaUsagePhaseID');
-
-        // vax_sessions_list
-        $this->dataStore['vax_sessions_list']['extractedIdList']['vaxSessionID'] = $this->idExtractor($this->dataStore['vax_sessions_list']['pdoResult'], 'vaxSessionID');
-        $this->dataStore['vax_sessions_list']['extractedIdList']['vaxUsagePhaseID'] = $this->idExtractor($this->dataStore['vax_sessions_list']['pdoResult'], 'vaxUsagePhaseID');
-
-        // labo_ordo_sampling_sessions_list
-        $this->dataStore['labo_ordo_sampling_sessions_list']['extractedIdList']['laboOrdoSamplingSessionID'] = $this->idExtractor($this->dataStore['labo_ordo_sampling_sessions_list']['pdoResult'], 'laboOrdoSamplingSessionID');
-
-        // labo_noordo_sampling_sessions_list
-        $this->dataStore['labo_noordo_sampling_sessions_list']['extractedIdList']['laboNoOrdoSamplingSessionID'] = $this->idExtractor($this->dataStore['labo_noordo_sampling_sessions_list']['pdoResult'], 'laboNoOrdoSamplingSessionID');
-
-        // care_sessions_list
-        $this->dataStore['care_sessions_list']['extractedIdList']['careSessionID'] = $this->idExtractor($this->dataStore['care_sessions_list']['pdoResult'], 'careSessionID');
-        $this->dataStore['care_sessions_list']['extractedIdList']['careUsagePhaseID'] = $this->idExtractor($this->dataStore['care_sessions_list']['pdoResult'], 'careUsagePhaseID');
-    }
-
-
-    /** */
-    private function gatherWave2PdoPrep()
-    {
-        // medic_event_category
-        $this->gatherAll('medic_event_category', $this->dataStore['medic_event_list']['extractedIdList']['medicEventCatID'], 'medicEventCatID');
-
-        // doc_list & doc_spemedic_relation & doc_office_list
-        $this->docList($this->dataStore['medic_event_list']['extractedIdList']['allUniqueDocs']); // doc_list
-        $this->gatherAll('doc_spemedic_relation', $this->dataStore['medic_event_list']['extractedIdList']['allUniqueDocs'], 'docID');
-        $this->docOfficeList($this->dataStore['medic_event_list']['extractedIdList']['docOfficeID']); // doc_office_list
-
-        // diag_check_points & diag_medic_themes_relation & diag_symptoms & diag_conclusions
-        $this->gatherAll('diag_check_points', $this->dataStore['diag_list']['extractedIdList']['diagID'], 'diagID');
-        $this->gatherAll('diag_medic_themes_relation', $this->dataStore['diag_list']['extractedIdList']['diagID'], 'diagID');
-        $this->gatherAll('diag_symptoms', $this->dataStore['diag_list']['extractedIdList']['diagID'], 'diagID');
-        $this->gatherAll('diag_conclusions', $this->dataStore['diag_list']['extractedIdList']['diagID'], 'diagID');
-
-        // treat_pharma_usage_phase
-        $this->gatherAllFromUsagePhase(
-            'treat_pharma_usage_phase',
-            $this->eventsIdList,
-            $this->dataStore['treat_pharma_usage_phase']['extractedIdList']['treatPharmaUsagePhaseID'],
-            'treatPharmaUsagePhaseID'
-        );
-
-        // treat_pharma_usage_phase
-        $this->gatherAllFromUsagePhase(
-            'vax_usage_phase',
-            $this->eventsIdList,
-            $this->dataStore['vax_sessions_list']['extractedIdList']['vaxUsagePhaseID'],
-            'vaxUsagePhaseID'
-        );
-
-        // labo_noordo_sections & ordo_labo_slots
-        $this->gatherAll('labo_noordo_sections', $this->dataStore['labo_noordo_sampling_sessions_list']['extractedIdList']['laboNoOrdoSamplingSessionID'], 'laboNoOrdoSamplingSessionID');
-        $this->gatherAll('ordo_labo_slots', $this->dataStore['labo_ordo_sampling_sessions_list']['extractedIdList']['laboOrdoSamplingSessionID'], 'laboOrdoSamplingSessionID');
-
-        // ordo_sight_list
-        $this->gatherAll('ordo_sight_list', $this->dataStore['diag_list']['extractedIdList']['diagID'], 'diagID');
-
-        // care_usage_phase
-        $this->gatherAllFromUsagePhase(
-            'care_usage_phase',
-            $this->eventsIdList,
-            $this->dataStore['care_sessions_list']['extractedIdList']['careUsagePhaseID'],
-            'careUsagePhaseID'
-        );
-    }
-
-
-    /** */
-    private function idExtractionFromWave2()
-    {
-        // doc_spemedic_relation
-        $this->dataStore['doc_spemedic_relation']['extractedIdList']['speMedicID'] = $this->idExtractor($this->dataStore['doc_spemedic_relation']['pdoResult'], 'speMedicID');
-
-        // diag_medic_themes_relation
-        $this->dataStore['diag_medic_themes_relation']['extractedIdList']['medicThemeID'] = $this->idExtractor($this->dataStore['diag_medic_themes_relation']['pdoResult'], 'medicThemeID');
-
-        // diag_conclusions
-        $this->dataStore['diag_conclusions']['extractedIdList']['medicAffectID'] = $this->idExtractor($this->dataStore['diag_conclusions']['pdoResult'], 'medicAffectID');
-
-        // treat_pharma_usage_phase
-        $this->dataStore['treat_pharma_usage_phase']['extractedIdList']['treatPharmaID'] = $this->idExtractor($this->dataStore['treat_pharma_usage_phase']['pdoResult'], 'treatPharmaID');
-        $this->dataStore['treat_pharma_usage_phase']['extractedIdList']['treatPharmaRoleID'] = $this->idExtractor($this->dataStore['treat_pharma_usage_phase']['pdoResult'], 'treatPharmaRoleID');
-        $this->dataStore['treat_pharma_usage_phase']['extractedIdList']['prescPharmaID'] = $this->idExtractor($this->dataStore['treat_pharma_usage_phase']['pdoResult'], 'prescPharmaID');
-
-        // vax_usage_phase
-        $this->dataStore['vax_usage_phase']['extractedIdList']['medicAffectID'] = $this->idExtractor($this->dataStore['vax_usage_phase']['pdoResult'], 'medicAffectID');
-        $this->dataStore['vax_usage_phase']['extractedIdList']['prescVaxID'] = $this->idExtractor($this->dataStore['vax_usage_phase']['pdoResult'], 'prescVaxID');
-        $this->dataStore['vax_usage_phase']['extractedIdList']['treatPharmaID'] = $this->idExtractor($this->dataStore['vax_usage_phase']['pdoResult'], 'treatPharmaID');
-
-        // labo_noordo_sections
-        $this->dataStore['labo_noordo_sections']['extractedIdList']['laboNoOrdoSectionID'] = $this->idExtractor($this->dataStore['labo_noordo_sections']['pdoResult'], 'laboNoOrdoSectionID');
-
-        // ordo_labo_slots
-        $this->dataStore['ordo_labo_slots']['extractedIdList']['ordoLaboID'] = $this->idExtractor($this->dataStore['ordo_labo_slots']['pdoResult'], 'ordoLaboID');
-
-        // care_usage_phase
-        $this->dataStore['care_usage_phase']['extractedIdList']['careRoleOnAffectID'] = $this->idExtractor($this->dataStore['care_usage_phase']['pdoResult'], 'careRoleOnAffectID');
-    }
-
-
-    /** */
-    private function gatherWave3PdoPrep()
-    {
-        // spe_medic_full_list
-        $this->gatherAll('spe_medic_full_list', $this->dataStore['doc_spemedic_relation']['extractedIdList']['speMedicID'], 'speMedicID');
-
-        // medic_theme_list
-        $this->gatherAll('medic_theme_list', $this->dataStore['medic_event_themes_relation']['extractedIdList']['medicThemeID'], 'medicThemeID');
-
-        // presc_pharma_list
-        $this->prescPharmaListOnlyOrdoPharmaIds($this->dataStore['treat_pharma_usage_phase']['extractedIdList']['prescPharmaID']);
-
-        // vax_sessions_side_effects
-        $this->gatherAll('vax_sessions_side_effects', $this->dataStore['vax_sessions_list']['extractedIdList']['vaxSessionID'], 'vaxSessionID');
-
-        // ordo_vax_slots
-        $this->gatherAll('ordo_vax_slots', $this->dataStore['vax_sessions_list']['extractedIdList']['vaxSessionID'], 'vaxSessionID');
-
-        // presc_vax_list
-        $this->ordoVaxSlotsOnlyOrdoVaxIds($this->dataStore['vax_usage_phase']['extractedIdList']['prescVaxID']);
-
-        // labo_noordo_sections_elements
-        $this->gatherAll('labo_noordo_sections_elements', $this->dataStore['labo_noordo_sections']['extractedIdList']['laboNoOrdoSectionID'], 'laboNoOrdoSectionID');
-
-        // ordo_labo_list
-        $this->dualColumnGatherAll(
-            'ordo_labo_list',
-            $this->dataStore['diag_list']['extractedIdList']['diagID'],
-            'diagID',
-            $this->dataStore['ordo_labo_slots']['extractedIdList']['ordoLaboID'],
-            'ordoLaboID'
-        );
-
-        // care_role_on_affect
-        $this->gatherAll('care_role_on_affect', $this->dataStore['care_usage_phase']['extractedIdList']['careRoleOnAffectID'], 'careRoleOnAffectID');
-
-        // care_session_elements
-        $this->gatherAll('care_session_elements', $this->dataStore['care_sessions_list']['extractedIdList']['careSessionID'], 'careSessionID');
-    }
-
-
-    /** */
-    private function idExtractionFromWave3()
-    {
-        // presc_pharma_list
-        $this->dataStore['presc_pharma_list']['extractedIdList']['ordoPharmaID'] = $this->idExtractor($this->dataStore['presc_pharma_list']['pdoResult'], 'ordoPharmaID');
-
-        // ordo_vax_slots
-        $this->dataStore['ordo_vax_slots']['extractedIdList']['ordoVaxID'] = $this->idExtractor($this->dataStore['ordo_vax_slots']['pdoResult'], 'ordoVaxID');
-
-        // presc_vax_list
-        $this->dataStore['presc_vax_list']['extractedIdList']['ordoVaxID'] = $this->idExtractor($this->dataStore['presc_vax_list']['pdoResult'], 'ordoVaxID');
-
-        // presc_vax_list
-        $this->dataStore['ordo_labo_list']['extractedIdList']['ordoLaboID'] = $this->idExtractor($this->dataStore['ordo_labo_list']['pdoResult'], 'ordoLaboID');
-
-        // care_role_on_affect
-        $this->dataStore['care_role_on_affect']['extractedIdList']['medicAffectID'] = $this->idExtractor($this->dataStore['care_role_on_affect']['pdoResult'], 'medicAffectID');
-    }
-
-
-
-    /** */
-    private function gatherWave4PdoPrep()
-    {
-        // ordo_pharma_list
-        $this->dualColumnGatherAll(
-            'ordo_pharma_list',
-            $this->dataStore['diag_list']['extractedIdList']['diagID'],
-            'diagID',
-            $this->dataStore['presc_pharma_list']['extractedIdList']['ordoPharmaID'],
-            'ordoPharmaID'
-        );
-
-        // ordo_vax_list
-        $ordoVaxIDList = array_merge(
-            $this->dataStore['ordo_vax_slots']['extractedIdList']['ordoVaxID'],
-            $this->dataStore['presc_vax_list']['extractedIdList']['ordoVaxID']
-        );
-        $ordoVaxIDList = array_unique($ordoVaxIDList, SORT_NUMERIC);
-
-        $this->dualColumnGatherAll(
-            'ordo_vax_list',
-            $this->dataStore['diag_list']['extractedIdList']['diagID'],
-            'diagID',
-            $ordoVaxIDList,
-            'ordoVaxID'
-        );
-
-        // presc_labo_list
-        $this->gatherAll('presc_labo_list', $this->dataStore['ordo_labo_list']['extractedIdList']['ordoLaboID'], 'ordoLaboID');
-    }
-
-
-    /** */
-    private function idExtractionFromWave4()
-    {
-        // ordo_pharma_list
-        $this->dataStore['ordo_pharma_list']['extractedIdList']['ordoPharmaID'] = $this->idExtractor($this->dataStore['ordo_pharma_list']['pdoResult'], 'ordoPharmaID');
-
-        // ordo_vax_list
-        $this->dataStore['ordo_vax_list']['extractedIdList']['ordoVaxID'] = $this->idExtractor($this->dataStore['ordo_vax_list']['pdoResult'], 'ordoVaxID');
-
-        // presc_labo_list
-        $this->dataStore['presc_labo_list']['extractedIdList']['prescLaboID'] = $this->idExtractor($this->dataStore['presc_labo_list']['pdoResult'], 'prescLaboID');
-    }
-
-
-    /** */
-    private function gatherWave5PdoPrep()
-    {
-        // presc_pharma_list
-        $this->dualColumnGatherAll(
-            'presc_pharma_list',
-            $this->dataStore['ordo_pharma_list']['extractedIdList']['ordoPharmaID'],
-            'ordoPharmaID',
-            $this->dataStore['treat_pharma_usage_phase']['extractedIdList']['prescPharmaID'],
-            'prescPharmaID'
-        );
-
-        // ordo_vax_slots
-        $this->dualColumnGatherAll(
-            'ordo_vax_slots',
-            $this->dataStore['vax_sessions_list']['extractedIdList']['vaxSessionID'],
-            'vaxSessionID',
-            $this->dataStore['ordo_vax_list']['extractedIdList']['ordoVaxID'],
-            'ordoVaxID'
-        );
-
-        // presc_vax_list
-        $this->dualColumnGatherAll(
-            'presc_vax_list',
-            $this->dataStore['vax_usage_phase']['extractedIdList']['prescVaxID'],
-            'prescVaxID',
-            $this->dataStore['ordo_vax_list']['extractedIdList']['ordoVaxID'],
-            'ordoVaxID'
-        );
-
-        // presc_labo_elements
-        $this->gatherAll('presc_labo_elements', $this->dataStore['presc_labo_list']['extractedIdList']['prescLaboID'], 'prescLaboID');
-    }
-
-
-    /** */
-    private function idExtractionFromWave5()
-    {
-        // presc_pharma_list
-        $this->dataStore['presc_pharma_list']['extractedIdList']['treatPharmaID'] = $this->idExtractor($this->dataStore['presc_pharma_list']['pdoResult'], 'treatPharmaID');
-        $this->dataStore['presc_pharma_list']['extractedIdList']['treatPharmaRoleID'] = $this->idExtractor($this->dataStore['presc_pharma_list']['pdoResult'], 'treatPharmaRoleID');
-
-        // presc_vax_list
-        $this->dataStore['presc_vax_list']['extractedIdList']['treatPharmaID'] = $this->idExtractor($this->dataStore['presc_vax_list']['pdoResult'], 'treatPharmaID');
-    }
-
-
-    /** */
-    private function gatherWave6PdoPrep()
-    {
-        // treat_pharma_role_on_affect
-        $treatPharmaRoleID = array_merge(
-            $this->dataStore['treat_pharma_usage_phase']['extractedIdList']['treatPharmaRoleID'],
-            $this->dataStore['presc_pharma_list']['extractedIdList']['treatPharmaRoleID']
-        );
-        $treatPharmaRoleID = array_unique($treatPharmaRoleID, SORT_NUMERIC);
-        $this->gatherAll('treat_pharma_role_on_affect', $treatPharmaRoleID, 'treatPharmaRoleID');
-
-        // treat_pharma_list
-        $treatPharmaID = array_merge(
-            $this->dataStore['treat_pharma_usage_phase']['extractedIdList']['treatPharmaID'],
-            $this->dataStore['presc_vax_list']['extractedIdList']['treatPharmaID'],
-            $this->dataStore['presc_pharma_list']['extractedIdList']['treatPharmaID'],
-            $this->dataStore['vax_usage_phase']['extractedIdList']['treatPharmaID']
-        );
-        $treatPharmaID = array_unique($treatPharmaID, SORT_NUMERIC);
-        $this->treatPharmaNames($treatPharmaID);
-    }
-
-
-    /** */
-    private function idExtractionFromWave6()
-    {
-        // treat_pharma_role_on_affect
-        $this->dataStore['treat_pharma_role_on_affect']['extractedIdList']['medicAffectID'] = $this->idExtractor($this->dataStore['treat_pharma_role_on_affect']['pdoResult'], 'medicAffectID');
-    }
-
-    /** */
-    private function gatherWave7PdoPrep()
-    {
-        // medic_affect_list
-        $medicAffectID = array_merge(
-            $this->dataStore['treat_pharma_role_on_affect']['extractedIdList']['medicAffectID'],
-            $this->dataStore['care_role_on_affect']['extractedIdList']['medicAffectID'],
-            $this->dataStore['vax_usage_phase']['extractedIdList']['medicAffectID'],
-            $this->dataStore['diag_conclusions']['extractedIdList']['medicAffectID'],
-        );
-        $medicAffectID = array_unique($medicAffectID, SORT_NUMERIC);
-        $this->medicAffectNames($medicAffectID);
     }
 }

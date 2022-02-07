@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Controller\medic\docOffice;
 
-/** Controleur de la section 'accueil' */
+/** Contrôleur POST des cabinets médicaux
+ */
 class DocOfficePostController extends DocOfficeCommonController
 {
     public function __construct()
@@ -10,12 +11,14 @@ class DocOfficePostController extends DocOfficeCommonController
         parent::__construct();
     }
 
-
     public function __destruct()
     {
     }
 
-
+    /** recoit GET['action'] et lance la suite
+     * @param array $cleanedUpGet   Infos nettoyées provenants du GET
+     * @return void
+     */
     public function actionReceiver(array $cleanedUpGet)
     {
         if (isset($cleanedUpGet['action'])) {

@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Controller\medic\doc;
 
-/** Controleur de la section 'accueil' */
+/** Attributs et méthodes communs aux contrôleurs GET et POST des docteurs
+ */
 abstract class DocCommonController
 {
     protected object $docModel;

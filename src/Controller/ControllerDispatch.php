@@ -2,8 +2,6 @@
 
 namespace HealthKerd\Controller;
 
-session_start();
-
 /** Classe de dispatch qui lance tout le reste
  * * Récupération et analyse du contenu de $_GET['controller'] et $_GET['action']
  */
@@ -13,15 +11,14 @@ class ControllerDispatch extends GetAndPostCleaner
     private array $cleanedUpPost; // Recoit les données du $_POST une fois nettoyées
     private string $selectedController; // Recoit le nom du controleur qui est forcément inclut dans $_GET['controller']
 
-
+    /** Nettoyage des $_GET et $_POST avant envoi pour la suite
+     */
     public function __construct()
     {
-        // nettoyage des $_GET et $_POST avant envoi pour la suite
         $this->cleanedUpGet = (isset($_GET)) ? $this->inputCleaner($_GET) : array();
         $this->cleanedUpPost = (isset($_POST)) ? $this->inputCleaner($_POST) : array();
         $this->sessionChecker();
     }
-
 
     public function __destruct()
     {
@@ -32,10 +29,12 @@ class ControllerDispatch extends GetAndPostCleaner
     */
     private function sessionChecker()
     {
+        session_start();
+
         if (empty($_SESSION)) {
             // récupération du controleur voulu, si aucun n'est précisé on part sur 'login'
             $this->selectedController = (isset($this->cleanedUpGet['controller'])) ? $this->cleanedUpGet['controller'] : 'loginPage';
-            $this->unloggedDispatcher($this->selectedController);
+            $this->unloggedDispatcher();
         } else {
             // récupération du controleur voulu, si aucun n'est précisé on part sur 'home'
             $this->selectedController = (isset($this->cleanedUpGet['controller'])) ? $this->cleanedUpGet['controller'] : 'home';
@@ -45,9 +44,9 @@ class ControllerDispatch extends GetAndPostCleaner
 
     /** Oriente vers la page de login ou de création de compte si $_SESSION est vide
      */
-    private function unloggedDispatcher($selectedController)
+    private function unloggedDispatcher()
     {
-        switch ($selectedController) {
+        switch ($this->selectedController) {
             case 'login': // Afficher la page de login
                 $controllerObj = new \HealthKerd\Controller\login\LoginGetController();
                 $controllerObj->displayLoginPage($this->cleanedUpGet);
@@ -70,7 +69,7 @@ class ControllerDispatch extends GetAndPostCleaner
         }
     }
 
-    /** Lancement du controleur voulu, si aucun ne correspond on part sur HomeGetController
+    /** Lancement du contrôleur voulu si $_SESSION est vide, si aucun ne correspond on part sur HomeGetController
      * * Tout se fait par le cleanedUpGet['controller'], le cleanedUpPost n'est jamais sollicité
      * * Les cases finissant par Post viennent des submits de formulaires, les autres viennent des liens de nav
      * * Cette technique empeche l'insertion de données venant du $_POST en appuyant sur F5 puisque le $_POST n'est pas sollicité

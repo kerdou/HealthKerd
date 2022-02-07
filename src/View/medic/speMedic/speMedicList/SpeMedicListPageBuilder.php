@@ -2,13 +2,13 @@
 
 namespace HealthKerd\View\medic\speMedic\speMedicList;
 
+/** Construction puis affichage de la page listant les spécialités médicales utilisées par le user
+ */
 class SpeMedicListPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
     private string $builtContentHTML = '';
     private array $speMedicList = array();
-
-
 
     public function __construct()
     {
@@ -23,15 +23,17 @@ class SpeMedicListPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
     }
 
-    /** PLOP */
+    /** Recoit les données des thèmes médicaux d'un user puis lance la construction des blocs HTML
+     * @param array $speMedicList     Données des spécialités médicales
+    */
     public function dataReceiver(array $speMedicList)
     {
         $this->speMedicList = $speMedicList;
         $this->buildOrder();
     }
 
-
-    /** */
+    /** Construction de la liste des spécialités médicales utilisées par le user
+    */
     private function buildOrder()
     {
         $this->builtContentHTML .= '<div class="p-2">';
@@ -41,24 +43,24 @@ class SpeMedicListPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->builtContentHTML .= $this->speMedicCardsBuilder($this->speMedicList);
         $this->builtContentHTML .= '</div>';
 
-
         $this->builtContentHTML .= '</div>';
-
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
         $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 
-
-    /** */
+    /** Création de l'ensemble des cards de spécialité médicale
+     * @param array $medicThemeList     Liste des données de tous les spécialités médicales
+     * @return string                   HTML des cards
+     */
     private function speMedicCardsBuilder(array $speMedicList)
     {
         $cardHTMLString = '';
         $cardHTMLArray = array();
 
         foreach ($speMedicList as $speData) {
-            $completeCard = $this->cardTop($speData);
+            $completeCard = $this->cardBuilder($speData);
             array_push($cardHTMLArray, $completeCard);
         }
 
@@ -69,9 +71,11 @@ class SpeMedicListPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $cardHTMLString;
     }
 
-
-    /** */
-    private function cardTop(array $speMedicList)
+    /** Création d'une card de spécialité médicale
+     * @param array $speMedicList       Données d'une spécialité médicale
+     * @return string                   HTML de la card d'une spécialité médicale
+    */
+    private function cardBuilder(array $speMedicList)
     {
         $cardHTML =
         '<a href="index.php?controller=medic&subCtrlr=speMedic&action=dispAllEventsRegrdOneSpe&speMedicID=' . $speMedicList['speMedicID'] . '" class="col-12 col-lg-4 flex-fill rounded-3 mb-3 me-lg-3">

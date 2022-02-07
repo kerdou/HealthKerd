@@ -2,13 +2,13 @@
 
 namespace HealthKerd\View\medic\docOffice\docOfficeList;
 
+/** Construction et affichage de la page listant les cabinets médicaux
+ */
 class DocOfficeListPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
     private string $builtContentHTML = '';
     private array $docOfficeList = array();
-
-
 
     public function __construct()
     {
@@ -23,15 +23,18 @@ class DocOfficeListPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
     }
 
-    /** PLOP */
+    /** Recoit les données puis lance la création de la liste des cabinets médicaux
+     * @param array $docOfficeList     Données des cabinets médicaux
+    */
     public function dataReceiver(array $docOfficeList)
     {
         $this->docOfficeList = $docOfficeList;
         $this->buildOrder();
     }
 
-
-    /** */
+    /** Construction de la liste des cabinets médicaux
+     * Puis configuration de la page et affichage du contenu
+     */
     private function buildOrder()
     {
         $this->builtContentHTML .= '<div class="p-2">';
@@ -41,17 +44,17 @@ class DocOfficeListPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->builtContentHTML .= $this->docOfficeCardsBuilder($this->docOfficeList);
         $this->builtContentHTML .= '</div>';
 
-
         $this->builtContentHTML .= '</div>';
-
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
         $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 
-
-    /** */
+    /** Création de la liste des cards des cabinets médicaux
+     * @param array $docOfficeList      Données des cabinets médicaux
+     * @return string                   HTML de la liste des cabinets médicaux
+    */
     private function docOfficeCardsBuilder(array $docOfficeList)
     {
         $cardHTMLString = '';
@@ -69,8 +72,10 @@ class DocOfficeListPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $cardHTMLString;
     }
 
-
-    /** */
+    /** Création de chaque card de cabinet médical
+     * @param array $officeData     Données d'un seul cabinet médical
+     * @return string               HTML d'une card de cabinet médical
+     */
     private function cardBuilder(array $officeData)
     {
         $cardHTML =

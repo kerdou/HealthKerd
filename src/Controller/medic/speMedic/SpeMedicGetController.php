@@ -2,7 +2,7 @@
 
 namespace HealthKerd\Controller\medic\speMedic;
 
-/** Controleur de la section 'accueil' */
+/** Controleur GET des spécialités médicales */
 class SpeMedicGetController
 {
     private array $cleanedUpGet;
@@ -12,9 +12,7 @@ class SpeMedicGetController
     private object $speMedicModel;
     private object $speView;
 
-    //protected object $docModel;
 
-    /** */
     public function __construct()
     {
         $this->eventIdFinder = new \HealthKerd\Model\medic\eventIdFinder\EventIdFinder();
@@ -25,30 +23,36 @@ class SpeMedicGetController
     {
     }
 
-    /** */
+    /** recoit GET['action'] et lance la suite
+     * @param array $cleanedUpGet   Infos nettoyées provenants du GET
+     * @return void
+     */
     public function actionReceiver(array $cleanedUpGet)
     {
         $this->cleanedUpGet = $cleanedUpGet;
 
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
-                case 'dispAllSpeMedics':
+                case 'dispAllSpeMedics': // affichage de toutes les spécialités médicales
                     $this->displayAllSpeMedics();
                     break;
-                case 'dispAllEventsRegrdOneSpe':
+
+                case 'dispAllEventsRegrdOneSpe': // affichage de tous les events vis à vis d'une spé en particulier
                     $this->dispAllEventsRegardingOneSpeMedic();
                     break;
-                default:
+
+                default: // si le Get['action'] ne correspond à rien, retour à l'affichage de la liste des spé médicales
                     $this->displayAllSpeMedics();
             }
         } else {
+            // si le Get['action'] n'est pas défini, retour à l'affichage de la liste des spé médicales
             $this->displayAllSpeMedics();
         }
     }
 
-
-
-    /** */
+    /** création d'une liste de spécialités médicales sans doublons avec leurs ID
+     * @return array contient les spécialités médicales (sans doublon) avec leur ID
+    */
     private function speMedicListBuildUp()
     {
         $speMedicIDList = array();
@@ -79,8 +83,8 @@ class SpeMedicGetController
         return $speMedicBadgeList;
     }
 
-
-    /** */
+    /** Affichage de toutes les spécialités médicales
+    */
     private function displayAllSpeMedics()
     {
         $medicEventsIdResult = $this->eventIdFinder->eventsIdsByUserId();
@@ -97,8 +101,8 @@ class SpeMedicGetController
         $this->speView->dataReceiver($speMedicUniqueList);
     }
 
-
-    /** */
+    /** Affichage de tous les events vis à vis d'une spé en particulier
+     */
     private function dispAllEventsRegardingOneSpeMedic()
     {
         $speMedicID = $this->cleanedUpGet['speMedicID']; // ID de la spéMedic recherchée
@@ -126,7 +130,7 @@ class SpeMedicGetController
         $medicEventDataGatherer = new \HealthKerd\Model\medic\eventDataGatherer\EventDataGatherer();
         $medicEvtOriginalDataStore = $medicEventDataGatherer->eventIdReceiver($medicEventsIdList);
 
-        $medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicArrayBuildOrder();
+        $medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicEventArrayBuildOrder();
         $medicEvtProcessedDataStore = $medicEventArrayBuildOrder->eventDataReceiver($medicEvtOriginalDataStore);
 
         // vidage de $medicEvtOriginalDataStore

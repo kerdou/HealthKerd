@@ -1,0 +1,60 @@
+@startuml
+title <b>View - Out of Medic</b>
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+package View {
+    package common {
+        abstract class ViewInChief {
+            # $topMainLayoutHTML : string
+            # $bottomMainLayoutHTML : string
+            # $pageContent : string
+            --
+            + __construct()
+            + __destruct()
+            # topMainLayoutAssembly()
+            # bottomMainLayoutAssembly()
+            # pageSetup()
+            # pageDisplay()
+        }
+    }
+
+    package home {
+        class HomePageBuilder extends ViewInChief {
+            - $pageSettingsList : array
+            - $eventsData : array
+            - $builtContentHTML : string
+            - $futureEventsHTML : string
+            - $eventsBuilder : object
+            --
+            + __construct()
+            + __destruct()
+            + dataReceiver()
+            - buildOrder()
+        }
+
+    }
+
+    package login {
+        class LoginPageBuilder extends ViewInChief {
+            - $pageSettingsList : array
+            --
+            + __construct()
+            + __destruct()
+            + buildOrder()
+        }
+    }
+
+    package userAccount {
+
+    }
+
+
+
+
+
+
+
+
+@enduml

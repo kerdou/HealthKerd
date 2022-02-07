@@ -2,7 +2,8 @@
 
 namespace HealthKerd\Controller\medic\eventCat;
 
-/** Controleur de la section 'accueil' */
+/** Controller GET des catégories d'events
+*/
 class EventCatGetController extends EventCatCommonController
 {
     private array $cleanedUpGet;
@@ -13,45 +14,52 @@ class EventCatGetController extends EventCatCommonController
     private object $catView;
 
 
-    /** */
     public function __construct()
     {
         parent::__construct();
         date_default_timezone_set('Europe/Paris');
         $this->medicEventIdFinder = new \HealthKerd\Model\medic\eventIdFinder\EventIdFinder();
         $this->medicEventDataGatherer = new \HealthKerd\Model\medic\eventDataGatherer\EventDataGatherer();
-        $this->medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicArrayBuildOrder();
+        $this->medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicEventArrayBuildOrder();
     }
 
     public function __destruct()
     {
     }
 
-    /** */
+    /** recoit GET['action'] et lance la suite
+     * @param array $cleanedUpGet   Infos nettoyées provenants du GET
+     * @return void
+     */
     public function actionReceiver(array $cleanedUpGet)
     {
         $this->cleanedUpGet = $cleanedUpGet;
 
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
-                case 'dispAllEventCats':
+                case 'dispAllEventCats': // affichage de toutes les catégories d'events
                     $eventCatsList = $this->eventCatModel->gatherAllEventsCats();
 
                     $this->catView = new \HealthKerd\View\medic\eventCats\eventCatsList\EventCatsListPageBuilder();
                     $this->catView->dataReceiver($eventCatsList);
                     break;
-                case 'dispAllEventsRegrdOneCat':
+
+                case 'dispAllEventsRegrdOneCat': // affichage de tous les events ayant une catégorie particulière
                     $this->dispAllEventsRegardingOneCat();
                     break;
-                default:
+
+                default: // si GET['action'] ne correspond à aucun cas de figure, on repart vers la liste des catégories d'events
                     echo "<script> window.location.replace('index.php?controller=medic&subCtrlr=eventCat&action=dispAllEventCats') </script>";
             }
         } else {
+            // si GET['action'] n'est pas défini, on repart vers la liste des catégories d'events
             echo "<script> window.location.replace('index.php?controller=medic&subCtrlr=eventCat&action=dispAllEventCats') </script>";
         }
     }
 
-    /** */
+
+    /** Affichage de tous les events ayant une catégorie particulière
+    */
     public function dispAllEventsRegardingOneCat()
     {
         $medicEventsIdResult = $this->medicEventIdFinder->eventsIdsbyCatId($this->cleanedUpGet['medicEventCatID']);

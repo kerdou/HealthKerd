@@ -2,9 +2,14 @@
 
 namespace HealthKerd\Controller;
 
+/** Classe dédiée au nettoyage des données entrantes
+ */
 abstract class GetAndPostCleaner
 {
-    // Fonction nettoyant les données envoyées dans le $_GET et le $_POST
+    /** Fonction nettoyant les données envoyées dans le $_GET et le $_POST
+     * @param array $inputData      Données entrantes provenant du $_GET ou du $_POST
+     * @return array                Données nettoyées
+     */
     protected function inputCleaner(array $inputData)
     {
         $cleanedUpArray = array();

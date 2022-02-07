@@ -1,0 +1,118 @@
+@startmindmap
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+* View/
+
+** common/
+***_ ViewInChief.php
+
+** home/
+***_ HomePageBuilder.php
+
+** login/
+***_ LoginPageBuilder.php
+
+** medic/
+*** allEvents/
+****_ AllEventsPageBuilder.php
+
+*** doc/
+**** docForm/
+*****_ DocAddFormPageBuilder.php
+*****_ DocDeleteFormPageBuilder.php
+*****_ DocEditFormPageBuilder.php
+*****_ DocFailedAddFormPageBuilder.php
+*****_ DocFailedEditFormPageBuilder.php
+
+**** docList/
+*****_ DocListPageBuilder.php
+
+**** eventsWithOneDoc/
+*****_ EventsWithOneDocPageBuilder.php
+
+**** oneDoc/
+*****_ OneDocPageBuilder.php
+
+*** docOffice/
+**** allEventsRegrdOneDocOffice/
+*****_ AllEventsRegrdOneDocOfficePageBuilder.php
+
+**** docOfficeList/
+*****_ DocOfficeListPageBuilder.php
+
+
+*** eventCats/
+**** allEventsRegardingOneCat/
+*****_ AllEventsRegardingOneCatPageBuilder.php
+
+**** eventCatsList/
+*****_ EventCatsListPageBuilder.php
+
+*** eventsBuilder/
+**** care/
+***** phase/
+
+***** session/
+******_ CareSessionBuilder.php
+******_ CareSessionBuilderFunctionsPool.php
+
+**** diag/
+*****_ DiagBuilder.php
+*****_ DiagBuilderFunctionsPool.php
+
+**** ordo/
+***** glass/
+******_ GlassOrdoBuilder.php
+
+***** labo/
+******_ LaboOrdoBuilder.php
+******_ LaboOrdoBuilderFunctionsPool.php
+
+***** lens/
+******_ LensOrdoBuilder.php
+
+***** pharma/
+******_ PharmaOrdoBuilder.php
+******_ PharmaOrdoBuilderFunctionsPool.php
+
+***** vax/
+******_ VaxOrdoBuilder.php
+******_ VaxOrdoBuilderFunctionsPool.php
+
+**** presc/
+***** labo/
+******_ PrescLaboBuilder.php
+******_ PrescLaboBuilderFunctionsPool.php
+
+***** pharma/
+******_ PharmaPrescBuilder.php
+
+***** vax/
+******_ PrescVaxBuilder.php
+
+
+****_ EventsBuilder.php
+****_ EventsBuilderFunctionPool.php
+
+*** medicTheme/
+**** allEventsRegrdOneTheme/
+*****_ AllEventsRegrdOneThemePageBuilder.php
+
+**** medicThemeList/
+*****_ MedicThemeListPageBuilder.php
+
+*** speMedic/
+**** AllEventsRegrdOneSpe/
+*****_ AllEventsRegardOneSpePageBuilder.php
+
+**** speMedicList/
+*****_ SpeMedicListPageBuilder.php
+
+** userAccount/
+
+
+
+@endmindmap

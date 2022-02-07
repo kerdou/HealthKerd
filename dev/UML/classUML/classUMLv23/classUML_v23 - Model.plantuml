@@ -1,0 +1,256 @@
+@startuml
+title <b>Model</b>
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+
+package Model {
+    package common {
+        abstract class ModelInChief {
+            # $pdo : object
+            #  $query : object
+            --
+            + __construct()
+            # pdoInit()
+            # stmtWhereBuilder()
+            # pdoPreparedSelectExecute()
+            # pdoRawSelectExecute()
+            # pdoEventSelectMultiQuery()
+            # pdoPreparedInsertUpdateDeleteExecute()
+        }
+
+    }
+
+
+    package home {
+        class HomeModel extends ModelInChief {
+
+        }
+    }
+
+
+    package login {
+        class LoginModel extends ModelInChief {
+            + __destruct()
+            + checkUserLogs()
+        }
+    }
+
+
+    package medic {
+        package allEvents///medic {
+
+        }
+
+
+        package doc///medic {
+            class DocModel extends ModelInChief {
+                + __construct()
+                + __destruct()
+                + gatherAllDocs()
+                + getOneDocForPageDisplay()
+                + getOneDocForFormDisplay()
+                + gatherDocSpeMedicRelation()
+                + getNewDocID()
+            }
+
+            class DocPostModel extends ModelInChief {
+                + __construct()
+                + __destruct()
+                + addDoc()
+                + addOfficeAndSpeMedic()
+                + editDoc()
+                + deleteDoc()
+                + deleteOfficeAndSpeMedic()
+            }
+        }
+
+
+        package docOffice///medic {
+            class DocOfficeModel extends ModelInChief {
+                + __construct()
+                + __destruct()
+                + gatherAllDocOffices()
+            }
+        }
+
+        package eventCat///medic {
+            class EventCatModel extends ModelInChief {
+                + __construct()
+                + __destruct()
+                + gatherAllEventsCats()
+            }
+        }
+
+
+        package eventDataGatherer///medic {
+            abstract class EventDataGathererPdoManager extends ModelInChief {
+                # $pdoBufferArray : array
+                --
+                + __construct()
+                # pdoBufferArrayReinit()
+                # pdoStmtAndDestInsertionInCue()
+                # pdoStmtAndDestProcessing()
+                # pdoQueryExec()
+                # pdoResultWriter()
+            }
+
+
+            class EventDataGatherer extends EventDataGathererPdoManager {
+                # $dataStore : array
+                # $eventsIdList : array
+                --
+                + __construct()
+                +__destruct()
+                - dataStoreArrayPrepPhase1()
+                - dataStoreArrayPrepPhase2()
+                + eventIdReceiver()
+            }
+        }
+
+
+        package eventIdFinder///medic {
+            class EventIdFinder extends ModelInChief {
+                + __construct()
+                + comingEventsIds()
+                + eventsIdsByUserId()
+                + eventsIdsFromOneDocId()
+                + onlyOneEvent()
+            }
+
+        }
+
+
+        package medicTheme///medic {
+            class MedicThemeModel extends ModelInChief {
+                + __construct()
+                + __destruct()
+                + medicThemeByEventsIds()
+                + gatherMedicEventMedicThemeRelation()
+            }
+        }
+
+
+        package speMedic///medic {
+            class SpeMedicModel extends ModelInChief {
+                + __construct()
+                + __destruct()
+                + speMedicByEventsIds()
+                + gatherMedicEventSpeMedicRelation()
+            }
+        }
+    }
+
+
+    package medicORMMapper {
+        class MedicORMMapper {
+            + $DiagCheckPoints object
+            + $DiagConclusions object
+            + $DiagList object
+            + $DiagMedicThemeRelations object
+            + $DiagSymptoms object
+            + $DocList object
+            + $DocSpemedicRelation object
+            + $MedicEventAffectsRelation object
+            + $MedicEventList object
+            + $MedicEventSpemedicRelation object
+            + $MedicEventThemesRelation object
+            + $OrdoLaboList object
+            + $OrdoPharmaList object
+            + $PrescLaboList object
+            + $PrescPharmaList object
+            + $SpeMedicFullList object
+            --
+            + __construct()
+            + __destruct()
+        }
+
+        package dbList///medicORMMapper {
+            class DiagCheckPoints {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class DiagConclusions {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class DiagList {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class DiagMedicThemeRelations {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class DiagSymptoms {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class DocList {
+            }
+
+            class DocSpemedicRelation {
+            }
+
+            class MedicEventAffectsRelation {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class MedicEventList {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class MedicEventSpemedicRelation {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class MedicEventThemesRelation {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class OrdoLaboList {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class OrdoPharmaList {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class PrescLaboList {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class PrescPharmaList {
+                --
+                + stmtSelectForEvent()
+            }
+
+            class SpeMedicFullList {
+                --
+                + stmtSelectForEvent()
+            }
+        }
+    }
+
+    package userAccount {
+
+    }
+}
+
+
+
+@enduml

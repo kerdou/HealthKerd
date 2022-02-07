@@ -1,0 +1,53 @@
+@startmindmap
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+* Model/
+
+** common/
+***_ dbSettings.php
+***_ ModelInChief.php
+
+** home/
+***_ HomeModel.php
+
+** login/
+***_ LoginModel.php
+
+
+** medic/
+*** allEvents/
+
+
+*** doc/
+****_ DocModel.php
+****_ DocPostModel.php
+
+
+*** docOffice/
+****_ DocOfficeModel.php
+
+*** eventCat/
+****_ EventCatModel.php
+
+*** eventDataGatherer/
+****_ EventDataGatherer.php
+****_ EventDataGathererPdoManager.php
+****_ EventDataHelpers.php
+****_ SpecificStmtStore.php
+
+*** eventIdFinder/
+****_ EventIdFinder.php
+
+*** medicTheme/
+****_ MedicThemeModel.php
+
+*** speMedic/
+****_ speMedicModel.php
+
+** userAccount/
+
+
+@endmindmap

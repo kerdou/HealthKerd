@@ -2,14 +2,19 @@
 
 namespace HealthKerd\View\medic\eventsBuilder\care\session;
 
+/** Dépot des méthodes de création des blocs de l'accordéon de session de soin
+ */
 class CareSessionBuilderFunctionsPool
 {
     public function __destruct()
     {
     }
 
-
-    /** */
+    /** Début de la DIV d'accordéon de session de soin
+     * @param array $sessionData        Données de la session de soin
+     * @param string $medicEventID      ID de l'event
+     * @return string                   HTML du début d'accordéon
+    */
     protected function careAccordionStart(array $sessionData, string $medicEventID)
     {
         $careAccordionStartHTML =
@@ -31,14 +36,16 @@ class CareSessionBuilderFunctionsPool
         return $careAccordionStartHTML;
     }
 
-
-    /** */
-    protected function careElemBuilder(array $sessionData)
+    /** Construction des <LI> des élements de la session de soin
+     * @param array $elementsData   Listes des éléments de la session de soin
+     * @return string               HTML des <li> concatenées
+    */
+    protected function careElemBuilder(array $elementsData)
     {
         $careElemBuilderHTML = '';
         $careElemBuilderArray = array();
 
-        foreach ($sessionData['elements'] as $element) {
+        foreach ($elementsData as $element) {
             $li = '<li>' . $element['name'] . '</li>';
             array_push($careElemBuilderArray, $li);
         }
@@ -54,8 +61,11 @@ class CareSessionBuilderFunctionsPool
         return $careElemBuilderHTML;
     }
 
-
-    /** */
+    /** DIV de commentaire de la session de soin
+     * @param array $sessionData        Données de la session de soin
+     * @param string $medicEventID      ID de l'event
+     * @return string                   DIV de commentaire
+    */
     protected function careComment(array $sessionData, string $medicEventID)
     {
         $careCommentHTML =
@@ -67,8 +77,9 @@ class CareSessionBuilderFunctionsPool
         return $careCommentHTML;
     }
 
-
-    /** */
+    /** Fin de l'accordéon de session de soin
+     * @return string       HTML de la fin de l'accordéon de soin
+    */
     protected function careAccordionEnd()
     {
         $careAccordionEndHTML =
@@ -78,8 +89,5 @@ class CareSessionBuilderFunctionsPool
             </div> <!-- END OF CARE SESSION ACCORDION --> ';
 
         return $careAccordionEndHTML;
-
     }
-
-
 }

@@ -2,6 +2,8 @@
 
 namespace HealthKerd\Controller\userAccount;
 
+/** Contrôleur GET de gestion de compte user
+ */
 class UserAccountGetController
 {
     private object $homeModel; // Récupére les données des 3 derniers clients et des 3 derniers prospects
@@ -11,7 +13,10 @@ class UserAccountGetController
     {
     }
 
-    /** Récupére [$_GET['action']] et lance l'affichage de la page voulue */
+    /** Recoit GET['action'] et lance la suite
+     * @param array $cleanedUpGet   Infos nettoyées provenants du GET
+     * @return void
+     */
     public function actionReceiver(array $cleanedUpGet)
     {
         echo '<h1>PLOP ACCOUNT GET CONTROLLER</h1>';

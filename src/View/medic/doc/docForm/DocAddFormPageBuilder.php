@@ -2,6 +2,8 @@
 
 namespace HealthKerd\View\medic\doc\docForm;
 
+/** Construction puis affichage du formulaire d'ajout de docteur
+ */
 class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
@@ -22,21 +24,22 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
     }
 
-
-    /** */
+    /** Lance la construction du HTML
+    */
     public function dataReceiver()
     {
         $this->buildOrder();
     }
 
 
-    /** */
+    /** Ordre de construction des élèments de la page, puis du remplissage des champs et ajout des boutons du formulaire avant affichage
+    */
     private function buildOrder()
     {
-        $this->builtContentHTML .= file_get_contents(__DIR__ . '../../../../../../templates/medic/doc/docFormTop.html');
+        $this->builtContentHTML .= file_get_contents(__DIR__ . '../../../../../../templates/medic/doc/docFormTop.html'); // partie haute du template de formulaire de docteur
         $this->builtContentHTML .= '<button type="button" id="formSubmitButton" name="formSubmitButton" class="btn btn-secondary me-2" value="{formSubmitButtonValue}">{formSubmitButtonText}</button>';
         $this->builtContentHTML .= '<button type="button" id="formResetButton" name="formResetButton" class="btn btn-secondary me-2">Réinitialiser</button>';
-        $this->builtContentHTML .= file_get_contents(__DIR__ . '../../../../../../templates/medic/doc/docFormBot.html');
+        $this->builtContentHTML .= file_get_contents(__DIR__ . '../../../../../../templates/medic/doc/docFormBot.html'); // partie basse du template de formulaire de docteur
         $this->stringReplacer();
 
         $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
@@ -44,10 +47,10 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageDisplay();
     }
 
-
+    /** Configuration de tous les élèments du formulaire
+     */
     private function stringReplacer()
     {
-
         $this->builtContentHTML = str_replace('{formAction}', 'index.php?controller=medic&subCtrlr=docPost&action=addDoc', $this->builtContentHTML);
 
         $this->builtContentHTML = str_replace('{formTitle}', 'Création d\'un professionnel de santé', $this->builtContentHTML);
@@ -68,7 +71,6 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->builtContentHTML = str_replace('{noneChecked}', 'checked', $this->builtContentHTML);
         $this->builtContentHTML = str_replace('{noneDisabled}', '', $this->builtContentHTML);
 
-
         // Nom de famille
         $this->builtContentHTML = str_replace('{lastnameValidity}', '', $this->builtContentHTML);
         $this->builtContentHTML = str_replace('{lastnameValue}', '', $this->builtContentHTML);
@@ -78,10 +80,6 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->builtContentHTML = str_replace('{firstnameValidity}', '', $this->builtContentHTML);
         $this->builtContentHTML = str_replace('{firstnameValue}', '', $this->builtContentHTML);
         $this->builtContentHTML = str_replace('{fistNameReadOnly}', '', $this->builtContentHTML);
-
-
-
-
 
         // Tel
         $this->builtContentHTML = str_replace('{telValidity}', '', $this->builtContentHTML);
@@ -93,10 +91,6 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->builtContentHTML = str_replace('{mailValue}', '', $this->builtContentHTML);
         $this->builtContentHTML = str_replace('{mailReadOnly}', '', $this->builtContentHTML);
 
-
-
-
-
         // Site web perso
         $this->builtContentHTML = str_replace('{webpageValidity}', '', $this->builtContentHTML);
         $this->builtContentHTML = str_replace('{webpageValue}', '', $this->builtContentHTML);
@@ -107,15 +101,9 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->builtContentHTML = str_replace('{doctolibpageValue}', '', $this->builtContentHTML);
         $this->builtContentHTML = str_replace('{doctolibpageValue}', '', $this->builtContentHTML);
 
-
-
-
         // Commentaires
         $this->builtContentHTML = str_replace('{commentContent}', '', $this->builtContentHTML);
         $this->builtContentHTML = str_replace('{commentReadOnly}', '', $this->builtContentHTML);
-
-
-
 
         // Bouton de création
         $this->builtContentHTML = str_replace('{formSubmitButtonValue}', '', $this->builtContentHTML);

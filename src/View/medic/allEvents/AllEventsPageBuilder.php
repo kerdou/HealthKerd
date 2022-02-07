@@ -2,17 +2,18 @@
 
 namespace HealthKerd\View\medic\allEvents;
 
+/** Construction puis affichage de la page contenant tous les events (passés et futurs) d'un user
+ */
 class AllEventsPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
-    private array|null $eventsData = array();
+    private array $eventsData = array();
     private string $builtContentHTML = '';
-    private string|null $pastEventsHTML = '';
-    private string|null $futureEventsHTML = '';
+    private string $pastEventsHTML = '';
+    private string $futureEventsHTML = '';
 
     private object $eventsBuilder;
 
-    /** */
     public function __construct()
     {
         parent::__construct();
@@ -22,12 +23,15 @@ class AllEventsPageBuilder extends \HealthKerd\View\common\ViewInChief
         );
     }
 
-
     public function __destruct()
     {
     }
 
-
+    /** Recoit les données de tous les rendez-vous puis lance la construction du HTML de ce contenu
+     * * On construit d'abord les events passés
+     * * On construit ensuite les events futurs
+     * @param array $medicEvtProcessedDataStore     Donnée réassamblée et réagencée dans le Processor pour faciliter la création du HTML
+     */
     public function dataReceiver(array $medicEvtProcessedDataStore)
     {
         $this->eventsData = $medicEvtProcessedDataStore;
@@ -41,10 +45,9 @@ class AllEventsPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->buildOrder();
     }
 
-
-
-
-    /** */
+    /** Adaptation de la page suivant la présence ou l'absence des events passés et futurs
+     * Puis configuration de la page et affichage du contenu
+     */
     private function buildOrder()
     {
         if (sizeof($this->eventsData['futureEvents']) > 0) {

@@ -1,0 +1,27 @@
+@startmindmap archi_v2
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+* root/
+
+** .git/
+
+** .vscode/
+
+** assets/
+
+** node_modules/
+
+** public/
+
+** src/
+
+** template/
+
+** tests/
+
+** vendor/
+
+@endmindmap
