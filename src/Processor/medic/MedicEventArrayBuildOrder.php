@@ -14,68 +14,7 @@ class MedicEventArrayBuildOrder
 
     public function __construct()
     {
-        /** DATA WORKBENCH
-         * Stockage de données
-         */
-        // temps
-        $this->dataWorkbench['dateAndTime'] = array(); // Stockage de toutes les données temporelles
-
-        // doc
-        $this->dataWorkbench['docList'] = array(); // Données liées aux docteurs et à leur spécialités médicales
-
-        // event
-        $this->dataWorkbench['eventArray'] = array(); // Données de l'event et uniquement lui; pas de ses contenus
-
-        // ordonnances
-        $this->dataWorkbench['ordoLabo'] = array(); // Ordonnances de prélèvement en laboratoire médical
-        $this->dataWorkbench['ordoPharma'] = array(); // Ordonnances pharmaceutiques
-        $this->dataWorkbench['ordoVax'] = array(); // Ordonnances vaccinnales
-        $this->dataWorkbench['ordoSight'] = array(); // Ordonnances optiques
-        $this->dataWorkbench['ordoGlobalArray'] = array(); // Regroupement des ordonnances
-
-        // diagnostics
-        $this->dataWorkbench['diagList'] = array(); // Liste des diagnostics
-
-        // sessions de soins
-        $this->dataWorkbench['careSessions'] = array(); // Sessions de soin
-
-        // sessions de vaccination
-        $this->dataWorkbench['vaxSessions'] = array(); // Sessions de vaccination
-
-        /** OBJECT STORE
-         * Stockage des instances de traitement de données
-         */
-        // gestion des spécialités médicales pour les docteurs
-        $this->objectStore['SpeMedicForDocsOrganizer'] = new \HealthKerd\Processor\medic\speMedic\DocSpeMedicOrganizer();
-
-        // gestion des docteurs et de leur spécialits médicales
-        $this->objectStore['DocOrganizer'] = new \HealthKerd\Processor\medic\doc\DocListOrganizer();
-
-        // gestion des events
-        $this->objectStore['EventDataOrganizer'] = new \HealthKerd\Processor\medic\event\EventDataOrganizer();
-        $this->objectStore['EventFinalContentMerger'] = new \HealthKerd\Processor\medic\event\EventFinalContentMerger();
-
-        // gestion des ordonnances
-        $this->objectStore['OrdoLaboOrganizer'] = new \HealthKerd\Processor\medic\event\diag\ordo\OrdoLaboOrganizer();
-        $this->objectStore['OrdoPharmaOrganizer'] = new \HealthKerd\Processor\medic\event\diag\ordo\OrdoPharmaOrganizer();
-        $this->objectStore['OrdoVaxOrganizer'] = new \HealthKerd\Processor\medic\event\diag\ordo\OrdoVaxOrganizer();
-        $this->objectStore['OrdoSightOrganizer'] = new \HealthKerd\Processor\medic\event\diag\ordo\OrdoSightOrganizer();
-        $this->objectStore['OrdoGatherAndSorting'] = new \HealthKerd\Processor\medic\event\diag\ordo\OrdoGatherAndSorting();
-
-        // gestion des diagnostics
-        $this->objectStore['DiagListOrganizer'] = new \HealthKerd\Processor\medic\event\diag\DiagListOrganizer();
-
-        // gestion des sessions de soin
-        $this->objectStore['CareSessionsOrganizer'] = new \HealthKerd\Processor\medic\event\care\CareSessionsOrganizer(); //
-
-        // gestion des sessions de vaccination
-        $this->objectStore['VaxSessionsOrganizer'] = new \HealthKerd\Processor\medic\event\vax\VaxSessionsOrganizer(); //
-
-
-        /** EXECUTION AUTOMATIQUE
-         * Lancement automatique de fonctions
-         */
-        $this->dateAndTimeCreator(); // ajoute des données de temps à $dataWorkbench['dateAndTime']
+        $this->dateAndTimeCreator(); // ajoute des données de temps dans $dataWorkbench['dateAndTime']
     }
 
     public function __destruct()
@@ -123,6 +62,8 @@ class MedicEventArrayBuildOrder
     private function dateAndTimeCreator()
     {
         setlocale(LC_TIME, 'fr_FR', 'fra');
+        $this->dataWorkbench['dateAndTime'] = array(); // Stockage de toutes les données temporelles
+
         $this->dataWorkbench['dateAndTime']['timezoneObj'] = timezone_open('Europe/Paris');
         $this->dataWorkbench['dateAndTime']['nowTimeObj'] = date_create('now', $this->dataWorkbench['dateAndTime']['timezoneObj']);
 
@@ -141,6 +82,7 @@ class MedicEventArrayBuildOrder
     */
     private function docSpeMedicOrganizer()
     {
+        $this->objectStore['SpeMedicForDocsOrganizer'] = new \HealthKerd\Processor\medic\speMedic\DocSpeMedicOrganizer();
         $this->dataWorkbench['spe_medic_for_docs'] = $this->objectStore['SpeMedicForDocsOrganizer']->docSpeMedicOrganizer(
             $this->originalDataStore['spe_medic_for_attended_docs_on_events']['pdoResult'],
             $this->originalDataStore['spe_medic_for_replaced_docs_on_events']['pdoResult'],
@@ -156,6 +98,8 @@ class MedicEventArrayBuildOrder
      */
     private function docListOrganizer()
     {
+        $this->objectStore['DocOrganizer'] = new \HealthKerd\Processor\medic\doc\DocListOrganizer();
+        $this->dataWorkbench['docList'] = array(); // Données liées aux docteurs et à leur spécialités médicales
         $this->dataWorkbench['docList'] = $this->objectStore['DocOrganizer']->docListOrganizer(
             $this->originalDataStore['doc_list_AttendedDoc']['pdoResult'],
             $this->originalDataStore['doc_list_ReplacedDoc']['pdoResult'],
@@ -169,6 +113,8 @@ class MedicEventArrayBuildOrder
     */
     private function eventBascisManager()
     {
+        $this->objectStore['EventDataOrganizer'] = new \HealthKerd\Processor\medic\event\EventDataOrganizer();
+        $this->dataWorkbench['eventArray'] = array(); // liste des events
         $this->dataWorkbench['eventArray'] = $this->objectStore['EventDataOrganizer']->eventGeneralBuildOrder(
             $this->originalDataStore['medic_event_list']['pdoResult'],
             $this->originalDataStore['medic_event_themes_relation']['pdoResult'],
@@ -188,6 +134,8 @@ class MedicEventArrayBuildOrder
     private function ordoManager()
     {
         // Récupération des presc et slots d'ordo labo puis regroupement dans les ordonnances d'ordo labo
+        $this->objectStore['OrdoLaboOrganizer'] = new \HealthKerd\Processor\medic\event\diag\ordo\OrdoLaboOrganizer();
+        $this->dataWorkbench['ordoLabo'] = array();
         $this->dataWorkbench['ordoLabo'] = $this->objectStore['OrdoLaboOrganizer']->ordoLaboGeneralBuildOrder(
             $this->originalDataStore['ordo_labo_list']['pdoResult'],
             $this->originalDataStore['presc_labo_list']['pdoResult'],
@@ -197,6 +145,8 @@ class MedicEventArrayBuildOrder
         );
 
         // Récupération des presc d'ordo labo puis regroupement dans les ordonnances d'ordo pharma
+        $this->objectStore['OrdoPharmaOrganizer'] = new \HealthKerd\Processor\medic\event\diag\ordo\OrdoPharmaOrganizer();
+        $this->dataWorkbench['ordoPharma'] = array(); // Ordonnances pharmaceutiques
         $this->dataWorkbench['ordoPharma'] = $this->objectStore['OrdoPharmaOrganizer']->ordoPharmaGeneralBuildOrder(
             $this->originalDataStore['ordo_pharma_list']['pdoResult'],
             $this->originalDataStore['presc_pharma_list']['pdoResult'],
@@ -204,12 +154,16 @@ class MedicEventArrayBuildOrder
         );
 
         // Récupération des ordonnances optiques
+        $this->objectStore['OrdoSightOrganizer'] = new \HealthKerd\Processor\medic\event\diag\ordo\OrdoSightOrganizer();
+        $this->dataWorkbench['ordoSight'] = array(); // Ordonnances optiques
         $this->dataWorkbench['ordoSight'] = $this->objectStore['OrdoSightOrganizer']->ordoSightGeneralBuildOrder(
             $this->originalDataStore['ordo_sight_list']['pdoResult'],
             $this->dataWorkbench['dateAndTime']
         );
 
         // Récupération des presc et slots d'ordo vax puis regroupement dans les ordonnances d'ordo vax
+        $this->objectStore['OrdoVaxOrganizer'] = new \HealthKerd\Processor\medic\event\diag\ordo\OrdoVaxOrganizer();
+        $this->dataWorkbench['ordoVax'] = array(); // Ordonnances vaccinnales
         $this->dataWorkbench['ordoVax'] = $this->objectStore['OrdoVaxOrganizer']->ordoVaxGeneralBuildOrder(
             $this->originalDataStore['ordo_vax_list']['pdoResult'],
             $this->originalDataStore['presc_vax_list']['pdoResult'],
@@ -218,6 +172,8 @@ class MedicEventArrayBuildOrder
         );
 
         // Rassemblement de toutes les ordonnances dans un seul array et tri par timestamp par ordre croissant
+        $this->objectStore['OrdoGatherAndSorting'] = new \HealthKerd\Processor\medic\event\diag\ordo\OrdoGatherAndSorting();
+        $this->dataWorkbench['ordoGlobalArray'] = array(); // Regroupement des ordonnances
         $this->dataWorkbench['ordoGlobalArray'] = $this->objectStore['OrdoGatherAndSorting']->ordoArrayGeneralBuildOrder(
             $this->dataWorkbench['ordoLabo'],
             $this->dataWorkbench['ordoPharma'],
@@ -234,7 +190,9 @@ class MedicEventArrayBuildOrder
     private function diagManager()
     {
         // Création des diagnostics
-        $this->dataWorkbench['diagList'] = $this->objectStore['DiagListOrganizer'] ->diagListArrayGeneralBuildOrder(
+        $this->objectStore['DiagListOrganizer'] = new \HealthKerd\Processor\medic\event\diag\DiagListOrganizer();
+        $this->dataWorkbench['diagList'] = array(); // Liste des diagnostics
+        $this->dataWorkbench['diagList'] = $this->objectStore['DiagListOrganizer']->diagListArrayGeneralBuildOrder(
             $this->originalDataStore['diag_list']['pdoResult'],
             $this->originalDataStore['diag_symptoms']['pdoResult'],
             $this->originalDataStore['diag_check_points']['pdoResult'],
@@ -247,6 +205,8 @@ class MedicEventArrayBuildOrder
      */
     private function careSessionsManager()
     {
+        $this->objectStore['CareSessionsOrganizer'] = new \HealthKerd\Processor\medic\event\care\CareSessionsOrganizer();
+        $this->dataWorkbench['careSessions'] = array(); // Sessions de soin
         $this->dataWorkbench['careSessions'] = $this->objectStore['CareSessionsOrganizer']->careSessionsGeneralBuildOrder(
             $this->originalDataStore['care_sessions_list']['pdoResult'],
             $this->originalDataStore['care_session_elements']['pdoResult']
@@ -257,6 +217,8 @@ class MedicEventArrayBuildOrder
      */
     private function vaxSessionsManager()
     {
+        $this->objectStore['VaxSessionsOrganizer'] = new \HealthKerd\Processor\medic\event\vax\VaxSessionsOrganizer();
+        $this->dataWorkbench['vaxSessions'] = array(); // Sessions de vaccination
         $this->dataWorkbench['vaxSessions'] = $this->objectStore['VaxSessionsOrganizer']->vaxSessionsGeneralBuildOrder(
             $this->originalDataStore['vax_sessions_list']['pdoResult'],
             $this->originalDataStore['vax_sessions_side_effects']['pdoResult'],
@@ -268,6 +230,7 @@ class MedicEventArrayBuildOrder
      */
     private function eventsFinalDataMerge()
     {
+        $this->objectStore['EventFinalContentMerger'] = new \HealthKerd\Processor\medic\event\EventFinalContentMerger();
         $this->processedDataArray = $this->objectStore['EventFinalContentMerger']->eventContentMerger(
             $this->dataWorkbench['eventArray'],
             $this->dataWorkbench['dateAndTime']['todayEarlyTimestamp'],
