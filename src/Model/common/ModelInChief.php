@@ -40,6 +40,7 @@ abstract class ModelInChief
      * @param string $base          Nom de la DB
      * @param string $user          Login de cnx au serveur SQL
      * @param string $password      Mot de passe
+     * @throws string               Message d'erreur
      */
     protected function pdoInit(string $host, string $base, string $user, string $password)
     {
@@ -66,7 +67,7 @@ abstract class ModelInChief
      * @param  string $idColumnName     Nom de la colonne à chercher dans la table
      * @return string                   Renvoie du string des 'columnName = id' rassemblés
     */
-    protected function stmtWhereBuilder(array $idList, string $idColumnName)
+    public static function stmtWhereBuilder(array $idList, string $idColumnName): string
     {
         $whereString = '';
         $whereStringBuildUpArray = array();
@@ -85,9 +86,10 @@ abstract class ModelInChief
 
     /** Execution de SELECT préparé, 2 modes de Fetch possible suivante le nombre de résultats attendu
      * @param string $fetchMode     Défini le type de Fetch: single ou multi
-     * @return array                Données renvoyées par la DB
+     * @return array                Données renvoyées par la DB en cas de succés
+     * @throws string               Message d'erreur
     */
-    protected function pdoPreparedSelectExecute(string $fetchMode)
+    protected function pdoPreparedSelectExecute(string $fetchMode): array
     {
         try {
             $this->query->execute();
@@ -113,9 +115,10 @@ abstract class ModelInChief
     /** Execution de SELECT non préparé, 2 modes de Fetch possible suivante le nombre de résultats attendu
      * @param string $stmt          Requete envoyée
      * @param string $fetchMode     Défini le type de Fetch: single ou multi
-     * @return array                Données renvoyées par la DB
+     * @return array                Données renvoyées par la DB en cas de succés
+     * @throws string               Message d'erreur
      */
-    protected function pdoRawSelectExecute(string $stmt, string $fetchMode)
+    protected function pdoRawSelectExecute(string $stmt, string $fetchMode): array
     {
         try {
             $result = $this->pdo->query($stmt);
@@ -140,7 +143,7 @@ abstract class ModelInChief
      * @param array $dest       Array permettant de connaitre le nombre de réponses attendues
      * @return array            Contient toutes les réponses séparées
      */
-    protected function pdoEventSelectMultiQuery(string $stmt, array $dest)
+    protected function pdoEventSelectMultiQuery(string $stmt, array $dest): array
     {
         $rawResult = $this->pdo->query($stmt);
         $resultsArray = array();

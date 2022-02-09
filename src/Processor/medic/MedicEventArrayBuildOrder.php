@@ -98,7 +98,7 @@ class MedicEventArrayBuildOrder
      */
     private function docListOrganizer()
     {
-        $this->objectStore['DocOrganizer'] = new \HealthKerd\Processor\medic\doc\DocListOrganizer();
+        $this->objectStore['DocOrganizer'] = new \HealthKerd\Processor\medic\doc\DocListOrganizerForEvent();
         $this->dataWorkbench['docList'] = array(); // Données liées aux docteurs et à leur spécialités médicales
         $this->dataWorkbench['docList'] = $this->objectStore['DocOrganizer']->docListOrganizer(
             $this->originalDataStore['doc_list_AttendedDoc']['pdoResult'],

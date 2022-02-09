@@ -4,7 +4,7 @@ namespace HealthKerd\Model\medic\doc;
 
 /** Modéle GET de récupération des données des docteurs et des autre données gravitant autour
  */
-class DocModel extends \HealthKerd\Model\common\ModelInChief
+class DocModel extends \HealthKerd\Model\common\PdoBufferManager
 {
     public function __construct()
     {
@@ -13,34 +13,6 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
 
     public function __destruct()
     {
-    }
-
-    /** Récupération des données basiques de tous les docteurs d'un user
-     * * docID
-     * * Titre du doc
-     * * Prénom du doc
-     * * Nom de famille du doc
-     * ----
-     * * Requête préparée
-     * @return array    Renvoie de toutes les données
-     */
-    public function gatherAllDocs()
-    {
-        $stmt =
-            "SELECT
-                docID, title, firstName, lastName
-            FROM
-                doc_list
-            WHERE
-                userID = :userID
-            ORDER BY
-                lastName;";
-
-        $this->query = $this->pdo->prepare($stmt);
-        $this->query->bindParam(':userID', $_SESSION['userID']);
-
-        $result = $this->pdoPreparedSelectExecute('multi');
-        return $result;
     }
 
     /** Récupération des données de la page d'informations concernant un docteur
@@ -52,7 +24,7 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
      * @param string $docID     ID du docteur concerné
      * @return array            Toutes les informations renvoyées par la base
      */
-    public function getOneDocForPageDisplay(string $docID)
+    public function getDataForOneDocPage(string $docID): array
     {
         $docStmt =
             "SELECT
@@ -140,7 +112,7 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
      * @param string $docID     ID du docteur
      * @return array            Toutes les données du docteur depuis doc_list
      */
-    public function getOneDocForFormDisplay(string $docID)
+    public function getAllDataForOneDocFromDocList(string $docID): array
     {
         $docStmt =
             "SELECT
@@ -162,46 +134,34 @@ class DocModel extends \HealthKerd\Model\common\ModelInChief
         return $docResult;
     }
 
-
-    /** Récupération des spécialités médicales d'un docteur
-     * @param array $docIDList
-     * @return array
-    */
-    public function gatherDocSpeMedicRelation(array $docIDList)
+    /** Récupére les données basiques des docteurs d'un user ainsi que leurs spé médicales
+     * @return array        Donnée des docteurs et leurs spé médicales
+     */
+    public function displayAllDocList(): array
     {
-        $whereString = $this->stmtWhereBuilder($docIDList, 'docID');
+        $medicSqlStmtStore = new  \HealthKerd\Model\medicSqlStmtStore\MedicSqlStmtStore(); // accés au store de templates de requêtes SQL
+        $docsUsedByUserWhereString = $this->stmtWhereBuilder([$_SESSION['userID']], 'doc_list.userID');
 
-        $stmt =
-            "SELECT
-                doc_spemedic_relation.*,
-                spe_medic_full_list.name
-            FROM
-                doc_spemedic_relation
-            INNER JOIN spe_medic_full_list ON doc_spemedic_relation.speMedicID = spe_medic_full_list.speMedicID
-            WHERE " . $whereString . ";";
+        $dataStore = array();
+        $dataStore['doc_list']['pdoStmt'] = $medicSqlStmtStore->DocList->stmtAllDocsBasicsInfos($docsUsedByUserWhereString);
+        $dataStore['doc_spemedic_relation']['pdoStmt'] = $medicSqlStmtStore->DocSpemedicRelation->stmtDocSpeMedicRelation($docsUsedByUserWhereString);
+        $dataStore['used_spemedics']['pdoStmt'] = $medicSqlStmtStore->DocSpemedicRelation->stmtSpeMedicUsedByUser($docsUsedByUserWhereString);
 
-        $result = $this->pdoRawSelectExecute($stmt, 'multi');
+        // Lancement de l'injection des données dans le $pdoBufferArray
+        foreach ($dataStore as $key => $value) {
+            $this->pdoStmtAndDestInsertionInCue($value['pdoStmt'], $key);
+        }
 
-        return $result;
-    }
+        $dataToWrite = array();
+        $dataToWrite = $this->pdoQueryExec(); // traitement des requêtes en attente dans le $pdoBuffer
 
-    /** Récupération de l'ID du dernier docteur créé par le user
-     * @return string   Le docID
-    */
-    public function getNewDocID()
-    {
-        $stmt =
-            "SELECT
-                docID
-            FROM
-                doc_list
-            WHERE " . $_SESSION['userID'] . "
-            ORDER BY docID
-            DESC LIMIT 1
-            ;";
+        // extraction des destinations des données puis remplacement des clés dans $dataToWrite['pdoMixedResult']
+        $dataToWrite['finalDestKeys'] = array();
+        foreach ($dataToWrite['dest'] as $key => $value) {
+            array_push($dataToWrite['finalDestKeys'], $value[0]);
+        }
+        $dataToWrite['pdoMixedResult'] = array_combine($dataToWrite['finalDestKeys'], $dataToWrite['pdoMixedResult']);
 
-        $result = $this->pdoRawSelectExecute($stmt, 'single');
-
-        return $result;
+        return $dataToWrite['pdoMixedResult'];
     }
 }

@@ -19,7 +19,7 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
      * @param array $docList    Liste des données des docteurs
      * @return array            Liste des ID des docs
      */
-    protected function docIDsExtractor(array $docList)
+    protected function docIDsExtractor(array $docList): array
     {
         $docIDList = array();
 
@@ -32,7 +32,7 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
 
     /** Récapitulatif des nombres et dates d'events passés et futurs
      */
-    protected function eventsSummaryCreation()
+    protected function eventsSummaryCreation(): void
     {
         $pastEventsQty = sizeof($this->pastEvents);
         $futureEventsQty = sizeof($this->futureEvents);
@@ -59,8 +59,9 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
     }
 
     /** convertie et ajoute la civilité du dr dans docList[$docKey]['title']
+     * TODO à réviser
     */
-    protected function docTitleAddition()
+    protected function docTitleAddition(): void
     {
         foreach ($this->docList as $docKey => $docValue) {
             switch ($docValue['title']) {
@@ -84,11 +85,12 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
     }
 
     /** Création de la string contenant le titre, le prénom et le nom du doc pour l'ajouter dans docList[$docKey]['fullNameSentence']
+     * TODO à réviser
      * * Exemple: Dr Gregory House
      * * Le résultat varie suivant la présence ou l'absence du titre de docteur
      * * Le résultat varie suivant la présence ou l'absence du prénom
      */
-    protected function docFullNameSentenceCreator()
+    protected function docFullNameSentenceCreator(): void
     {
         foreach ($this->docList as $docKey => $docValue) {
             $titleType = '';
@@ -151,7 +153,7 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
 
     /** ajoute les spécialités médicales des docteurs
     */
-    protected function speMedicAdditionToDocs()
+    protected function speMedicAdditionToDocs(): void
     {
         foreach ($this->docList as $docKey => $docValue) {
             foreach ($this->speMedicList as $speKey => $speValue) {
@@ -164,7 +166,7 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
 
     /** ajoute les informations du cabinet médical
     */
-    protected function docOfficeAddition()
+    protected function docOfficeAddition(): void
     {
         foreach ($this->docList as $docKey => $docValue) {
             foreach ($this->docOfficeList as $officeKey => $officeValue) {
@@ -175,42 +177,10 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
         }
     }
 
-    /** Création d'un array sans doublon contenant les spécialités médicales
-     * @return array    array de spécialités médicales et leurs ID (sans doublon)
-     */
-    protected function speMedicBadgeListBuildUp()
-    {
-        $speMedicIDList = array();
-
-        foreach ($this->speMedicList as $key => $value) {
-            array_push($speMedicIDList, $value['speMedicID']);
-        }
-
-        $speMedicIDList = array_unique($speMedicIDList);
-        sort($speMedicIDList, SORT_NUMERIC); // impératif pour que les index s'incrémentent de +1 à chaque élement, sinon le foreach utilisant array_key_exists() ne peut pas marcher
-
-        $speMedicBadgeList = array();
-
-        // s'il y a un match entre le speMedicID et que cette spé n'a pas déjà été ajoutée à $speMedicBadgeList, on l'ajoute
-        foreach ($speMedicIDList as $idKey => $idValue) {
-            foreach ($this->speMedicList as $speKey => $speValue) {
-                if (($idValue == $speValue['speMedicID']) && (array_key_exists($idKey, $speMedicBadgeList) == false)) {
-                    $tempArray = [
-                        'speMedicID' => $speValue['speMedicID'],
-                        'speMedicName' => $speValue['name']
-                    ];
-                    array_push($speMedicBadgeList, $tempArray);
-                }
-            }
-        }
-
-        //var_dump($speMedicBadgeList);
-        return $speMedicBadgeList;
-    }
-
     /** Création et stockage de toutes les données temporelles d'aujourd'hui
+     * TODO à réviser
     */
-    protected function dateAndTimeCreator()
+    protected function dateAndTimeCreator(): void
     {
         setlocale(LC_TIME, 'fr_FR', 'fra');
         $this->dataWorkbench['dateAndTime']['timezoneObj'] = timezone_open('Europe/Paris');
@@ -230,7 +200,7 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
     /** Préparation de la partie ['time'] de l'event
      *  * medicEventList[$eventKey]['time']['dateTime'] sert à stocker l'objet dateTime qui sera utilisé pour la création de toutes les autres données temporelles
     */
-    protected function medicEventArrayTimeModifier()
+    protected function medicEventArrayTimeModifier(): void
     {
         foreach ($this->medicEventList as $eventKey => $eventValue) {
             $this->medicEventList[$eventKey]['time']['dateTime'] = $eventValue['dateTime'];
@@ -241,8 +211,9 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
     }
 
     /** Ajout du timestamp, de la date complete en français et de l'heure
+     * TODO à réviser
      */
-    protected function timeManagement()
+    protected function timeManagement(): void
     {
         foreach ($this->medicEventList as $eventKey => $value) {
             $dateObj = date_create($value['time']['dateTime'], $this->dataWorkbench['dateAndTime']['timezoneObj']); // création de l'objet dateTime en tenant compte du décalage horaire correspondant à la date de l'event
@@ -255,8 +226,9 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
     }
 
     /** Tri des events dans 2 arrays par rapport à leur timestamp
+     * TODO à réviser
     */
-    protected function eventTimeDispatcher()
+    protected function eventTimeDispatcher(): void
     {
         foreach ($this->medicEventList as $key => $value) {
             if ($value['time']['timestamp'] < $this->dataWorkbench['dateAndTime']['todayEarlyTimestamp']) {
@@ -268,8 +240,9 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
     }
 
     /** Tri entre les events passés et futurs
+     * TODO à réviser
      */
-    protected function pastAndFutureEventsTimeSorting()
+    protected function pastAndFutureEventsTimeSorting(): void
     {
         uasort($this->pastEvents, array($this, "incrTimestampEventSorting"));
         uasort($this->futureEvents, array($this, "incrTimestampEventSorting"));
@@ -277,7 +250,7 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
 
 
     /** Tri des events en ordre croissant par timestamp
-     *
+     * TODO à réviser
     */
     protected function incrTimestampEventSorting($firstValue, $secondValue)
     {
@@ -288,7 +261,9 @@ abstract class DocGetControllerFunctionsPool extends DocCommonController
     }
 
 
-    /** Tri des events en ordre décroissant par timestamp */
+    /** Tri des events en ordre décroissant par timestamp
+     * TODO à réviser
+    */
     protected function decrTimestampEventSorting($firstValue, $secondValue)
     {
         if ($firstValue['time']['timestamp'] == $secondValue['time']['timestamp']) {

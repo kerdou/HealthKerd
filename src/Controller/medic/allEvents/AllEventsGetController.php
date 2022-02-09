@@ -31,7 +31,7 @@ class AllEventsGetController
      */
     public function displayAllEvents()
     {
-        $medicEventsIdResult = $this->medicEventIdFinder->eventsIdsByUserId();
+        $medicEventsIdResult = $this->medicEventIdFinder->eventsIdsByUserId(); // model
         $medicEventsIdList = array();
 
         // conversion des ID d'event en integer
@@ -39,13 +39,13 @@ class AllEventsGetController
             array_push($medicEventsIdList, intval($value['medicEventID']));
         }
 
-        $medicEvtOriginalDataStore = $this->medicEventDataGatherer->eventIdReceiver($medicEventsIdList);
-        $medicEvtProcessedDataStore = $this->medicEventArrayBuildOrder->eventDataReceiver($medicEvtOriginalDataStore);
+        $medicEvtOriginalDataStore = $this->medicEventDataGatherer->eventIdReceiver($medicEventsIdList); // model
+        $medicEvtProcessedDataStore = $this->medicEventArrayBuildOrder->eventDataReceiver($medicEvtOriginalDataStore); // processor
 
         // vidage de $medicEvtOriginalDataStore
         unset($medicEvtOriginalDataStore);
         $medicEvtOriginalDataStore = array();
 
-        $this->allEventsView->dataReceiver($medicEvtProcessedDataStore);
+        $this->allEventsView->dataReceiver($medicEvtProcessedDataStore); // view
     }
 }
