@@ -10,9 +10,8 @@ class LoginPostController extends LoginCommonController
 
     public function __construct()
     {
-        $this->loginModel = new \HealthKerd\Model\login\LoginModel();
+        $this->loginModel = new \HealthKerd\Model\modelInit\login\LoginSelectModel();
     }
-
 
     public function __destruct()
     {
@@ -22,21 +21,20 @@ class LoginPostController extends LoginCommonController
      * @param array $cleanedUpPost   Infos nettoyées provenants du POST
      * @return void
      */
-    public function actionReceiver(array $cleanedUpPost)
+    public function actionReceiver(array $cleanedUpPost): void
     {
         if (isset($cleanedUpPost['action'])) {
             switch ($cleanedUpPost['action']) {
-                case 'logMeIn':
+                case 'logMeIn': // tentative de connexion d'un user
                     $userData = $this->loginModel->checkUserLogs($cleanedUpPost);
 
-                    if (!empty($userData)) {
+                    if (!empty($userData)) { // en cas de succés, on part vers la homepage
                         $_SESSION['userID'] = intval($userData['userID']);
                         $_SESSION['isAdmin'] = intval($userData['isAdmin']);
                         $_SESSION['firstName'] = $userData['firstName'];
                         $_SESSION['lastName'] = $userData['lastName'];
                         echo "<script>window.location = 'index.php?controller=home';</script>";
-                    } else {
-                        //echo '<h1>NOT GOOD!!!</h1>';
+                    } else { // en cas d'échec, on retourne à la page de login
                         echo "<script>window.location = 'index.php';</script>";
                     }
 

@@ -4,13 +4,8 @@ namespace HealthKerd\Controller\medic\docOffice;
 
 /** Contrôleur POST des cabinets médicaux
  */
-class DocOfficePostController extends DocOfficeCommonController
+class DocOfficePostController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function __destruct()
     {
     }

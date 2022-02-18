@@ -15,12 +15,12 @@ class DocGetController extends DocGetControllerFunctionsPool
     protected array $futureEvents = array();
     protected array $dataWorkbench = array();
 
+    protected object $docSelectModel;
     protected object $docView;
-
 
     public function __construct()
     {
-        parent::__construct();
+        $this->docSelectModel = new \HealthKerd\Model\modelInit\medic\doc\DocSelectModel();
     }
 
     public function __destruct()
@@ -46,8 +46,7 @@ class DocGetController extends DocGetControllerFunctionsPool
                     break;
 
                 case 'showEventsWithOneDoc': // affichage de tous les events liés à un doc
-                    $docID = $cleanedUpGet['docID'];
-                    $this->showEventsWithOneDoc($docID);
+                    $this->showEventsWithOneDoc();
                     break;
 
                 case 'showDocAddForm': // affichage du formulaire d'ajout de doc
@@ -79,7 +78,7 @@ class DocGetController extends DocGetControllerFunctionsPool
     private function displayAllDocList(): void
     {
         $combinedData = array();
-        $combinedData = $this->docModel->displayAllDocList();
+        $combinedData = $this->docSelectModel->displayAllDocsListModel();
 
         $DocListOrganizerForDocListing = new \HealthKerd\Processor\medic\doc\DocListOrganizerForDocListing();
         $organizedData = $DocListOrganizerForDocListing->docListOrganizer($combinedData['doc_list'], $combinedData['doc_spemedic_relation']);
@@ -93,7 +92,7 @@ class DocGetController extends DocGetControllerFunctionsPool
     */
     private function displayOneDoc(string $docID): void
     {
-        $mixedDataResult = $this->docModel->getDataForOneDocPage($docID); // model
+        $mixedDataResult = $this->docSelectModel->getDataForOneDocPageModel($docID); // model
 
         array_push($this->docList, $mixedDataResult['doc']);
         $this->speMedicList = $mixedDataResult['speMedic'];
@@ -130,39 +129,15 @@ class DocGetController extends DocGetControllerFunctionsPool
         $this->docView->dataReceiver($this->docList[0]); // view
     }
 
-
     /** Affichage de tous les events liés à un doc
-     * @param string $docID
     */
-    private function showEventsWithOneDoc(string $docID): void
+    private function showEventsWithOneDoc(): void
     {
-        date_default_timezone_set('Europe/Paris');
-        $medicEventIdFinder = new \HealthKerd\Model\medic\eventIdFinder\EventIdFinder();
-        $medicEventDataGatherer = new \HealthKerd\Model\medic\eventDataGatherer\EventDataGatherer();
-        $medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicEventArrayBuildOrder();
+        $this->eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
+        $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsFromOneDocId', $this->cleanedUpGet);
+
         $this->docView = new \HealthKerd\View\medic\doc\eventsWithOneDoc\EventsWithOneDocPageBuilder();
-
-        $medicEventsIdResult = array();
-        $medicEventsIdResult = $medicEventIdFinder->eventsIdsFromOneDocId($docID); // model
-
-        // conversion des ID d'event en integer
-        $medicEventsIdList = array();
-        foreach ($medicEventsIdResult as $value) {
-            array_push($medicEventsIdList, intval($value['medicEventID']));
-        }
-
-        $medicEvtOriginalDataStore = $medicEventDataGatherer->eventIdReceiver($medicEventsIdList); // model
-        $medicEvtProcessedDataStore = $medicEventArrayBuildOrder->eventDataReceiver($medicEvtOriginalDataStore);
-
-        //echo '<pre>';
-        //print_r($medicEvtOriginalDataStore);
-        //echo '</pre>';
-
-        // vidage de $medicEvtOriginalDataStore
-        unset($medicEvtOriginalDataStore);
-        $medicEvtOriginalDataStore = array();
-
-        $this->docView->dataReceiver($medicEvtProcessedDataStore);
+        $this->docView->dataReceiver($processedData);
     }
 
     /** Affichage du formulaire d'ajout de doc
@@ -173,25 +148,23 @@ class DocGetController extends DocGetControllerFunctionsPool
         $this->docView->dataReceiver();
     }
 
-
     /** Affichage du formulaire de modif de doc
      * @param string $docID
     */
     private function showDocEditForm(string $docID): void
     {
-        $docData = $this->docModel->getAllDataForOneDocFromDocList($docID);
+        $docData = $this->docSelectModel->getAllDataForOneDocFromDocListModel($docID);
 
         $this->docView = new \HealthKerd\View\medic\doc\docForm\DocEditFormPageBuilder();
         $this->docView->dataReceiver($docData);
     }
-
 
     /** Affichage du formulaire de suppr de doc
      * @param string $docID
     */
     private function showDocDeleteForm(string $docID): void
     {
-        $docData = $this->docModel->getAllDataForOneDocFromDocList($docID);
+        $docData = $this->docSelectModel->getAllDataForOneDocFromDocListModel($docID);
 
         $this->docView = new \HealthKerd\View\medic\doc\docForm\DocDeleteFormPageBuilder();
         $this->docView->dataReceiver($docData);

@@ -1,27 +1,27 @@
-{
-    "liveSassCompile.settings.formats": [
-        {
-            "format": "expanded",
-            "extensionName": ".css",
-            "savePath": "/public/css"
-        },
-        {
-            "extensionName": ".min.css",
-            "format": "compressed",
-            "savePath": "/public/css"
-        }
-    ],
-    "liveSassCompile.settings.includeItems": [
-        "/assets/Sass/**"
-    ],
-    "liveSassCompile.settings.excludeList": [
-        "**/node_modules/**",
-        ".vscode/**"
-    ],
-    "liveSassCompile.settings.generateMap": true,
-    "liveSassCompile.settings.autoprefix": [
-        "> 1%",
-        "last 2 versions"
-    ],
-    "phpcs.standard": "./phpCodeSnifferOwnRuleset.xml"
+{,
+  "liveSassCompile.settings.formats": [
+      {
+          "format": "expanded",
+          "extensionName": ".css",
+          "savePath": "/public/css"
+      },
+      {
+          "extensionName": ".min.css",
+          "format": "compressed",
+          "savePath": "/public/css"
+      }
+  ],
+  "liveSassCompile.settings.includeItems": [
+      "/assets/Sass/**"
+  ],
+  "liveSassCompile.settings.excludeList": [
+      "**/node_modules/**",
+      ".vscode/**"
+  ],
+  "liveSassCompile.settings.generateMap": true,
+  "liveSassCompile.settings.autoprefix": [
+      "> 1%",
+      "last 2 versions"
+  ],
+  "phpcs.standard": "./phpCodeSnifferOwnRuleset.xml"
 }

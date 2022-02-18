@@ -4,13 +4,8 @@ namespace HealthKerd\Controller\medic\medicTheme;
 
 /** Contrôleur POST des thémes médicaux
  */
-class MedicThemePostController extends MedicThemeCommonController
+class MedicThemePostController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function __destruct()
     {
     }

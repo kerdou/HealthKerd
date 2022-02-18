@@ -3,20 +3,13 @@
 namespace HealthKerd\Controller\medic\doc;
 
 /** Controller gérant les données POST des formulaires de docteurs */
-class DocPostController extends DocCommonController
+class DocPostController
 {
     private array $cleanedUpGet = array();
     private array $cleanedUpPost = array();
 
-    private object $docPostModel;
     private object $docFormChecker;
 
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->docPostModel = new \HealthKerd\Model\medic\doc\DocPostModel();
-    }
 
     public function __destruct()
     {
@@ -44,13 +37,14 @@ class DocPostController extends DocCommonController
                         $docView = new \HealthKerd\View\medic\doc\docForm\DocFailedAddFormPageBuilder();
                         $docView->dataReceiver($this->cleanedUpPost, $checksArray);
                     } else {
-                        $pdoErrorMessage = $this->docPostModel->addDoc($this->cleanedUpPost);
+                        $insertModel = new \HealthKerd\Model\modelInit\medic\doc\DocInsertModel();
+                        $pdoErrorMessage = $insertModel->addDocModel($this->cleanedUpPost);
 
-                        $newDocIDArray = $this->docModel->getNewDocID();
-                        $newDocID = $newDocIDArray['docID'];
+                        $selectModel = new \HealthKerd\Model\modelInit\medic\doc\DocSelectModel();
+                        $newDocID = $selectModel->getNewDocIDModel();
 
-                        if (strlen($pdoErrorMessage) == 0) {
-                            $this->docPostModel->addOfficeAndSpeMedic($newDocID);
+                        if (strlen($pdoErrorMessage) == 0) { // si la création du docteur se passe bien, on lui ajoute ses cabinets médicaux et ses spé médicales
+                            $insertModel->addOfficeAndSpeMedicModel($newDocID);
                         }
 
                         echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $newDocID . "';</script>";
@@ -68,14 +62,16 @@ class DocPostController extends DocCommonController
                         $docView = new \HealthKerd\View\medic\doc\docForm\DocFailedEditFormPageBuilder();
                         $docView->dataReceiver($this->cleanedUpPost, $checksArray, $this->cleanedUpGet['docID']);
                     } else {
-                        $pdoErrorMessage = $this->docPostModel->editDoc($this->cleanedUpPost, $this->cleanedUpGet['docID']);
+                        $docUpdateModel = new \HealthKerd\Model\modelInit\medic\doc\DocUpdateModel();
+                        $pdoErrorMessage = $docUpdateModel->editDocModel($this->cleanedUpPost, $this->cleanedUpGet['docID']);
                         echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $this->cleanedUpGet['docID'] . "';</script>";
                     }
                     break;
 
                 case 'removeDoc': // suppr d'un docteur
-                    $this->docPostModel->deleteOfficeAndSpeMedic($this->cleanedUpGet['docID']);
-                    $pdoErrorMessage = $this->docPostModel->deleteDoc($this->cleanedUpGet['docID']);
+                    $docDeleteModel = new \HealthKerd\Model\modelInit\medic\doc\DocDeleteModel();
+                    $docDeleteModel->deleteOfficeAndSpeMedic($this->cleanedUpGet['docID']);
+                    $pdoErrorMessage = $docDeleteModel->deleteDoc($this->cleanedUpGet['docID']);
                     echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp';</script>";
                     break;
 

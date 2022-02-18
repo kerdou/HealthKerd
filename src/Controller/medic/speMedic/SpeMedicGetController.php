@@ -6,18 +6,8 @@ namespace HealthKerd\Controller\medic\speMedic;
 class SpeMedicGetController
 {
     private array $cleanedUpGet;
-    private array $speMedicList = array();
 
-    private object $eventIdFinder;
-    private object $speMedicModel;
     private object $speView;
-
-
-    public function __construct()
-    {
-        $this->eventIdFinder = new \HealthKerd\Model\medic\eventIdFinder\EventIdFinder();
-        $this->speMedicModel = new \HealthKerd\Model\medic\speMedic\SpeMedicModel();
-    }
 
     public function __destruct()
     {
@@ -25,9 +15,8 @@ class SpeMedicGetController
 
     /** recoit GET['action'] et lance la suite
      * @param array $cleanedUpGet   Infos nettoyées provenants du GET
-     * @return void
      */
-    public function actionReceiver(array $cleanedUpGet)
+    public function actionReceiver(array $cleanedUpGet): void
     {
         $this->cleanedUpGet = $cleanedUpGet;
 
@@ -50,100 +39,25 @@ class SpeMedicGetController
         }
     }
 
-    /** création d'une liste de spécialités médicales sans doublons avec leurs ID
-     * @return array contient les spécialités médicales (sans doublon) avec leur ID
-    */
-    private function speMedicListBuildUp()
-    {
-        $speMedicIDList = array();
-
-        foreach ($this->speMedicList as $key => $value) {
-            array_push($speMedicIDList, $value['speMedicID']);
-        }
-
-        $speMedicIDList = array_unique($speMedicIDList);
-        sort($speMedicIDList, SORT_NUMERIC); // impératif pour que les index s'incrémentent de +1 à chaque élement, sinon le foreach utilisant array_key_exists() ne peut pas marcher
-
-        $speMedicBadgeList = array();
-
-        // s'il y a un match entre le speMedicID et que cette spé n'a pas déjà été ajoutée à $speMedicBadgeList, on l'ajoute
-        foreach ($speMedicIDList as $idKey => $idValue) {
-            foreach ($this->speMedicList as $speKey => $speValue) {
-                if (($idValue == $speValue['speMedicID']) && (array_key_exists($idKey, $speMedicBadgeList) == false)) {
-                    $tempArray = [
-                        'speMedicID' => $speValue['speMedicID'],
-                        'speMedicName' => $speValue['name']
-                    ];
-                    array_push($speMedicBadgeList, $tempArray);
-                }
-            }
-        }
-
-        //var_dump($speMedicBadgeList);
-        return $speMedicBadgeList;
-    }
-
     /** Affichage de toutes les spécialités médicales
     */
-    private function displayAllSpeMedics()
+    private function displayAllSpeMedics(): void
     {
-        $medicEventsIdResult = $this->eventIdFinder->eventsIdsByUserId();
-        $medicEventsIdList = array();
-
-        foreach ($medicEventsIdResult as $value) {
-            array_push($medicEventsIdList, intval($value['medicEventID']));
-        }
-
-        $this->speMedicList = $this->speMedicModel->gatherMedicEventSpeMedicRelation($medicEventsIdList);
-        $speMedicUniqueList = $this->speMedicListBuildUp();
+        $speMedicModel = new \HealthKerd\Model\modelInit\medic\speMedic\speMedicSelectModel();
+        $speMedicList = $speMedicModel->selectSpeMedicUsedByUser();
 
         $this->speView = new \HealthKerd\View\medic\speMedic\speMedicList\SpeMedicListPageBuilder();
-        $this->speView->dataReceiver($speMedicUniqueList);
+        $this->speView->dataReceiver($speMedicList);
     }
 
     /** Affichage de tous les events vis à vis d'une spé en particulier
      */
-    private function dispAllEventsRegardingOneSpeMedic()
+    private function dispAllEventsRegardingOneSpeMedic(): void
     {
-        $speMedicID = $this->cleanedUpGet['speMedicID']; // ID de la spéMedic recherchée
-
-        // liste de tous les events du user
-        $medicEventsIdResult = $this->eventIdFinder->eventsIdsByUserId();
-        $medicEventsIdList = array();
-        foreach ($medicEventsIdResult as $value) {
-            array_push($medicEventsIdList, intval($value['medicEventID']));
-        }
-
-        // récupération de toutes les relation events<>speMedic
-        $speMedicRelationResult = $this->speMedicModel->speMedicByEventsIds($medicEventsIdList);
-
-        // on ne garde que les medicEvents correspondants au speMedicID
-        $medicEventsIdList = array();
-        foreach ($speMedicRelationResult as $speValue) {
-            if ($speMedicID == $speValue['speMedicID']) {
-                array_push($medicEventsIdList, intval($speValue['medicEventID']));
-            }
-        }
-        $medicEventsIdList = array_unique($medicEventsIdList, SORT_NUMERIC);
-        sort($medicEventsIdList, SORT_NUMERIC);
-
-        $medicEventDataGatherer = new \HealthKerd\Model\medic\eventDataGatherer\EventDataGatherer();
-        $medicEvtOriginalDataStore = $medicEventDataGatherer->eventIdReceiver($medicEventsIdList);
-
-        $medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicEventArrayBuildOrder();
-        $medicEvtProcessedDataStore = $medicEventArrayBuildOrder->eventDataReceiver($medicEvtOriginalDataStore);
-
-        // vidage de $medicEvtOriginalDataStore
-        unset($medicEvtOriginalDataStore);
-        $medicEvtOriginalDataStore = array();
-
-        //echo '<pre>';
-        //print_r($medicEvtProcessedDataStore);
-        //echo '</pre>';
-
-        //var_dump($medicEvtProcessedDataStore);
+        $this->eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
+        $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsFromSpeMedicId', $this->cleanedUpGet);
 
         $this->speView = new \HealthKerd\View\medic\speMedic\AllEventsRegrdOneSpe\AllEventsRegardOneSpePageBuilder();
-        $this->speView->dataReceiver($medicEvtProcessedDataStore);
+        $this->speView->dataReceiver($processedData);
     }
 }

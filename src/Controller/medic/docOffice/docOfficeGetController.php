@@ -4,26 +4,11 @@ namespace HealthKerd\Controller\medic\docOffice;
 
 /** Contrôleur GET des cabinets médicaux
  */
-class DocOfficeGetController extends DocOfficeCommonController
+class DocOfficeGetController
 {
     private array $cleanedUpGet;
-    private array $docOfficeList = array();
-    private array $speMedicList = array();
 
-
-    private object $medicEventIdFinder; // Modéle spéclialisé dans la recherche d'ID d'events médicaux
-    private object $medicEventDataGatherer;
-    private object $medicEventArrayBuildOrder;
     private object $docOfficeView;
-
-    public function __construct()
-    {
-        parent::__construct();
-        date_default_timezone_set('Europe/Paris');
-        $this->medicEventIdFinder = new \HealthKerd\Model\medic\eventIdFinder\EventIdFinder();
-        $this->medicEventDataGatherer = new \HealthKerd\Model\medic\eventDataGatherer\EventDataGatherer();
-        $this->medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicEventArrayBuildOrder();
-    }
 
     public function __destruct()
     {
@@ -33,7 +18,7 @@ class DocOfficeGetController extends DocOfficeCommonController
      * @param array $cleanedUpGet   Infos nettoyées provenants du GET
      * @return void
      */
-    public function actionReceiver(array $cleanedUpGet)
+    public function actionReceiver(array $cleanedUpGet): void
     {
         $this->cleanedUpGet = $cleanedUpGet;
 
@@ -58,9 +43,10 @@ class DocOfficeGetController extends DocOfficeCommonController
 
     /** Affichage de la liste des cabinets médicaux
      */
-    private function displayAllDocOfficesList()
+    private function displayAllDocOfficesList(): void
     {
-        $this->docOfficeList = $this->docOfficeModel->gatherAllDocOffices();
+        $this->docOfficeModel = new \HealthKerd\Model\modelInit\medic\docOffice\DocOfficeSelectModel();
+        $this->docOfficeList = $this->docOfficeModel->gatherAllDocOfficesModel();
 
         $this->docOfficeView = new \HealthKerd\View\medic\docOffice\docOfficeList\DocOfficeListPageBuilder();
         $this->docOfficeView->dataReceiver($this->docOfficeList);
@@ -68,29 +54,12 @@ class DocOfficeGetController extends DocOfficeCommonController
 
     /** Affichage des events liés à un cabinet médical en particulier
     */
-    private function displayEventsWithOneDocOffice()
+    private function displayEventsWithOneDocOffice(): void
     {
-        $medicEventsIdResult = $this->medicEventIdFinder->eventsIdsByDocOfficeId($this->cleanedUpGet['docOfficeID']);
-        $medicEventsIdList = array();
-
-        // conversion des ID d'event en integer
-        foreach ($medicEventsIdResult as $value) {
-            array_push($medicEventsIdList, intval($value['medicEventID']));
-        }
-
-        $medicEvtOriginalDataStore = $this->medicEventDataGatherer->eventIdReceiver($medicEventsIdList);
-        $medicEvtProcessedDataStore = $this->medicEventArrayBuildOrder->eventDataReceiver($medicEvtOriginalDataStore);
-
-        // vidage de $medicEvtOriginalDataStore
-        unset($medicEvtOriginalDataStore);
-        $medicEvtOriginalDataStore = array();
-
-        //echo '<pre>';
-        //print_r($medicEvtProcessedDataStore);
-        //var_dump($medicEvtProcessedDataStore);
-        //echo '</pre>';
+        $this->eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
+        $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsByDocOfficeId', $this->cleanedUpGet);
 
         $this->docOfficeView = new \HealthKerd\View\medic\docOffice\allEventsRegrdOneDocOffice\AllEventsRegrdOneDocOfficePageBuilder();
-        $this->docOfficeView->dataReceiver($medicEvtProcessedDataStore);
+        $this->docOfficeView->dataReceiver($processedData);
     }
 }

@@ -4,24 +4,11 @@ namespace HealthKerd\Controller\medic\eventCat;
 
 /** Controller GET des catégories d'events
 */
-class EventCatGetController extends EventCatCommonController
+class EventCatGetController
 {
     private array $cleanedUpGet;
 
-    private object $medicEventIdFinder; // Modéle spéclialisé dans la recherche d'ID d'events médicaux
-    private object $medicEventDataGatherer;
-    private object $medicEventArrayBuildOrder;
     private object $catView;
-
-
-    public function __construct()
-    {
-        parent::__construct();
-        date_default_timezone_set('Europe/Paris');
-        $this->medicEventIdFinder = new \HealthKerd\Model\medic\eventIdFinder\EventIdFinder();
-        $this->medicEventDataGatherer = new \HealthKerd\Model\medic\eventDataGatherer\EventDataGatherer();
-        $this->medicEventArrayBuildOrder = new \HealthKerd\Processor\medic\MedicEventArrayBuildOrder();
-    }
 
     public function __destruct()
     {
@@ -29,16 +16,16 @@ class EventCatGetController extends EventCatCommonController
 
     /** recoit GET['action'] et lance la suite
      * @param array $cleanedUpGet   Infos nettoyées provenants du GET
-     * @return void
      */
-    public function actionReceiver(array $cleanedUpGet)
+    public function actionReceiver(array $cleanedUpGet): void
     {
         $this->cleanedUpGet = $cleanedUpGet;
 
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
                 case 'dispAllEventCats': // affichage de toutes les catégories d'events
-                    $eventCatsList = $this->eventCatModel->gatherAllEventsCats();
+                    $eventCatSelectModel = new \HealthKerd\Model\modelInit\medic\eventCat\EventCatSelectModel();
+                    $eventCatsList = $eventCatSelectModel->gatherAllEventsCats();
 
                     $this->catView = new \HealthKerd\View\medic\eventCats\eventCatsList\EventCatsListPageBuilder();
                     $this->catView->dataReceiver($eventCatsList);
@@ -62,27 +49,10 @@ class EventCatGetController extends EventCatCommonController
     */
     public function dispAllEventsRegardingOneCat()
     {
-        $medicEventsIdResult = $this->medicEventIdFinder->eventsIdsbyCatId($this->cleanedUpGet['medicEventCatID']);
-        $medicEventsIdList = array();
-
-        // conversion des ID d'event en integer
-        foreach ($medicEventsIdResult as $value) {
-            array_push($medicEventsIdList, intval($value['medicEventID']));
-        }
-
-        $medicEvtOriginalDataStore = $this->medicEventDataGatherer->eventIdReceiver($medicEventsIdList);
-        $medicEvtProcessedDataStore = $this->medicEventArrayBuildOrder->eventDataReceiver($medicEvtOriginalDataStore);
-
-        // vidage de $medicEvtOriginalDataStore
-        unset($medicEvtOriginalDataStore);
-        $medicEvtOriginalDataStore = array();
-
-        //echo '<pre>';
-        //print_r($medicEvtProcessedDataStore);
-        //var_dump($medicEvtProcessedDataStore);
-        //echo '</pre>';
+        $this->eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
+        $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsbyCatId', $this->cleanedUpGet);
 
         $this->catView = new \HealthKerd\View\medic\eventCats\allEventsRegardingOneCat\AllEventsRegardingOneCatPageBuilder();
-        $this->catView->dataReceiver($medicEvtProcessedDataStore);
+        $this->catView->dataReceiver($processedData);
     }
 }

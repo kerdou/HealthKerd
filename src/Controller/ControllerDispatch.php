@@ -30,6 +30,7 @@ class ControllerDispatch extends GetAndPostCleaner
     private function sessionChecker()
     {
         session_start();
+        date_default_timezone_set('Europe/Paris');
 
         if (empty($_SESSION)) {
             // récupération du controleur voulu, si aucun n'est précisé on part sur 'login'

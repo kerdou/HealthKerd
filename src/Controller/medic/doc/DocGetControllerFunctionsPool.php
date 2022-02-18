@@ -3,17 +3,11 @@
 namespace HealthKerd\Controller\medic\doc;
 
 /** Depot de fonctions pour alléger le fichier DocGetController */
-abstract class DocGetControllerFunctionsPool extends DocCommonController
+abstract class DocGetControllerFunctionsPool
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function __destruct()
     {
     }
-
 
     /** extraie les docID d'un Array
      * @param array $docList    Liste des données des docteurs

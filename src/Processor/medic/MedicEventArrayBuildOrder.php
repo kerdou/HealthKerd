@@ -29,29 +29,36 @@ class MedicEventArrayBuildOrder
     {
         $this->originalDataStore = $receivedDataStore;
 
-        // spécialités médicales des docteurs, et docteurs
-        $this->docSpeMedicOrganizer();
-        $this->docListOrganizer();
+        if ($this->originalDataStore != array()) {
+            // spécialités médicales des docteurs, et docteurs
+            $this->docSpeMedicOrganizer();
+            $this->docListOrganizer();
 
-        // gestion de la couche de base des events
-        $this->eventBascisManager();
+            // gestion de la couche de base des events
+            $this->eventBascisManager();
 
-        // gestion des ordonnances et des diagnostics
-        $this->ordoManager();
-        $this->diagManager();
+            // gestion des ordonnances et des diagnostics
+            $this->ordoManager();
+            $this->diagManager();
 
-        // gestion des sessions de soin et de vaccination
-        $this->careSessionsManager();
-        $this->vaxSessionsManager();
+            // gestion des sessions de soin et de vaccination
+            $this->careSessionsManager();
+            $this->vaxSessionsManager();
 
-        // merge final de toutes les données
-        $this->eventsFinalDataMerge();
+            // merge final de toutes les données
+            $this->eventsFinalDataMerge();
 
-        //echo '<pre>';
-        //    print_r($this->processedDataArray);
-        //echo '</pre>';
+            //echo '<pre>';
+            //    print_r($this->processedDataArray);
+            //echo '</pre>';
 
-        return $this->processedDataArray;
+            return $this->processedDataArray;
+        } else {
+            return array(
+                'pastEvents' => array(),
+                'futureEvents' => array()
+            );
+        }
     }
 
     /** Création et stockage de toutes les données temporelles de la journée en cours
