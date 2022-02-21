@@ -1,7 +1,7 @@
-@import './header/_header.scss';
-@import './layout/_generalLayout.scss';
-@import './layout/_sidebars.scss';
+@use './header/_header.scss';
+@use './layout/_generalLayout.scss';
+@use './layout/_sidebars.scss';
 
-@import './content/_generalContent.scss';
+@use './content/_generalContent.scss';
 
-@import './loginForm/_loginForm.scss';
+@use './loginForm/_loginForm.scss';

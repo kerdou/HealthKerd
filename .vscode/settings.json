@@ -1,4 +1,4 @@
-{,
+{
   "liveSassCompile.settings.formats": [
       {
           "format": "expanded",
@@ -15,13 +15,21 @@
       "/assets/Sass/**"
   ],
   "liveSassCompile.settings.excludeList": [
-      "**/node_modules/**",
-      ".vscode/**"
+      "/node_modules/**",
+      "/.vscode/**"
   ],
   "liveSassCompile.settings.generateMap": true,
   "liveSassCompile.settings.autoprefix": [
       "> 1%",
       "last 2 versions"
   ],
-  "phpcs.standard": "./phpCodeSnifferOwnRuleset.xml"
+  "phpcs.standard": "./phpCodeSnifferOwnRuleset.xml",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": false
+  },
+  "[typescript]": {
+      "editor.formatOnSave": false
+  }
 }
