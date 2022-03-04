@@ -84,7 +84,7 @@ class DocGetController extends DocGetControllerFunctionsPool
         $organizedData = $DocListOrganizerForDocListing->docListOrganizer($combinedData['doc_list'], $combinedData['doc_spemedic_relation']);
 
         $this->docView = new \HealthKerd\View\medic\doc\docList\DocListPageBuilder();
-        $this->docView->dataReceiver($organizedData, $combinedData['used_spemedics']); // view
+        $this->docView->buildOrder($organizedData, $combinedData['used_spemedics']); // view
     }
 
     /** Affichage de la fiche d'un seul doc
@@ -126,7 +126,7 @@ class DocGetController extends DocGetControllerFunctionsPool
         $this->eventsSummaryCreation();
 
         $this->docView = new \HealthKerd\View\medic\doc\oneDoc\OneDocPageBuilder();
-        $this->docView->dataReceiver($this->docList[0]); // view
+        $this->docView->buildOrder($this->docList[0]); // view
     }
 
     /** Affichage de tous les events liés à un doc
@@ -137,7 +137,7 @@ class DocGetController extends DocGetControllerFunctionsPool
         $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsFromOneDocId', $this->cleanedUpGet);
 
         $this->docView = new \HealthKerd\View\medic\doc\eventsWithOneDoc\EventsWithOneDocPageBuilder();
-        $this->docView->dataReceiver($processedData);
+        $this->docView->buildOrder($processedData);
     }
 
     /** Affichage du formulaire d'ajout de doc
@@ -145,7 +145,7 @@ class DocGetController extends DocGetControllerFunctionsPool
     private function showDocAddForm(): void
     {
         $this->docView = new \HealthKerd\View\medic\doc\docForm\DocAddFormPageBuilder();
-        $this->docView->dataReceiver();
+        $this->docView->buildOrder();
     }
 
     /** Affichage du formulaire de modif de doc
@@ -156,7 +156,7 @@ class DocGetController extends DocGetControllerFunctionsPool
         $docData = $this->docSelectModel->getAllDataForOneDocFromDocListModel($docID);
 
         $this->docView = new \HealthKerd\View\medic\doc\docForm\DocEditFormPageBuilder();
-        $this->docView->dataReceiver($docData);
+        $this->docView->buildOrder($docData);
     }
 
     /** Affichage du formulaire de suppr de doc
@@ -167,6 +167,6 @@ class DocGetController extends DocGetControllerFunctionsPool
         $docData = $this->docSelectModel->getAllDataForOneDocFromDocListModel($docID);
 
         $this->docView = new \HealthKerd\View\medic\doc\docForm\DocDeleteFormPageBuilder();
-        $this->docView->dataReceiver($docData);
+        $this->docView->buildOrder($docData);
     }
 }

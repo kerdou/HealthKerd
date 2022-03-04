@@ -1,0 +1,29 @@
+<div id="care-session-accordion-{medicEventID}-{careSessionID}" class="accordion my-1">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="">
+            <button class="accordion-button collapsed" data-bs-toggle="collapse"
+                data-bs-target="#care-session-collapse-{medicEventID}-{careSessionID}">
+                <b>Réception de soin</b>
+            </button>
+        </h2>
+
+        <div id="care-session-collapse-{medicEventID}-{careSessionID}" class="accordion-collapse collapse"
+            data-bs-parent="#care-session-accordion-{medicEventID}-{careSessionID}">
+            <div class="accordion-body p-2">
+                <h5><u>Éléments</u></h5>
+
+                <ul>
+                    {careLiElements}
+                </ul>
+
+                <div class="form-floating mx-1 mt-2">
+                    <textarea class="form-control textarea-ridonli" placeholder=""
+                        id="careTextarea-{medicEventID}-{careSessionID}">{sessionComment}</textarea>
+                    <label for="careTextarea-{medicEventID}-{careSessionID}">Informations complémentaires</label>
+                </div>
+
+            </div> <!-- END OF ACCORDION BODY -->
+        </div> <!-- END OF CARE SESSION COLLAPSE -->
+
+    </div> <!-- END OF CARE SESSION ITEM -->
+</div> <!-- END OF CARE SESSION ACCORDION -->

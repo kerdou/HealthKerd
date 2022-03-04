@@ -1,37 +1,60 @@
 "use strict";
-window.addEventListener('load', operationsAtLoad);
-/* Copie du contenu du sidebar dans le off canvas sidebar au chargement de la page */
-function operationsAtLoad() {
-    if (document.body.contains(document.getElementById('my-sidebar'))) {
-        var sidebar = document.getElementById('my-sidebar'); // trouvable dans sidebar.html
-        var myOffCanvasSidebar = document.getElementById('my-offcanvas-sidebar'); // trouvable dans offCanvas-sidebar.html
-        myOffCanvasSidebar.innerHTML = sidebar.innerHTML; // copie du sidebar desktop dans le sidebar off-canvas pour la version mobile
-        textAreaRidonliListenersAddition(); // Pour faire disparaitre "Informations complémentaires" au scroll des textarea
-        // obligé de gérer ça dés le chargement de la page pour éviter des erreurs aprés des rechargements avec F5
-        //scrollUpButton = document.getElementById("scrollUpButton");
-        //scrollUpButton.addEventListener('click', scrollToTop); // When the user clicks on the button, scroll to the top of the document
-        var scrollUpButton = document.getElementById('scrollUpButton'); // trouvable dans pageBottom.html
-        scrollUpButton.addEventListener('click', scrollToTop);
-    }
+var currentPage = '';
+if (document.body.contains(document.getElementById('login_form'))) {
+    currentPage = 'login_form';
 }
-/* Retraction du menu off canvas quand le navigateur devient plus large que 992px */
+if (document.body.contains(document.getElementById('docForm'))) {
+    currentPage = 'docForm';
+}
+
+"use strict";
 var windowWidth = window.innerWidth;
-//console.log(windowWidth);
 window.addEventListener('resize', windowResize);
-var offCanvasSidebar = document.getElementById('offcanvas-nav'); // trouvable dans offCanvas-sidebar.html
-/** Se déclenche au resize de la page */
+/** Se déclenche au resize de la page
+ * Au delà de 992px de large (format LG sur Bootstrap), l'offcanvas menu se rétracte
+ * Bootstrap fait apparaitre un <div class="offcanvas-backdrop fade show" qui grise le reste de l'écran
+ * Quand on supprime la classe "show" du sidebar, il faut aussi supprimer cette div supplémentaire
+ * pour supprimer ce grisage *
+*/
 function windowResize() {
+    var mobileSidebar = document.getElementById('mobile_sidebar'); // trouvable dans mainContainer.html
     windowWidth = window.innerWidth;
-    /** Au delà de 992px de large (format LG sur Bootstrap), l'offcanvas menu se rétracte
-     * Bootstrap fait apparaitre un <div class="offcanvas-backdrop fade show" qui grise le reste de l'écran
-     * Quand on supprime la classe "show" du sidebar, il faut aussi supprimer cette div supplémentaire
-     * pour supprimer ce grisage
-     */
-    if (windowWidth >= 992 && offCanvasSidebar.classList.contains('show')) {
-        offCanvasSidebar.classList.remove('show');
+    if (windowWidth >= 992 && mobileSidebar.classList.contains('show')) {
+        mobileSidebar.classList.remove('show');
         if (document.getElementsByClassName('offcanvas-backdrop').length != 0) {
             document.getElementsByClassName('offcanvas-backdrop')[0].remove();
         }
+    }
+}
+
+"use strict";
+var windowWidth = window.innerWidth;
+window.addEventListener('resize', windowResize);
+/** Se déclenche au resize de la page
+ * Au delà de 992px de large (format LG sur Bootstrap), l'offcanvas menu se rétracte
+ * Bootstrap fait apparaitre un <div class="offcanvas-backdrop fade show" qui grise le reste de l'écran
+ * Quand on supprime la classe "show" du sidebar, il faut aussi supprimer cette div supplémentaire
+ * pour supprimer ce grisage *
+*/
+function windowResize() {
+    var mobileSidebar = document.getElementById('mobile_sidebar'); // trouvable dans mainContainer.html
+    windowWidth = window.innerWidth;
+    if (windowWidth >= 992 && mobileSidebar.classList.contains('show')) {
+        mobileSidebar.classList.remove('show');
+        if (document.getElementsByClassName('offcanvas-backdrop').length != 0) {
+            document.getElementsByClassName('offcanvas-backdrop')[0].remove();
+        }
+    }
+}
+
+"use strict";
+window.addEventListener('load', scrollUpAtLoad);
+/** Copie du contenu du sidebar dans le off canvas sidebar au chargement de la page
+*/
+function scrollUpAtLoad() {
+    if (document.body.contains(document.getElementById('desktop_sidebar'))) {
+        var scrollUpButton = document.getElementById('scrollUpButton'); // trouvable dans pageBottom.html
+        scrollUpButton.addEventListener('click', scrollToTop); //
     }
 }
 // When the user scrolls down 20px from the top of the document, show the button
@@ -66,17 +89,34 @@ function scrollToTop() {
         document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
     }
 }
-// Pour faire disparaitre "Informations complémentaires" au scroll des textarea
+
+"use strict";
+window.addEventListener('load', operationsAtLoad);
+/** Copie du contenu du sidebar dans le off canvas sidebar au chargement de la page
+*/
+function operationsAtLoad() {
+    if (document.body.contains(document.getElementById('desktop_sidebar'))) {
+        textAreaRidonliListenersAddition(); // Pour faire disparaitre "Informations complémentaires" au scroll des textarea
+    }
+}
+/** Pour faire disparaitre "Informations complémentaires" au scroll des textarea
+ */
 function textAreaRidonliListenersAddition() {
     var ridonList = Array.from(document.getElementsByClassName('textarea-ridonli'));
     ridonList.forEach(function (element) {
         element.addEventListener('scroll', textAreaScrollDown);
     });
 }
+/**
+ *
+ * @param this
+ */
 function textAreaScrollDown() {
     var label = this.nextElementSibling;
     label.style.opacity = '0';
 }
+
+"use strict";
 if (document.body.contains(document.getElementById('docForm'))) {
     var formSubmitButton = document.getElementById('formSubmitButton');
     var formResetButton = document.getElementById('formResetButton');
@@ -101,7 +141,8 @@ if (document.body.contains(document.getElementById('docForm'))) {
     webpageInput.addEventListener('focusout', focusOutRecheck);
     doctolibpageInput.addEventListener('focusout', focusOutRecheck);
 }
-/** Relance la vérification des champs quand l'un d'eux perd le focus et qu'il n'est pas vide */
+/** Relance la vérification des champs quand l'un d'eux perd le focus et qu'il n'est pas vide
+*/
 function focusOutRecheck() {
     var event = this;
     var target = event.id;
@@ -127,6 +168,37 @@ function telKeyCheck(event) {
         event.preventDefault();
     }
 }
+/** Reset du form et des classes des champs inputs
+ */
+function resetForm() {
+    var lastnameInput = document.getElementById('lastname');
+    var firstnameInput = document.getElementById('firstname');
+    var telInput = document.getElementById('tel');
+    var mailInput = document.getElementById('mail');
+    var webpageInput = document.getElementById('webpage');
+    var doctolibpageInput = document.getElementById('doctolibpage');
+    var docForm = document.getElementById('docForm');
+    lastnameInput.classList.remove('is-invalid');
+    firstnameInput.classList.remove('is-invalid');
+    telInput.classList.remove('is-invalid');
+    mailInput.classList.remove('is-invalid');
+    webpageInput.classList.remove('is-invalid');
+    doctolibpageInput.classList.remove('is-invalid');
+    docForm.reset();
+}
+/** Comportement lors de l'appui sur le bouton de Submit
+ */
+function submitForm() {
+    var formValidity = [];
+    formValidity = formChecks();
+    var validityStatus = formValidity.findIndex(formValidityArrayChecker);
+    if (validityStatus == -1) {
+        var docForm = document.getElementById('docForm');
+        docForm.submit();
+    }
+}
+
+"use strict";
 /** Série de vérifications des champs du formulaire
  * @param {string} target True pour afficher un message indiquant les changements à faire
  * @returns {boolean} Renvoie du statut de vérification du formulaire
@@ -344,32 +416,8 @@ function doctolibPageCheck(urlRegex) {
     }
     return doctolibPageValidity;
 }
-function resetForm() {
-    var lastnameInput = document.getElementById('lastname');
-    var firstnameInput = document.getElementById('firstname');
-    var telInput = document.getElementById('tel');
-    var mailInput = document.getElementById('mail');
-    var webpageInput = document.getElementById('webpage');
-    var doctolibpageInput = document.getElementById('doctolibpage');
-    var docForm = document.getElementById('docForm');
-    lastnameInput.classList.remove('is-invalid');
-    firstnameInput.classList.remove('is-invalid');
-    telInput.classList.remove('is-invalid');
-    mailInput.classList.remove('is-invalid');
-    webpageInput.classList.remove('is-invalid');
-    doctolibpageInput.classList.remove('is-invalid');
-    docForm.reset();
-}
-function submitForm() {
-    var formValidity = [];
-    formValidity = formChecks();
-    var validityStatus = formValidity.findIndex(formValidityArrayChecker);
-    if (validityStatus == -1) {
-        var docForm = document.getElementById('docForm');
-        docForm.submit();
-    }
-}
-/** Si un seul élements de formValidity est false, la valeur renvoyée sera différente de -1 */
+/** Si un seul élements de formValidity est false, la valeur renvoyée sera différente de -1
+*/
 function formValidityArrayChecker(value) {
     return value == false;
 }

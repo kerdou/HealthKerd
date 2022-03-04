@@ -1,0 +1,44 @@
+<div id="diag-accordion-{medicEventID}-{diagID}" class="accordion my-1">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="diag-header">
+            <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#diag-content-{medicEventID}-{diagID}">
+            <b>Diagnostic & ordonnances</b>
+            </button>
+        </h2>
+        <div id="diag-content-{medicEventID}-{diagID}" class="accordion-collapse collapse" data-bs-parent="#diag-accordion-{medicEventID}-{diagID}">
+            <div class="accordion-body p-1">  <!-- START OF DIAG ACCORDION BODY -->
+
+                <div class="p-2">
+                    <div class="d-flex flex-column flex-xl-row justify-content-start">
+                        <div class="flex-fill">
+                            <h5><u>Symptômes</u></h5>
+                            <ul>
+                                {symptomsLiElements}
+                            </ul>
+                        </div>
+
+                        <div class="flex-fill">
+                            <h5><u>Points de contrôle</u></h5>
+                            <ul>
+                                {checkpointsLiElements}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5><u>Conclusions</u></h5>
+                        {conclusionsUlAndLiElements}
+                    </div>
+
+                    <div class="form-floating mx-0 my-1">
+                        <textarea class="form-control textarea-ridonli" placeholder="" id="diag-textarea-{medicEventID}-{diagID}" readonly>{diagComments}</textarea>
+                        <label for="diag-textarea-{medicEventID}-{diagID}">Informations complémentaires sur le diagnostic</label>
+                    </div>
+                </div>
+
+                {ordoAccordions}
+
+            </div> <!-- END OF DIAG ACCORDION BODY -->
+        </div> <!-- END OF DIAG ACCORDION CONTENT -->
+    </div> <!-- END OF DIAG ACCORDION ITEM -->
+</div> <!-- END OF DIAG ACCORDION -->

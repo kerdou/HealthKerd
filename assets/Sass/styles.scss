@@ -1,7 +1,6 @@
-@use './header/_header.scss';
 @use './layout/_generalLayout.scss';
+@use './layout/_scrollUpButton.scss';
 @use './layout/_sidebars.scss';
 
-@use './content/_generalContent.scss';
-
-@use './loginForm/_loginForm.scss';
+@use './content/_textarea.scss';
+@use './content/_loginForm.scss';

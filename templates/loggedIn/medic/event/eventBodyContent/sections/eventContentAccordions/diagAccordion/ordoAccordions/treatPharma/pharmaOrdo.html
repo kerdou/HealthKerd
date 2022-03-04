@@ -1,0 +1,16 @@
+<div id="ordo-pharma-accordion-{medicEventID}-{diagID}-{ordoPharmaID}" class="accordion my-1 mx-1 mx-lg-2">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="">
+            <button class="btn accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#ordo-pharma-content-{medicEventID}-{diagID}-{ordoPharmaID}">
+                <b>Ordonnance pharmacologique du {frenchDate}</b>
+            </button>
+        </h2>
+        <div id="ordo-pharma-content-{medicEventID}-{diagID}-{ordoPharmaID}" class="accordion-collapse collapse"
+            data-bs-parent="#ordo-pharma-accordion-{medicEventID}-{diagID}-{ordoPharmaID}">
+            <div class="accordion-body">
+                {pharmaPrescElements}
+            </div> <!-- END OF ORDO PHARMA ACCORDION BODY -->
+        </div> <!-- END OF ORDO PHARMA ACCORDION COLLAPSE -->
+    </div> <!-- END OF ORDO PHARMA ACCORDION ITEM -->
+</div> <!-- END OF ORDO PHARMA ACCORDION -->

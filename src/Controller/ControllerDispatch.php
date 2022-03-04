@@ -31,6 +31,7 @@ class ControllerDispatch extends GetAndPostCleaner
     {
         session_start();
         date_default_timezone_set('Europe/Paris');
+        $_ENV['APPROOTPATH'] = __DIR__ . '/' . '../../'; // pour avoir le chemin de la racine du projet accessible depuis n'importe quel fichier
 
         if (empty($_SESSION)) {
             // récupération du controleur voulu, si aucun n'est précisé on part sur 'login'

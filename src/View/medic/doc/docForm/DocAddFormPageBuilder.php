@@ -2,114 +2,212 @@
 
 namespace HealthKerd\View\medic\doc\docForm;
 
-/** Construction puis affichage du formulaire d'ajout de docteur
+/** Construction puis affichage du formulaire de création de docteur
  */
 class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
-    private string $builtContentHTML = '';
+    protected string $pageContent = '';
+    private string $formTemplate = '';
 
 
     public function __construct()
     {
         parent::__construct();
-
-        $this->pageSettingsList = array(
-            "pageTitle" => "Création d'un professionnel de santé"
-        );
+        $this->pageElementsSettingsList();
+        $this->pageElementsStringReplace(); // configuration de la page
     }
-
 
     public function __destruct()
     {
     }
 
-    /** Lance la construction du HTML
-    */
-    public function dataReceiver()
+    /** Liste des paramétres de la page, sans le contenu
+     */
+    private function pageElementsSettingsList(): void
     {
-        $this->buildOrder();
+        $this->pageSettingsList = array(
+            'headContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/head.html'),
+            'pageTitle' => 'Création d\'un professionnel de santé',
+            'headerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/header.html'),
+            'mainContainer' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/mainContainer.html'),
+            'sidebarMenuUlContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/sidebarMenuUlContent.html'),
+            'userFullName' => $_SESSION['firstName'] . ' ' . $_SESSION['lastName'],
+            'scrollUpButton' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/scrollUpArrow.html'),
+            'footerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/footer.html'),
+            'HTMLBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/HTMLBottomDeclarations.html')
+        );
     }
 
-
-    /** Ordre de construction des élèments de la page, puis du remplissage des champs et ajout des boutons du formulaire avant affichage
-    */
-    private function buildOrder()
+    /** Application de tous les paramétres listés dans $pageSettingsList
+     */
+    private function pageElementsStringReplace(): void
     {
-        $this->builtContentHTML .= file_get_contents(__DIR__ . '../../../../../../templates/medic/doc/docFormTop.html'); // partie haute du template de formulaire de docteur
-        $this->builtContentHTML .= '<button type="button" id="formSubmitButton" name="formSubmitButton" class="btn btn-secondary me-2" value="{formSubmitButtonValue}">{formSubmitButtonText}</button>';
-        $this->builtContentHTML .= '<button type="button" id="formResetButton" name="formResetButton" class="btn btn-secondary me-2">Réinitialiser</button>';
-        $this->builtContentHTML .= file_get_contents(__DIR__ . '../../../../../../templates/medic/doc/docFormBot.html'); // partie basse du template de formulaire de docteur
-        $this->stringReplacer();
-
-        $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
-        $this->pageSetup($this->pageSettingsList); // configuration de la page
-        $this->pageDisplay();
+        $this->pageContent = str_replace('{headContent}', $this->pageSettingsList['headContent'], $this->pageContent);
+        $this->pageContent = str_replace('{pageTitle}', $this->pageSettingsList['pageTitle'], $this->pageContent);
+        $this->pageContent = str_replace('{headerContent}', $this->pageSettingsList['headerContent'], $this->pageContent);
+        $this->pageContent = str_replace('{mainContainer}', $this->pageSettingsList['mainContainer'], $this->pageContent);
+        $this->pageContent = str_replace('{sidebarMenuUlContent}', $this->pageSettingsList['sidebarMenuUlContent'], $this->pageContent);
+        $this->pageContent = str_replace('{userFullName}', $this->pageSettingsList['userFullName'], $this->pageContent);
+        $this->pageContent = str_replace('{scrollUpButton}', $this->pageSettingsList['scrollUpButton'], $this->pageContent);
+        $this->pageContent = str_replace('{footerContent}', $this->pageSettingsList['footerContent'], $this->pageContent);
+        $this->pageContent = str_replace('{HTMLBottomDeclarations}', $this->pageSettingsList['HTMLBottomDeclarations'], $this->pageContent);
     }
 
     /** Configuration de tous les élèments du formulaire
      */
-    private function stringReplacer()
+    public function buildOrder(): void
     {
-        $this->builtContentHTML = str_replace('{formAction}', 'index.php?controller=medic&subCtrlr=docPost&action=addDoc', $this->builtContentHTML);
+        $this->formTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/docForm.html');
+        $this->formConfLauncher();
 
-        $this->builtContentHTML = str_replace('{formTitle}', 'Création d\'un professionnel de santé', $this->builtContentHTML);
+        $this->contentElementsSettingsList();
+        $this->contentElementsStringReplace();
 
-        //Civilité
-        $this->builtContentHTML = str_replace('{drChecked}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{drDisabled}', '', $this->builtContentHTML);
+        $this->pageDisplay();
+    }
 
-        $this->builtContentHTML = str_replace('{mrChecked}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{mrDisabled}', '', $this->builtContentHTML);
+    /** Ensemble des fonctions de configuration du forum
+     */
+    private function formConfLauncher(): void
+    {
+        $this->formActionAndTitleSetup();
+        $this->checkStatusSetup();
+        $this->namesSetup();
+        $this->telAndMailSetup();
+        $this->webLinksSetup();
+        $this->commentsSetup();
+        $this->formButtonsSetup();
+    }
 
-        $this->builtContentHTML = str_replace('{mrsChecked}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{mrsDisabled}', '', $this->builtContentHTML);
+    /** Configuration du lien d'action et du titre de form
+     */
+    private function formActionAndTitleSetup(): void
+    {
+        $this->formTemplate = str_replace('{formAction}', 'index.php?controller=medic&subCtrlr=docPost&action=addDoc', $this->formTemplate);
+        $this->formTemplate = str_replace('{formTitle}', 'Création d\'un professionnel de santé', $this->formTemplate);
+    }
 
-        $this->builtContentHTML = str_replace('{msChecked}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{msDisabled}', '', $this->builtContentHTML);
+    /** Configuration de la barre de civilité
+     */
+    private function checkStatusSetup(): void
+    {
+        $this->formTemplate = str_replace('{drChecked}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{drDisabled}', '', $this->formTemplate);
 
-        $this->builtContentHTML = str_replace('{noneChecked}', 'checked', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{noneDisabled}', '', $this->builtContentHTML);
+        $this->formTemplate = str_replace('{mrChecked}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{mrDisabled}', '', $this->formTemplate);
 
+        $this->formTemplate = str_replace('{mrsChecked}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{mrsDisabled}', '', $this->formTemplate);
+
+        $this->formTemplate = str_replace('{msChecked}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{msDisabled}', '', $this->formTemplate);
+
+        $this->formTemplate = str_replace('{noneChecked}', 'checked', $this->formTemplate);
+        $this->formTemplate = str_replace('{noneDisabled}', '', $this->formTemplate);
+    }
+
+    /** Configuration des champs de prénom et de nom
+     */
+    private function namesSetup(): void
+    {
         // Nom de famille
-        $this->builtContentHTML = str_replace('{lastnameValidity}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{lastnameValue}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{lastNameReadOnly}', '', $this->builtContentHTML);
+        $this->formTemplate = str_replace('{lastnameValidity}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{lastnameValue}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{lastNameReadOnly}', '', $this->formTemplate);
 
         // Prénom
-        $this->builtContentHTML = str_replace('{firstnameValidity}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{firstnameValue}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{fistNameReadOnly}', '', $this->builtContentHTML);
+        $this->formTemplate = str_replace('{firstnameValidity}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{firstnameValue}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{fistNameReadOnly}', '', $this->formTemplate);
+    }
 
+    /** Configuration des champs de téléphone et de mail
+     */
+    private function telAndMailSetup(): void
+    {
         // Tel
-        $this->builtContentHTML = str_replace('{telValidity}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{telValue}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{telReadOnly}', '', $this->builtContentHTML);
+        $this->formTemplate = str_replace('{telValidity}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{telValue}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{telReadOnly}', '', $this->formTemplate);
 
         // Mail
-        $this->builtContentHTML = str_replace('{mailValidity}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{mailValue}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{mailReadOnly}', '', $this->builtContentHTML);
+        $this->formTemplate = str_replace('{mailValidity}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{mailValue}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{mailReadOnly}', '', $this->formTemplate);
+    }
 
+    /** Configuration des champs de page perso et Doctolib
+     */
+    private function webLinksSetup(): void
+    {
         // Site web perso
-        $this->builtContentHTML = str_replace('{webpageValidity}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{webpageValue}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{webpageReadOnly}', '', $this->builtContentHTML);
+        $this->formTemplate = str_replace('{webpageValidity}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{webpageValue}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{webpageReadOnly}', '', $this->formTemplate);
 
         // Page Docotlib
-        $this->builtContentHTML = str_replace('{doctolibpageValidity}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{doctolibpageValue}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{doctolibpageValue}', '', $this->builtContentHTML);
+        $this->formTemplate = str_replace('{doctolibpageValidity}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{doctolibpageValue}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{doctolibpageReadOnly}', '', $this->formTemplate);
+    }
 
+    /** Configuration du champ de commentaires
+     */
+    private function commentsSetup(): void
+    {
         // Commentaires
-        $this->builtContentHTML = str_replace('{commentContent}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{commentReadOnly}', '', $this->builtContentHTML);
+        $this->formTemplate = str_replace('{commentContent}', '', $this->formTemplate);
+        $this->formTemplate = str_replace('{commentReadOnly}', '', $this->formTemplate);
+    }
 
-        // Bouton de création
-        $this->builtContentHTML = str_replace('{formSubmitButtonValue}', '', $this->builtContentHTML);
-        $this->builtContentHTML = str_replace('{formSubmitButtonText}', 'Créer', $this->builtContentHTML);
+    /** Configuration des boutons du form
+     */
+    private function formButtonsSetup(): void
+    {
+        // Bouton de submit
+        $submitButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/submitButton.html');
+        $submitButtonTemplate = str_replace('{formSubmitButtonValue}', '', $submitButtonTemplate);
+        $submitButtonTemplate = str_replace('{formSubmitButtonText}', 'Créer', $submitButtonTemplate);
+
+        // Bouton de reset
+        $resetButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/resetButton.html');
+
+        // Bouton de suppression
+        $deleteButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/deleteButton.html');
+        $deleteButtonTemplate = str_replace('{formDeleteButtonValue}', '', $deleteButtonTemplate);
 
         // Bouton d'annulation
-        $this->builtContentHTML = str_replace('{cancelHref}', 'index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp', $this->builtContentHTML);
+        $cancelButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/cancelButton.html');
+        $cancelButtonTemplate = str_replace('{cancelButtonHref}', 'index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp', $cancelButtonTemplate);
+
+        // Création et configuration du button box du forum
+        $buttonBoxTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/formButtonBox.html');
+        $buttonBoxTemplate = str_replace('{submitButton}', $submitButtonTemplate, $buttonBoxTemplate);
+        $buttonBoxTemplate = str_replace('{resetButton}', $resetButtonTemplate, $buttonBoxTemplate);
+        $buttonBoxTemplate = str_replace('{deleteButton}', '', $buttonBoxTemplate);
+        $buttonBoxTemplate = str_replace('{cancelButton}', $cancelButtonTemplate, $buttonBoxTemplate);
+
+        // Intégration du button box dans le form
+        $this->formTemplate = str_replace('{docFormButtonBox}', $buttonBoxTemplate, $this->formTemplate);
+    }
+
+    /** Liste des contenus spécifiques à cette page
+     */
+    private function contentElementsSettingsList(): void
+    {
+        $this->contentSettingsList = array(
+            'mainContent' => $this->formTemplate,
+            'speMedicModal' => ''
+        );
+    }
+
+    /** Application des contenus spécifiques à cette page
+     */
+    private function contentElementsStringReplace(): void
+    {
+        $this->pageContent = str_replace('{mainContent}', $this->contentSettingsList['mainContent'], $this->pageContent);
+        $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
     }
 }

@@ -49,7 +49,7 @@ class DocOfficeGetController
         $this->docOfficeList = $this->docOfficeModel->gatherAllDocOfficesModel();
 
         $this->docOfficeView = new \HealthKerd\View\medic\docOffice\docOfficeList\DocOfficeListPageBuilder();
-        $this->docOfficeView->dataReceiver($this->docOfficeList);
+        $this->docOfficeView->buildOrder($this->docOfficeList);
     }
 
     /** Affichage des events liés à un cabinet médical en particulier
@@ -60,6 +60,6 @@ class DocOfficeGetController
         $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsByDocOfficeId', $this->cleanedUpGet);
 
         $this->docOfficeView = new \HealthKerd\View\medic\docOffice\allEventsRegrdOneDocOffice\AllEventsRegrdOneDocOfficePageBuilder();
-        $this->docOfficeView->dataReceiver($processedData);
+        $this->docOfficeView->buildOrder($processedData);
     }
 }

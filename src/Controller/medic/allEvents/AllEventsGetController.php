@@ -23,6 +23,6 @@ class AllEventsGetController
     public function displayAllEvents(): void
     {
         $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsByUserId');
-        $this->allEventsView->dataReceiver($processedData); // view
+        $this->allEventsView->buildOrder($processedData); // view
     }
 }

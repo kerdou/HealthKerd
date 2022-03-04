@@ -7,65 +7,142 @@ namespace HealthKerd\View\medic\allEvents;
 class AllEventsPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
-    private array $eventsData = array();
-    private string $builtContentHTML = '';
-    private string $pastEventsHTML = '';
-    private string $futureEventsHTML = '';
-
-    private object $eventsBuilder;
+    private array $contentSettingsList = array();
+    private string $eventsContent = '';
 
     public function __construct()
     {
         parent::__construct();
-
-        $this->pageSettingsList = array(
-            "pageTitle" => "Liste de tous les événements"
-        );
+        $this->pageElementsSettingsList();
+        $this->pageElementsStringReplace(); // configuration de la page
     }
 
     public function __destruct()
     {
     }
 
-    /** Recoit les données de tous les rendez-vous puis lance la construction du HTML de ce contenu
-     * * On construit d'abord les events passés
-     * * On construit ensuite les events futurs
-     * @param array $medicEvtProcessedDataStore     Donnée réassamblée et réagencée dans le Processor pour faciliter la création du HTML
+    /** Liste des paramétres de la page, sans le contenu
      */
-    public function dataReceiver(array $medicEvtProcessedDataStore)
+    private function pageElementsSettingsList(): void
     {
-        $this->eventsData = $medicEvtProcessedDataStore;
-
-        $this->eventsBuilder = new \HealthKerd\View\medic\eventsBuilder\EventsBuilder();
-        $this->pastEventsHTML = $this->eventsBuilder->eventBuildOrder($this->eventsData['pastEvents']);
-
-        // eventBuilder est détruit à la fin de son execution donc on le recrée pour les futureEvents
-        $this->eventsBuilder = new \HealthKerd\View\medic\eventsBuilder\EventsBuilder();
-        $this->futureEventsHTML = $this->eventsBuilder->eventBuildOrder($this->eventsData['futureEvents']);
-        $this->buildOrder();
+        $this->pageSettingsList = array(
+            'headContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/head.html'),
+            "pageTitle" => 'Liste de tous les événements',
+            'headerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/header.html'),
+            'mainContainer' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/mainContainer.html'),
+            'sidebarMenuUlContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/sidebarMenuUlContent.html'),
+            'userFullName' => $_SESSION['firstName'] . ' ' . $_SESSION['lastName'],
+            'scrollUpButton' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/scrollUpArrow.html'),
+            'footerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/footer.html'),
+            'HTMLBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/HTMLBottomDeclarations.html')
+        );
     }
 
-    /** Adaptation de la page suivant la présence ou l'absence des events passés et futurs
-     * Puis configuration de la page et affichage du contenu
+    /** Application de tous les paramétres listés dans $pageSettingsList
      */
-    private function buildOrder()
+    private function pageElementsStringReplace(): void
     {
-        if (sizeof($this->eventsData['futureEvents']) > 0) {
-            $this->builtContentHTML .= '<h3>&Eacute;vénements médicaux à venir: ' . sizeof($this->eventsData['futureEvents']) . '</h3>';
-            $this->builtContentHTML .= $this->futureEventsHTML;
-        }
+        $this->pageContent = str_replace('{headContent}', $this->pageSettingsList['headContent'], $this->pageContent);
+        $this->pageContent = str_replace('{pageTitle}', $this->pageSettingsList['pageTitle'], $this->pageContent);
+        $this->pageContent = str_replace('{headerContent}', $this->pageSettingsList['headerContent'], $this->pageContent);
+        $this->pageContent = str_replace('{mainContainer}', $this->pageSettingsList['mainContainer'], $this->pageContent);
+        $this->pageContent = str_replace('{sidebarMenuUlContent}', $this->pageSettingsList['sidebarMenuUlContent'], $this->pageContent);
+        $this->pageContent = str_replace('{userFullName}', $this->pageSettingsList['userFullName'], $this->pageContent);
+        $this->pageContent = str_replace('{scrollUpButton}', $this->pageSettingsList['scrollUpButton'], $this->pageContent);
+        $this->pageContent = str_replace('{footerContent}', $this->pageSettingsList['footerContent'], $this->pageContent);
+        $this->pageContent = str_replace('{HTMLBottomDeclarations}', $this->pageSettingsList['HTMLBottomDeclarations'], $this->pageContent);
+    }
 
-        if (sizeof($this->eventsData['pastEvents']) > 0) {
-            $this->builtContentHTML .= '<h3>&Eacute;vénements médicaux passés: ' . sizeof($this->eventsData['pastEvents']) . '</h3>';
-            $this->builtContentHTML .= $this->pastEventsHTML;
-        }
+    /** Recoit les données de tous les rendez-vous puis lance la construction du HTML de ce contenu
+     * * On construit d'abord les events futurs
+     * * On construit ensuite les events passés
+     * @param array $eventsData     Donnée réassamblée et réagencée dans le Processor pour faciliter la création du HTML
+     */
+    public function buildOrder(array $eventsData): void
+    {
+        $this->allEventsBuilder($eventsData);
 
-        if ((sizeof($this->eventsData['futureEvents']) == 0)  &&  (sizeof($this->eventsData['pastEvents']) == 0)) {
-            $this->builtContentHTML .= "<h3>Aucun événement médical lié à ce professionnel de santé trouvé</h3>";
-        }
+        $this->contentElementsSettingsList();
+        $this->contentElementsStringReplace();
 
-        $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
-        $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
+    }
+
+    /** Construction des blocs HTML passés et futurs, s'il y en a
+     * @param array $eventsData     Données des events
+     */
+    private function allEventsBuilder(array $eventsData): void
+    {
+        if ((sizeof($eventsData['futureEvents']) == 0) && (sizeof($eventsData['pastEvents']) == 0)) {
+            $this->eventsContent = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/allEvents/noEventsContent.html');
+        } else {
+            if (sizeof($eventsData['futureEvents']) > 0) {
+                $futureEventsContentTemplate = $this->futureEventsBuilder($eventsData['futureEvents']);
+            } else {
+                $futureEventsContentTemplate = '';
+            }
+
+            if (sizeof($eventsData['pastEvents']) > 0) {
+                $pastEventsContentTemplate = $this->pastEventsBuilder($eventsData['pastEvents']);
+            } else {
+                $pastEventsContentTemplate = '';
+            }
+
+            $this->eventsContent = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/allEvents/eventsContent.html');
+            $this->eventsContent = str_replace('{futureEventsAccordion}', $futureEventsContentTemplate, $this->eventsContent);
+            $this->eventsContent = str_replace('{pastEventsAccordion}', $pastEventsContentTemplate, $this->eventsContent);
+        }
+    }
+
+    /** Construction des éléments HTML des events à venir
+     * @param array $futureEventsData       Données des events futurs
+     * @return string                       Blocs HTML des events futurs
+     */
+    private function futureEventsBuilder(array $futureEventsData): string
+    {
+        $eventsBuilder = new \HealthKerd\View\medic\eventsBuilder\EventsBuilder();
+        $futureEventsAccordionHTML = $eventsBuilder->eventBuildOrder($futureEventsData);
+
+        $futureEventsContentTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/event/futureEvents/futureEvents.html');
+        $futureEventsContentTemplate = str_replace('{futureEventsQty}', sizeof($futureEventsData), $futureEventsContentTemplate);
+        $futureEventsContentTemplate = str_replace('{futureEventsAccordion}', $futureEventsAccordionHTML, $futureEventsContentTemplate);
+
+        return $futureEventsContentTemplate;
+    }
+
+    /** Construction des éléments HTML des events passés
+     * @param array $pastEventsData     Données des events passés
+     * @return string                   Blocs HTML des events passés
+     */
+    private function pastEventsBuilder(array $pastEventsData): string
+    {
+        $eventsBuilder = new \HealthKerd\View\medic\eventsBuilder\EventsBuilder();
+        $pastEventsAccordionHTML = $eventsBuilder->eventBuildOrder($pastEventsData);
+
+        $pastEventsContentTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/event/pastEvents/pastEvents.html');
+        $pastEventsContentTemplate = str_replace('{pastEventsQty}', sizeof($pastEventsData), $pastEventsContentTemplate);
+        $pastEventsContentTemplate = str_replace('{pastEventsAccordion}', $pastEventsAccordionHTML, $pastEventsContentTemplate);
+
+        return $pastEventsContentTemplate;
+    }
+
+    /** Liste des contenus spécifiques à cette page
+     */
+    private function contentElementsSettingsList(): void
+    {
+        $this->contentSettingsList = array(
+            'mainContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/allEvents/allEvents.html'),
+            'eventsContent' => $this->eventsContent,
+            'speMedicModal' => ''
+        );
+    }
+
+    /** Application des contenus spécifiques à cette page
+     */
+    private function contentElementsStringReplace(): void
+    {
+        $this->pageContent = str_replace('{mainContent}', $this->contentSettingsList['mainContent'], $this->pageContent);
+        $this->pageContent = str_replace('{eventsContent}', $this->contentSettingsList['eventsContent'], $this->pageContent);
+        $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
     }
 }

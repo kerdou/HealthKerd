@@ -20,6 +20,6 @@ class HomeGetController
         $processedData = $this->eventFinderAndGathererController->actionReceiver('comingEventsIds');
 
         $this->homeView = new \HealthKerd\View\home\HomePageBuilder();
-        $this->homeView->dataReceiver($processedData);
+        $this->homeView->buildOrder($processedData);
     }
 }

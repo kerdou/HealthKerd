@@ -1,0 +1,19 @@
+<div id="login_page">
+    <div class="wrapper fadeInDown">
+        <div id="formContent">
+            <!-- Tabs Titles -->
+            <div class="fadeIn first">
+                <h2>HealthKerd</h2>
+            </div>
+            <!-- Login Form -->
+            <form id="loginForm" method="post">
+                <input type="text" id="login" class="fadeIn second" name="userLogin" placeholder="Identifiant">
+                <input type="password" id="password" class="fadeIn third" name="userPwd" placeholder="Mot de passe">
+                <button type="submit" class="fadeIn fourth" id="loginSubmit" formaction="index.php?controller=loginPost"
+                    name="action" value="logMeIn">Connexion</button>
+                <button type="submit" class="fadeIn fifth" id="createSubmit"
+                    formaction="index.php?controller=userAccount&action=creationForm">Création de compte</button>
+            </form>
+        </div>
+    </div>
+</div>

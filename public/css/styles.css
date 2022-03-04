@@ -1,8 +1,7 @@
 @charset "UTF-8";
-#my-container {
+#body_container {
   /* Pour avoir un footer qui reste en bas*/
   min-height: 100vh;
-  /* 88% de vertical viewport pour que ça prenne l'intégralité d'un 16/9 sur Windows 10 */
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -12,14 +11,14 @@
           flex-direction: column;
 }
 
-#my-header {
+#header {
   /* Pour avoir un footer qui reste en bas*/
   -webkit-box-flex: 0;
-      -ms-flex: 0 1;
-          flex: 0 1;
+      -ms-flex: 0;
+          flex: 0;
 }
 
-#my-content {
+#main_container {
   /* Pour avoir un footer qui reste en bas*/
   -webkit-box-flex: 1;
       -ms-flex: 1;
@@ -28,9 +27,9 @@
 
 #footer {
   /* Pour avoir un footer qui reste en bas*/
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  -webkit-box-flex: 0;
+      -ms-flex: 0;
+          flex: 0;
 }
 
 /* Suppression du style des liens */
@@ -49,7 +48,6 @@ a:hover {
   text-decoration: inherit;
 }
 
-/* Scroll up button */
 #scrollUpButton {
   position: fixed;
   /*display: none;
@@ -76,8 +74,8 @@ a:hover {
 }
 
 /* Gestion des chevrons à gauche des sections de menus de sidebar, rotation au clic */
-#my-sidebar .btn-toggle,
-#offcanvas-nav .btn-toggle {
+#desktop_sidebar_menu_ul .btn-toggle,
+#mobile_sidebar_menu_ul .btn-toggle {
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -89,8 +87,8 @@ a:hover {
   border: 0;
 }
 
-#my-sidebar .btn-toggle::before,
-#offcanvas-nav .btn-toggle::before {
+#desktop_sidebar_menu_ul .btn-toggle::before,
+#mobile_sidebar_menu_ul .btn-toggle::before {
   width: 1.25em;
   line-height: 0;
   content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
@@ -102,14 +100,14 @@ a:hover {
           transform-origin: 0.5em 50%;
 }
 
-#my-sidebar .btn-toggle[aria-expanded=true]::before,
-#offcanvas-nav .btn-toggle[aria-expanded=true]::before {
+#desktop_sidebar_menu_ul .btn-toggle[aria-expanded=true]::before,
+#mobile_sidebar_menu_ul .btn-toggle[aria-expanded=true]::before {
   -webkit-transform: rotate(90deg);
           transform: rotate(90deg);
 }
 
-#my-sidebar .btn-toggle-nav a,
-#offcanvas-nav .btn-toggle-nav a {
+#desktop_sidebar_menu_ul .btn-toggle-nav a,
+#mobile_sidebar_menu_ul .btn-toggle-nav a {
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -120,15 +118,15 @@ a:hover {
 }
 
 /* Resize des textarea*/
-#my-content textarea {
+#main_container_fluid textarea {
   resize: vertical;
   min-height: 100px;
   max-height: 250px;
 }
-#my-content textarea.textarea-ridonli {
+#main_container_fluid textarea.textarea-ridonli {
   background-color: transparent;
 }
-#my-content textarea.textarea-ridonli + label {
+#main_container_fluid textarea.textarea-ridonli + label {
   transition: opacity 0.1s linear;
   -webkit-transition: opacity 0.1s linear;
   -moz-transition: opacity 0.1s linear;
@@ -137,7 +135,7 @@ a:hover {
 }
 
 /* BASIC */
-#login_form {
+#login_page {
   /* STRUCTURE */
   /* TABS */
   /* FORM TYPOGRAPHY*/
@@ -148,13 +146,13 @@ a:hover {
   /* OTHERS */
   /*# sourceMappingURL=styles.css.map */
 }
-#login_form a {
+#login_page a {
   color: #92badd;
   display: inline-block;
   text-decoration: none;
   font-weight: 400;
 }
-#login_form h2 {
+#login_page h2 {
   text-align: center;
   /*font-size: 32px;*/
   font-weight: 600;
@@ -163,7 +161,7 @@ a:hover {
   margin: 40px 8px 10px 8px;
   color: #cccccc;
 }
-#login_form .wrapper {
+#login_page .wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -181,7 +179,7 @@ a:hover {
   min-height: 100%;
   padding: 20px;
 }
-#login_form #formContent {
+#login_page #formContent {
   border-radius: 10px 10px 10px 10px;
   background: #fff;
   padding: 30px;
@@ -193,25 +191,25 @@ a:hover {
   box-shadow: 0 30px 60px 0 rgba(0, 0, 0, 0.3);
   text-align: center;
 }
-#login_form #formFooter {
+#login_page #formFooter {
   background-color: #f6f6f6;
   border-top: 1px solid #dce8f1;
   padding: 25px;
   text-align: center;
   border-radius: 0 0 10px 10px;
 }
-#login_form h2.inactive {
+#login_page h2.inactive {
   color: #cccccc;
 }
-#login_form h2.active {
+#login_page h2.active {
   color: #0d0d0d;
   border-bottom: 2px solid #5fbae9;
 }
-#login_form button[type=submit],
-#login_form button[type=button],
-#login_form input[type=button],
-#login_form input[type=submit],
-#login_form input[type=reset] {
+#login_page button[type=submit],
+#login_page button[type=button],
+#login_page input[type=button],
+#login_page input[type=submit],
+#login_page input[type=reset] {
   background-color: #56baed;
   border: none;
   color: white;
@@ -230,30 +228,30 @@ a:hover {
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
-#login_form #createSubmit {
+#login_page #createSubmit {
   margin-bottom: 20px;
   padding-top: 15px;
   padding-bottom: 15px;
   padding-left: 0px;
   padding-right: 0px;
 }
-#login_form button[type=submit]:hover,
-#login_form button[type=button]:hover,
-#login_form input[type=button]:hover,
-#login_form input[type=submit]:hover,
-#login_form input[type=reset]:hover {
+#login_page button[type=submit]:hover,
+#login_page button[type=button]:hover,
+#login_page input[type=button]:hover,
+#login_page input[type=submit]:hover,
+#login_page input[type=reset]:hover {
   background-color: #39ace7;
 }
-#login_form button[type=submit]:active,
-#login_form button[type=button]:active,
-#login_form input[type=button]:active,
-#login_form input[type=submit]:active,
-#login_form input[type=reset]:active {
+#login_page button[type=submit]:active,
+#login_page button[type=button]:active,
+#login_page input[type=button]:active,
+#login_page input[type=submit]:active,
+#login_page input[type=reset]:active {
   -webkit-transform: scale(0.95);
   transform: scale(0.95);
 }
-#login_form input[type=text],
-#login_form input[type=password] {
+#login_page input[type=text],
+#login_page input[type=password] {
   background-color: #f6f6f6;
   border: none;
   color: #0d0d0d;
@@ -269,16 +267,16 @@ a:hover {
   transition: all 0.5s ease-in-out;
   border-radius: 5px 5px 5px 5px;
 }
-#login_form input[type=text]:focus,
-#login_form input[type=password]:focus {
+#login_page input[type=text]:focus,
+#login_page input[type=password]:focus {
   background-color: #fff;
   border-bottom: 2px solid #5fbae9;
 }
-#login_form input[type=text]:placeholder,
-#login_form input[type=password]:placeholder {
+#login_page input[type=text]:placeholder,
+#login_page input[type=password]:placeholder {
   color: #cccccc;
 }
-#login_form .fadeInDown {
+#login_page .fadeInDown {
   -webkit-animation-name: fadeInDown;
   animation-name: fadeInDown;
   -webkit-animation-duration: 1s;
@@ -329,7 +327,7 @@ a:hover {
     opacity: 1;
   }
 }
-#login_form .fadeIn {
+#login_page .fadeIn {
   opacity: 0;
   -webkit-animation: fadeIn ease-in 1;
   animation: fadeIn ease-in 1;
@@ -338,27 +336,27 @@ a:hover {
   -webkit-animation-duration: 1s;
   animation-duration: 1s;
 }
-#login_form .fadeIn.first {
+#login_page .fadeIn.first {
   -webkit-animation-delay: 0.4s;
   animation-delay: 0.4s;
 }
-#login_form .fadeIn.second {
+#login_page .fadeIn.second {
   -webkit-animation-delay: 0.6s;
   animation-delay: 0.6s;
 }
-#login_form .fadeIn.third {
+#login_page .fadeIn.third {
   -webkit-animation-delay: 0.8s;
   animation-delay: 0.8s;
 }
-#login_form .fadeIn.fourth {
+#login_page .fadeIn.fourth {
   -webkit-animation-delay: 1s;
   animation-delay: 1s;
 }
-#login_form .fadeIn.fifth {
+#login_page .fadeIn.fifth {
   -webkit-animation-delay: 1.2s;
   animation-delay: 1.2s;
 }
-#login_form .underlineHover:after {
+#login_page .underlineHover:after {
   display: block;
   left: 0;
   bottom: -10px;
@@ -369,16 +367,15 @@ a:hover {
   -webkit-transition: width 0.2s;
   transition: width 0.2s;
 }
-#login_form .underlineHover:hover {
+#login_page .underlineHover:hover {
   color: #0d0d0d;
 }
-#login_form .underlineHover:hover:after {
+#login_page .underlineHover:hover:after {
   width: 100%;
 }
-#login_form *:focus {
+#login_page *:focus {
   outline: none;
 }
-#login_form #icon {
+#login_page #icon {
   width: 60%;
-}
-/*# sourceMappingURL=styles.css.map *//*# sourceMappingURL=styles.css.map */
+}/*# sourceMappingURL=styles.css.map */

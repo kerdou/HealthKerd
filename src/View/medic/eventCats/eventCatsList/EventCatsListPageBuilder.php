@@ -7,47 +7,62 @@ namespace HealthKerd\View\medic\eventCats\eventCatsList;
 class EventCatsListPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
-    private string $builtContentHTML = '';
+    private string $eventCatCardsHTML = '';
     private array $eventCatsList = array();
 
     public function __construct()
     {
         parent::__construct();
-
-        $this->pageSettingsList = array(
-            "pageTitle" => "Catégories d'événements médicaux"
-        );
+        $this->pageElementsSettingsList();
+        $this->pageElementsStringReplace();
     }
 
     public function __destruct()
     {
     }
 
-    /** Recoit les données puis lance la création de la liste des catégories d'événements
-     * @param array $eventCatsList     Données des catégories d'événements
-    */
-    public function dataReceiver(array $eventCatsList)
+    /** Liste des paramétres de la page, sans le contenu
+     */
+    private function pageElementsSettingsList(): void
     {
-        $this->eventCatsList = $eventCatsList;
-        $this->buildOrder();
+        $this->pageSettingsList = array(
+            'headContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/head.html'),
+            "pageTitle" => 'Catégories d\'événements médicaux',
+            'headerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/header.html'),
+            'mainContainer' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/mainContainer.html'),
+            'sidebarMenuUlContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/sidebarMenuUlContent.html'),
+            'userFullName' => $_SESSION['firstName'] . ' ' . $_SESSION['lastName'],
+            'scrollUpButton' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/scrollUpArrow.html'),
+            'footerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/footer.html'),
+            'HTMLBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/HTMLBottomDeclarations.html')
+        );
     }
 
-    /** Construction de la liste des catégories d'événements
-     * Puis configuration de la page et affichage du contenu
+    /** Application de tous les paramétres listés dans $pageSettingsList
      */
-    private function buildOrder()
+    private function pageElementsStringReplace(): void
     {
-        $this->builtContentHTML .= '<div class="p-2">';
+        $this->pageContent = str_replace('{headContent}', $this->pageSettingsList['headContent'], $this->pageContent);
+        $this->pageContent = str_replace('{pageTitle}', $this->pageSettingsList['pageTitle'], $this->pageContent);
+        $this->pageContent = str_replace('{headerContent}', $this->pageSettingsList['headerContent'], $this->pageContent);
+        $this->pageContent = str_replace('{mainContainer}', $this->pageSettingsList['mainContainer'], $this->pageContent);
+        $this->pageContent = str_replace('{sidebarMenuUlContent}', $this->pageSettingsList['sidebarMenuUlContent'], $this->pageContent);
+        $this->pageContent = str_replace('{userFullName}', $this->pageSettingsList['userFullName'], $this->pageContent);
+        $this->pageContent = str_replace('{scrollUpButton}', $this->pageSettingsList['scrollUpButton'], $this->pageContent);
+        $this->pageContent = str_replace('{footerContent}', $this->pageSettingsList['footerContent'], $this->pageContent);
+        $this->pageContent = str_replace('{HTMLBottomDeclarations}', $this->pageSettingsList['HTMLBottomDeclarations'], $this->pageContent);
+    }
 
-        $this->builtContentHTML .= '<h3>Catégories d\'événements médicaux: ' . sizeof($this->eventCatsList) . '</h3>';
-        $this->builtContentHTML .= '<div class= "d-flex flex-column flex-lg-row flex-wrap">';
-        $this->builtContentHTML .= $this->eventCatCardsBuilder($this->eventCatsList);
-        $this->builtContentHTML .= '</div>';
+    /**
+     */
+    public function buildOrder(array $eventCatsList)
+    {
+        $this->eventCatsList = $eventCatsList;
+        $this->eventCatCardsHTML = $this->eventCatCardsBuilder($this->eventCatsList);
 
-        $this->builtContentHTML .= '</div>';
+        $this->contentElementsSettingsList();
+        $this->contentElementsStringReplace();
 
-        $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
-        $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 
@@ -57,36 +72,38 @@ class EventCatsListPageBuilder extends \HealthKerd\View\common\ViewInChief
     */
     private function eventCatCardsBuilder(array $eventCatsList)
     {
-        $cardHTMLString = '';
-        $cardHTMLArray = array();
+        $catCardTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/eventCats/eventCatsList/eventCatCard.html');
+        $catCardHTML = '';
 
         foreach ($eventCatsList as $speData) {
-            $completeCard = $this->cardBuilder($speData);
-            array_push($cardHTMLArray, $completeCard);
+            $tempCard = $catCardTemplate;
+            $tempCard = str_replace('{medicEventCatID}', $speData['medicEventCatID'], $tempCard);
+            $tempCard = str_replace('{catName}', $speData['name'], $tempCard);
+            $catCardHTML .= $tempCard;
         }
 
-        foreach ($cardHTMLArray as $cardHTML) {
-            $cardHTMLString .= $cardHTML;
-        }
-
-        return $cardHTMLString;
+        return $catCardHTML;
     }
 
-    /** Création de chaque card de catégorie d'événements
-     * @param array $eventCatsList  Données d'une seule catégorie d'événements
-     * @return string               HTML d'une card de catégories d'événements
+    /** Liste des contenus spécifiques à cette page
      */
-    private function cardBuilder(array $eventCatsList)
+    private function contentElementsSettingsList(): void
     {
-        $cardHTML =
-        '<a href="index.php?controller=medic&subCtrlr=eventCat&action=dispAllEventsRegrdOneCat&medicEventCatID=' . $eventCatsList['medicEventCatID'] . '" class="col-12 col-lg-4 flex-fill rounded-3 mb-3 me-lg-3">
-            <div class="card h-100">
-                <div class="card-body d-flex flex-row">
-                    <h5 class="card-title">' . $eventCatsList['name'] . '</h5>
-                </div>
-            </div>
-        </a>';
+        $this->contentSettingsList = array(
+            'mainContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/eventCats/eventCatsList/eventCatsList.html'),
+            'eventCatsQty' => sizeof($this->eventCatsList),
+            'eventCatCards' => $this->eventCatCardsHTML,
+            'speMedicModal' => ''
+        );
+    }
 
-        return $cardHTML;
+    /** Application des contenus spécifiques à cette page
+     */
+    private function contentElementsStringReplace(): void
+    {
+        $this->pageContent = str_replace('{mainContent}', $this->contentSettingsList['mainContent'], $this->pageContent);
+        $this->pageContent = str_replace('{eventCatsQty}', $this->contentSettingsList['eventCatsQty'], $this->pageContent);
+        $this->pageContent = str_replace('{eventCatCards}', $this->contentSettingsList['eventCatCards'], $this->pageContent);
+        $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
     }
 }

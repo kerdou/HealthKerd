@@ -1,0 +1,21 @@
+<div id="ordo-labo-accordion-{medicEventID}-{diagID}-{ordoLaboID}" class="accordion my-1 mx-1 mx-lg-2">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="">
+            <button class="btn accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ordo-labo-content-{medicEventID}-{diagID}-{ordoLaboID}">
+                <b>Ordonnance de prélèvement du {frenchDate}</b>
+            </button>
+        </h2>
+        <div id="ordo-labo-content-{medicEventID}-{diagID}-{ordoLaboID}" class="accordion-collapse collapse" data-bs-parent="#ordo-labo-accordion-{medicEventID}-{diagID}-{ordoLaboID}">
+            <div class="accordion-body">
+
+                {prescElements}
+
+                <div class="form-floating mx-0 my-1">
+                    <textarea class="form-control textarea-ridonli" placeholder="" id="ordo-labo-textarea-{medicEventID}-{diagID}-{ordoLaboID}" readonly>{ordoComment}</textarea>
+                    <label for="ordo-labo-textarea-{medicEventID}-{diagID}-{ordoLaboID}">Informations complémentaires</label>
+                </div>
+
+            </div> <!-- END OF ORDO LABO ACCORDION BODY -->
+        </div> <!-- END OF ORDO LABO ACCORDION COLLAPSE -->
+    </div> <!-- END OF ORDO LABO ACCORDION ITEM -->
+</div> <!-- END OF ORDO LABO ACCORDION -->

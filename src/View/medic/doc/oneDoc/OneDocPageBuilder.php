@@ -8,372 +8,292 @@ namespace HealthKerd\View\medic\doc\oneDoc;
 class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
-    private string $builtContentHTML = '';
-    private array $builtContentArray = array();
-    private array $tempContent = array();
     private array $docDataArray = array();
+
+    private string $modifButtonHTML = '';
+    private string $speMedicBadgesHTML = '';
+    private string $contactContentHTML = '';
+    private string $commentPortionHTML = '';
+    private string $medicEventsReportHTML = '';
+    private string $docOfficeCardsHTML = '';
 
     public function __construct()
     {
         parent::__construct();
-
-        $this->tempContent['telPortion'] = '';
-        $this->tempContent['MailPortion'] = '';
-        $this->tempContent['phoneAndMailContent'] = '';
-
-        $this->tempContent['persoWebPagePortion'] = '';
-        $this->tempContent['doctoLibPagePortion'] = '';
-        $this->tempContent['websitesContent'] = '';
-
-        $this->tempContent['contactContent'] = '';
-
-        $this->pageSettingsList = array(
-            "pageTitle" => "Informations liées à un professionnel de santé"
-        );
+        $this->pageElementsSettingsList();
+        $this->pageElementsStringReplace();
     }
 
     public function __destruct()
     {
     }
 
-    /** Recoit les données d'un docteur puis lance la construction de la page avant de l'afficher
-     * @param array $docDataArray   Ensemble des données d'un docteur
+    /** Liste des paramétres de la page, sans le contenu
      */
-    public function dataReceiver(array $docDataArray)
+    private function pageElementsSettingsList(): void
     {
-        $this->docDataArray = $docDataArray;
-        $this->tempContentManagement();
-        $this->buildOrder();
+        $this->pageSettingsList = array(
+            'headContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/head.html'),
+            "pageTitle" => 'Informations liées à un professionnel de santé',
+            'headerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/header.html'),
+            'mainContainer' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/mainContainer.html'),
+            'sidebarMenuUlContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/sidebarMenuUlContent.html'),
+            'userFullName' => $_SESSION['firstName'] . ' ' . $_SESSION['lastName'],
+            'scrollUpButton' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/scrollUpArrow.html'),
+            'footerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/footer.html'),
+            'HTMLBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/HTMLBottomDeclarations.html')
+        );
+    }
+
+    /** Application de tous les paramétres listés dans $pageSettingsList
+     */
+    private function pageElementsStringReplace(): void
+    {
+        $this->pageContent = str_replace('{headContent}', $this->pageSettingsList['headContent'], $this->pageContent);
+        $this->pageContent = str_replace('{pageTitle}', $this->pageSettingsList['pageTitle'], $this->pageContent);
+        $this->pageContent = str_replace('{headerContent}', $this->pageSettingsList['headerContent'], $this->pageContent);
+        $this->pageContent = str_replace('{mainContainer}', $this->pageSettingsList['mainContainer'], $this->pageContent);
+        $this->pageContent = str_replace('{sidebarMenuUlContent}', $this->pageSettingsList['sidebarMenuUlContent'], $this->pageContent);
+        $this->pageContent = str_replace('{userFullName}', $this->pageSettingsList['userFullName'], $this->pageContent);
+        $this->pageContent = str_replace('{scrollUpButton}', $this->pageSettingsList['scrollUpButton'], $this->pageContent);
+        $this->pageContent = str_replace('{footerContent}', $this->pageSettingsList['footerContent'], $this->pageContent);
+        $this->pageContent = str_replace('{HTMLBottomDeclarations}', $this->pageSettingsList['HTMLBottomDeclarations'], $this->pageContent);
     }
 
     /** Génération de tous les blocs HTML et stockage dans $builtContentArray avant affichage
+     * @param array $docDataArray   Données du docteur concerné
     */
-    private function buildOrder()
+    public function buildOrder(array $docDataArray): void
     {
-        $this->builtContentArray['generalDivStart'] = '<div class="p-2"> <!-- GENERAL DIV START -->';
+        $this->docDataArray = $docDataArray;
 
-        $this->builtContentArray['docName'] = $this->docNameBuilder();
-        $this->builtContentArray['speMedicList'] = $this->speMedicBadgesBuilder($this->docDataArray['speMedicList']);
-        $this->builtContentArray['contactContent'] = $this->tempContent['contactContent'];
-        $this->builtContentArray['comment'] = $this->commentBuilder();
+        $this->modifButtonHTML = $this->modifButtonBuilder();
+        $this->speMedicBadgesHTML = $this->speMedicBadgesBuilder();
+        $this->contactContentHTML = $this->contactContentBuilder();
+        $this->commentPortionHTML = $this->commentPortionBuilder();
+        $this->medicEventsReportHTML = $this->medicEventsReportBuilder();
+        $this->docOfficeCardsHTML =  $this->docOfficeCardsBuilder();
 
-        $this->builtContentArray['firstBR'] = '<br>';
-        $this->builtContentArray['medicEvents'] = $this->medicEventsReport();
-        $this->builtContentArray['secondBR'] = '<br>';
+        $this->contentElementsSettingsList();
+        $this->contentElementsStringReplace();
 
-        $this->builtContentArray['docOfficeStart'] =    '<h3>Lieux d\'exercice</h3>
-                                                        <div class= "d-flex flex-column flex-lg-row flex-wrap"> <!-- DOCOFFICE START -->';
-        $this->builtContentArray['docOfficeCards'] = $this->officeCardBuilder($this->docDataArray['docOfficeList']);
-        $this->builtContentArray['docOfficeEnd'] = '</div>  <!-- DOCOFFICE END -->';
-
-
-        $this->builtContentArray['generalDivEnd'] = '</div> <!-- GENERAL DIV END -->';
-
-        foreach ($this->builtContentArray as $portions) {
-            $this->builtContentHTML .= $portions;
-        }
-
-        $this->pageContent = $this->topMainLayoutHTML . $this->builtContentHTML . $this->bottomMainLayoutHTML;
-        $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
 
-    /** Génération des blocs de contenu de contact suivant leur présence ou leur absence
-     * Gére les contenus suivants:
-     * * Numéro de tel
-     * * Adresse mail
-     * * Page perso
-     * * Page sur Doctolib
-    */
-    private function tempContentManagement()
+    /** Ajout du bouton de modification du docteur s'il est modifiable
+     * @return string       HTML du bouton de modification
+     */
+    private function modifButtonBuilder(): string
     {
-        // génération du bloc du numéro de tel s'il existe
-        if (strlen($this->docDataArray['tel'] > 0)) {
-            $this->tempContent['telPortion'] = $this->telPortionBuilder();
+        if ($this->docDataArray['isLocked'] == 0) {
+            $modifButtonHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/modifButton.html');
         } else {
-            $this->tempContent['telPortion'] = '';
+            $modifButtonHTML = '';
         }
 
-        // génération du bloc de l'adresse mail si elle existe
-        if (strlen($this->docDataArray['mail'] > 0)) {
-            $this->tempContent['MailPortion'] = $this->mailPortionBuilder();
+        return $modifButtonHTML;
+    }
+
+    /** Construction des badges de spécialités médicales du docteur
+     * @return string       HTML des badges de spécialités médicales
+     */
+    private function speMedicBadgesBuilder(): string
+    {
+        $speMedicBadgesHTML = '';
+
+        foreach ($this->docDataArray['speMedicList'] as $value) {
+            $badgeTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/badges/docSpeMedic/docSpeMedic.html');
+            $badgeTemplate = str_replace('{speMedicName}', $value['name'], $badgeTemplate);
+            $speMedicBadgesHTML .= $badgeTemplate;
+        }
+
+        return $speMedicBadgesHTML;
+    }
+
+    /** Construction des éléments de contact du docteur
+     * * Dépend de la présence d'un numéro de téléphone
+     * * Dépend de la présence d'un mail
+     * * Dépend de la présence d'une page web personnelle
+     * * Dépend de la présence d'une page sur Doctolib
+     * @return string       HTML de l'ensemble des informations de contact
+     */
+    private function contactContentBuilder(): string
+    {
+        if (
+            $this->docDataArray['tel'] == '' &&
+            $this->docDataArray['mail'] == '' &&
+            $this->docDataArray['webPage'] == '' &&
+            $this->docDataArray['doctolibPage'] == ''
+        ) {
+            $contactContentHTML = '';
         } else {
-            $this->tempContent['MailPortion'] = '';
+            $contactContentHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/contactContent/contactContent.html');
+
+            // S'il y a des données de tel ou de mail, elles iront dans {phoneAndMailContent}
+            if ($this->docDataArray['tel'] == '' && $this->docDataArray['mail'] == '') {
+                $phoneAndMailContentHTML = '';
+            } else {
+                $phoneAndMailContentHTML = $this->phoneAndMailContentBuilder();
+            }
+            $contactContentHTML = str_replace('{phoneAndMailContent}', $phoneAndMailContentHTML, $contactContentHTML);
+
+            // S'il y a des données de page web perso ou DoctoLib, elles iront dans {websitesContent}
+            if ($this->docDataArray['webPage'] == '' && $this->docDataArray['doctolibPage'] == '') {
+                $websitesContentHTML = '';
+            } else {
+                $websitesContentHTML = $this->websitesContentBuilder();
+            }
+            $contactContentHTML = str_replace('{websitesContent}', $websitesContentHTML, $contactContentHTML);
         }
 
-        // le bloc ['phoneAndMailContent'] se crée uniquement s'il y a un numéro de tel ou une adresse mail
-        if (
-            strlen($this->tempContent['telPortion']) > 0 ||
-            strlen($this->tempContent['MailPortion']) > 0
-        ) {
-            $this->tempContent['phoneAndMailContent'] = '<div class="d-flex flex-column flex-fill border rounded-3 my-2 me-lg-2 col-12 col-lg-4 p-2"> <!-- PHONE AND MAIL START -->';
-            $this->tempContent['phoneAndMailContent'] .= $this->tempContent['telPortion'];
-            $this->tempContent['phoneAndMailContent'] .= $this->tempContent['MailPortion'];
-            $this->tempContent['phoneAndMailContent'] .= '</div> <!-- PHONE AND MAIL END -->';
-        }
-
-        // génération du bloc de l'adresse de site perso s'il y en a une
-        if (strlen($this->docDataArray['webPage'] > 0)) {
-            $this->tempContent['persoWebPagePortion'] = $this->persoWebPagePortion();
-        }
-
-        // génération du bloc de l'adresse de la page Doctolib du doc s'il y en a une
-        if (strlen($this->docDataArray['doctolibPage'] > 0)) {
-            $this->tempContent['doctoLibPagePortion'] = $this->doctoLibPagePortion();
-        }
-
-        // le bloc ['websitesContent'] se crée uniquement s'il y a une une adresse de site perso ou une adresse Doctolib
-        if (
-            strlen($this->tempContent['persoWebPagePortion']) > 0 ||
-            strlen($this->tempContent['doctoLibPagePortion']) > 0
-        ) {
-            $this->tempContent['websitesContent'] = '<div class="d-flex flex-column flex-fill border rounded-3 my-2 ms-lg-2 col-12 col-lg-4 p-2"> <!-- WEBSITES START -->';
-            $this->tempContent['websitesContent'] .= $this->tempContent['persoWebPagePortion'];
-            $this->tempContent['websitesContent'] .= $this->tempContent['doctoLibPagePortion'];
-            $this->tempContent['websitesContent'] .= '</div> <!-- WEBSITES END -->';
-        }
-
-        // le bloc ['contactContent'] se crée uniquement si les blocs ['phoneAndMailContent'] ou ['websitesContent'] existent
-        if (
-            (strlen($this->tempContent['phoneAndMailContent']) > 0) ||
-            (strlen($this->tempContent['websitesContent']) > 0)
-        ) {
-            $this->tempContent['contactContent'] = '<div class="d-flex flex-column flex-lg-row"> <!-- CONTACTS START -->';
-            $this->tempContent['contactContent'] .= $this->tempContent['phoneAndMailContent'];
-            $this->tempContent['contactContent'] .= $this->tempContent['websitesContent'];
-            $this->tempContent['contactContent'] .= '</div> <!-- CONTACTS END -->';
-        }
+        return $contactContentHTML;
     }
 
-    /** Génération du bloc du nom du docteur
-     * * L'affichage du bouton de modification du docteur n'est pas systématique
-     * @return string    HTML du bloc de nom du docteur
-    */
-    private function docNameBuilder()
+    /** Construction des éléments de tel et/ou mail s'il y en a
+     * @param string    HTML des éléments de tel et/ou mail
+     */
+    private function phoneAndMailContentBuilder(): string
     {
-        $docNameTopBuilderHTML =
-            '<div class="d-flex flex-row"> <!-- DOC NAME START -->
-                <h2>' . $this->docDataArray['fullNameSentence'] .  '</h2>';
+        $phoneAndMailContentHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/contactContent/phoneAndMailContent/phoneAndMailContent.html');
 
-        $docNameMidBuilderHTML = '';
+        // éléments de tel s'il y en a
+        if ($this->docDataArray['tel'] == '') {
+            $telPortionHTML = '';
+        } else {
+            $telPortionHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/contactContent/phoneAndMailContent/telPortion.html');
+            $telPortionHTML = str_replace('{tel}', $this->docDataArray['tel'], $telPortionHTML);
+        }
+        $phoneAndMailContentHTML = str_replace('{telPortion}', $telPortionHTML, $phoneAndMailContentHTML);
 
-        // affichage du bouton de modification du docteur uniquement s'il n'est pas verrouillé
-        if ($this->docDataArray['isLocked'] == false) {
-            $docNameMidBuilderHTML =
-                '<a href="index.php?controller=medic&subCtrlr=doc&action=showDocEditForm&docID=' . $this->docDataArray['docID'] .  '" class="d-flex flex-column justify-content-center ms-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
-                        <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
-                        <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
-                    </svg>
-                </a>';
+        // éléments de mail s'il y en a
+        if ($this->docDataArray['mail'] == '') {
+            $mailPortionHTML = '';
+        } else {
+            $mailPortionHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/contactContent/phoneAndMailContent/mailPortion.html');
+            $mailPortionHTML = str_replace('{mail}', $this->docDataArray['mail'], $mailPortionHTML);
+        }
+        $phoneAndMailContentHTML = str_replace('{mailPortion}', $mailPortionHTML, $phoneAndMailContentHTML);
+
+        return $phoneAndMailContentHTML;
+    }
+
+    /** Construction des éléments de page web perso et/ou de page Doctolib s'il y en a
+     * @param string    HTML de page web perso et/ou de page Doctolib
+     */
+    private function websitesContentBuilder(): string
+    {
+        $websitesContentHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/contactContent/websitesContent/websitesContent.html');
+
+        // éléments de page web perso s'il y en a
+        if ($this->docDataArray['webPage'] == '') {
+            $webPageHTML = '';
+        } else {
+            $webPageHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/contactContent/websitesContent/persoWebPagePortion.html');
+            $webPageHTML = str_replace('{webPage}', $this->docDataArray['webPage'], $webPageHTML);
+        }
+        $websitesContentHTML = str_replace('{persoWebPagePortion}', $webPageHTML, $websitesContentHTML);
+
+        // éléments de page Doctolib s'il y en a
+        if ($this->docDataArray['doctolibPage'] == '') {
+            $doctolibPageHTML = '';
+        } else {
+            $doctolibPageHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/contactContent/websitesContent/doctoLibPagePortion.html');
+            $doctolibPageHTML = str_replace('{doctolibPage}', $this->docDataArray['doctolibPage'], $doctolibPageHTML);
+        }
+        $websitesContentHTML = str_replace('{doctoLibPagePortion}', $doctolibPageHTML, $websitesContentHTML);
+
+        return $websitesContentHTML;
+    }
+
+    /** Eléments de commentaires concernant le docteur
+     * @return string       HTML des commentaires
+     */
+    private function commentPortionBuilder(): string
+    {
+        if ($this->docDataArray['comment'] == '') {
+            $commentPortionHTML = '';
+        } else {
+            $commentPortionHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/commentPortion.html');
+            $commentPortionHTML = str_replace('{commentContent}', $this->docDataArray['comment'], $commentPortionHTML);
         }
 
-        $docNameBotBuilderHTML = '</div> <!-- DOC NAME END -->';
-
-        return $docNameTopBuilderHTML . $docNameMidBuilderHTML . $docNameBotBuilderHTML;
+        return $commentPortionHTML;
     }
 
-    /** Génération du bloc de spécialités médicales
-     * @param array $speMedicBadgeList  Liste des spécialités médicales du doc
-     * @return string                   HTML des badges de spécialités médicales
-    */
-    private function speMedicBadgesBuilder(array $speMedicBadgeList)
+    /** Eléments de rapport de consultations médicales
+     * @return string       HTML des commentaires
+     */
+    private function medicEventsReportBuilder(): string
     {
-        //var_dump($speMedicBadgeList);
-        $speMedicDivStart = '<div class="d-flex flex-row flex-wrap"> <!-- SPE MEDIC START -->';
-        $allBadgesHTMLString = '';
-        $speMedicDivEnd = '</div> <!-- SPE MEDIC END -->';
-        $allBadgesHTMLArray = array();
+        $medicEventsReportHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/medicEventReport.html');
 
-        foreach ($speMedicBadgeList as $speValue) {
-            $singleBadgeHTML = '<a href="#" class="badge bg-warning me-1 mb-1 text-white">' . $speValue['name'] . '</a>';
-            array_push($allBadgesHTMLArray, $singleBadgeHTML);
-        }
+        $medicEventsReportHTML = str_replace('{pastEventsQty}', $this->docDataArray['medicEvent']['qty']['past'], $medicEventsReportHTML);
+        $medicEventsReportHTML = str_replace('{comingEventsQty}', $this->docDataArray['medicEvent']['qty']['coming'], $medicEventsReportHTML);
+        $medicEventsReportHTML = str_replace('{totalEventsQty}', $this->docDataArray['medicEvent']['qty']['total'], $medicEventsReportHTML);
 
-        foreach ($allBadgesHTMLArray as $cardHTMLPortion) {
-            $allBadgesHTMLString .= $cardHTMLPortion;
-        }
-
-        return $speMedicDivStart . $allBadgesHTMLString . $speMedicDivEnd;
-    }
-
-    /** Génération du bloc de numéro de téléphone
-     * @return string   HTML du bloc de numéro de téléphone
-    */
-    private function telPortionBuilder()
-    {
-        $telPortionBuilderHTML =
-            '<a href="tel:' . $this->docDataArray['tel'] . '" class="my-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-telephone me-2" viewBox="0 0 16 16">
-                    <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
-                </svg>
-                ' . $this->docDataArray['tel'] . '
-            </a>';
-
-        return $telPortionBuilderHTML;
-    }
-
-    /** Génération du bloc d'adresse mail
-     * @return string   HTML du bloc d'adresse mail
-    */
-    private function mailPortionBuilder()
-    {
-        $mailPortionBuilderHTML =
-            '<a href="mailto:' . $this->docDataArray['mail'] . '" class="my-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope me-2" viewBox="0 0 16 16">
-                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
-                </svg>
-                ' . $this->docDataArray['mail'] . '
-            </a>';
-
-        return $mailPortionBuilderHTML;
-    }
-
-    /** Génération du bloc de page perso
-     * @return string   HTML du bloc de page perso
-    */
-    private function persoWebPagePortion()
-    {
-        $persoWebPagePortionHTML =
-            '<a href="' . $this->docDataArray['webPage'] . '" target="_blank" title="addressePerso.com" class="my-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
-                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"/>
-                </svg>
-                Page personnelle
-            </a>';
-
-        return $persoWebPagePortionHTML;
-    }
-
-    /** Génération du bloc de page Doctolib
-     * @return string   HTML du bloc de page Doctolib
-    */
-    private function doctoLibPagePortion()
-    {
-        $doctoLibPagePortionHTML =
-            '<a href="' . $this->docDataArray['doctolibPage'] . '" target="_blank" title="adresse.doctolib.com" class="my-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
-                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"/>
-                </svg>
-                Page DoctoLib
-            </a>
-            ';
-
-        return $doctoLibPagePortionHTML;
-    }
-
-    /** Génération du bloc de commentaire
-     * @return string   HTML du bloc de commentaire
-    */
-    private function commentBuilder()
-    {
-        $commentBuilderHTML =
-            '<div class="form-floating mt-2"> <!-- COMMENT START -->
-                <textarea class="form-control textarea-ridonli" placeholder="" id="event-floating-Textarea-1" readonly>' . $this->docDataArray['comment'] . '</textarea>
-                <label for="event-floating-Textarea-1">Informations complémentaires</label>
-            </div> <!-- COMMENT END -->';
-
-        return $commentBuilderHTML;
-    }
-
-    /** Génération du bloc faisant le bilan du nombre et des dates des rendez-vous
-     * @return string   HTML du bloc de bilan des rendez-vous
-    */
-    private function medicEventsReport()
-    {
-        $medicEventsReportHTML =
-            '<h3>Rendez-vous médicaux</h3>
-
-            <div class="d-flex flex-column flex-lg-row flex-wrap"> <!-- APPOINT START -->
-
-                <div class="card col-12 col-lg-3 col-xxl-2 rounded-3 mb-3 me-lg-3"> <!-- NUMBERS START -->
-                    <div class="card-body">
-                        <h5 class="card-title">Chiffres</h5>
-                        <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex flex-row">
-                            <div style="width: 5rem;" class="me-2">Passés:</div>
-                            <div>' . $this->docDataArray['medicEvent']['qty']['past'] . '</div>
-                        </li>
-                        <li class="list-group-item d-flex flex-row">
-                            <div style="width: 5rem;" class="me-2">&Agrave; venir:</div>
-                            <div>' . $this->docDataArray['medicEvent']['qty']['coming'] . '</div>
-                        </li>
-                        <li class="list-group-item d-flex flex-row">
-                            <div style="width: 5rem;" class="me-2">Total:</div>
-                            <div>' . $this->docDataArray['medicEvent']['qty']['total'] . '</div>
-                        </li>
-                        </ul>
-                    </div>
-                </div> <!-- NUMBERS END -->
-
-                <div class="card col-12 col-lg-8 col-xl-7 col-xxl-6 flex-lg-fill rounded-3 mb-3 me-0 me-xxl-3"> <!-- DATES START -->
-                    <div class="card-body">
-                        <h5 class="card-title">Dates</h5>
-                        <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex flex-row">
-                            <div style="width: 5rem;" class="me-2">Premier:</div>
-                            <div>' . $this->docDataArray['medicEvent']['dates']['first'] . '</div>
-                        </li>
-                        <li class="list-group-item d-flex flex-row">
-                            <div style="width: 5rem;" class="me-2">Dernier:</div>
-                            <div>' . $this->docDataArray['medicEvent']['dates']['last'] . '</div>
-                        </li>
-                        <li class="list-group-item d-flex flex-row">
-                            <div style="width: 5rem;" class="me-2">Prochain:</div>
-                            <div>' . $this->docDataArray['medicEvent']['dates']['next'] . '</div>
-                        </li>
-                        </ul>
-                    </div>
-                </div> <!-- DATES END -->
-                <a href="index.php?controller=medic&subCtrlr=doc&action=showEventsWithOneDoc&docID=' . $this->docDataArray['docID'] . '" class="col-12 flex-fill col-xl-2 col-xxl-3 mb-3 rounded-3">
-                <div class="card h-100 ">
-                    <div class="card-body">
-                        <h5 class="card-title">Afficher les rendez-vous</h5>
-                    </div>
-                </div>
-            </a>
-
-        </div>  <!-- APPOINT END -->';
+        $medicEventsReportHTML = str_replace('{firstEventDate}', $this->docDataArray['medicEvent']['dates']['first'], $medicEventsReportHTML);
+        $medicEventsReportHTML = str_replace('{lastEventDate}', $this->docDataArray['medicEvent']['dates']['last'], $medicEventsReportHTML);
+        $medicEventsReportHTML = str_replace('{nextEventDate}', $this->docDataArray['medicEvent']['dates']['next'], $medicEventsReportHTML);
 
         return $medicEventsReportHTML;
     }
 
-    /** Génératon des blocs de cabinets médicaux
-     * @return string   HTML des blocs de cabinets médicaux générés
-    */
-    private function officeCardBuilder(array $officeData)
+    /** Construction des cards de cabinets médicaux
+     * @return string       HTML des cards de cabinets médicaux
+     */
+    private function docOfficeCardsBuilder(): string
     {
-        $allCardsHTML = '';
-        $allCardsArray = array();
+        $docOfficeCardsTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/docOfficeCard.html');
+        $docOfficeCardsHTML = '';
 
-        foreach ($officeData as $value) {
-            $cardSingleHTML =
-            '<a href="index.php?controller=medic&subCtrlr=docOffice&action=dispEventsWithOneDocOffice&docOfficeID=' . $value['docOfficeID'] . '" class="col-12 col-lg-4 flex-fill rounded-3 mb-3 me-lg-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex flex-row">
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-building me-2" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd" d="M14.763.075A.5.5 0 0 1 15 .5v15a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V14h-1v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V10a.5.5 0 0 1 .342-.474L6 7.64V4.5a.5.5 0 0 1 .276-.447l8-4a.5.5 0 0 1 .487.022zM6 8.694 1 10.36V15h5V8.694zM7 15h2v-1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5V15h2V1.309l-7 3.5V15z"/>
-                                    <path d="M2 11h1v1H2v-1zm2 0h1v1H4v-1zm-2 2h1v1H2v-1zm2 0h1v1H4v-1zm4-4h1v1H8V9zm2 0h1v1h-1V9zm-2 2h1v1H8v-1zm2 0h1v1h-1v-1zm2-2h1v1h-1V9zm0 2h1v1h-1v-1zM8 7h1v1H8V7zm2 0h1v1h-1V7zm2 0h1v1h-1V7zM8 5h1v1H8V5zm2 0h1v1h-1V5zm2 0h1v1h-1V5zm0-2h1v1h-1V3z"/>
-                                </svg>
-                            </div>
-                            <div class="d-flex flex-column">
-                                <h5 class="card-title">' . $value['name'] . '</h5>
-                                <p>' . $value['cityName'] . '</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>';
+        if (sizeof($this->docDataArray['docOfficeList']) == 0) {
+            $docOfficeCardsHTML = 'Aucun cabinet médical rattaché';
+        } else {
+            foreach ($this->docDataArray['docOfficeList'] as $value) {
+                $docOfficeTemp = $docOfficeCardsTemplate;
 
-            array_push($allCardsArray, $cardSingleHTML);
+                $docOfficeTemp = str_replace('{docOfficeID}', $value['docOfficeID'], $docOfficeTemp);
+                $docOfficeTemp = str_replace('{name}', $value['name'], $docOfficeTemp);
+                $docOfficeTemp = str_replace('{cityName}', $value['cityName'], $docOfficeTemp);
+
+                $docOfficeCardsHTML .= $docOfficeTemp;
+            }
         }
 
-        foreach ($allCardsArray as $HTMLPortion) {
-            $allCardsHTML .= $HTMLPortion;
-        }
+        return $docOfficeCardsHTML;
+    }
 
-        return $allCardsHTML;
+    /** Liste des contenus spécifiques à cette page
+     */
+    private function contentElementsSettingsList(): void
+    {
+        $this->contentSettingsList = array(
+            'mainContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/oneDoc.html'),
+            'modifButton' => $this->modifButtonHTML,
+            'docFullNameSentence' => $this->docDataArray['fullNameSentence'],
+            'speMedicBadges' => $this->speMedicBadgesHTML,
+            'contactContent' => $this->contactContentHTML,
+            'commentPortion' => $this->commentPortionHTML,
+            'medicEventsReport' => $this->medicEventsReportHTML,
+            'docOfficeCards' => $this->docOfficeCardsHTML,
+            'docID' => $this->docDataArray['docID'],
+            'speMedicModal' => ''
+        );
+    }
+
+    /** Application des contenus spécifiques à cette page
+     */
+    private function contentElementsStringReplace(): void
+    {
+        $this->pageContent = str_replace('{mainContent}', $this->contentSettingsList['mainContent'], $this->pageContent);
+        $this->pageContent = str_replace('{docFullNameSentence}', $this->contentSettingsList['docFullNameSentence'], $this->pageContent);
+        $this->pageContent = str_replace('{modifButton}', $this->contentSettingsList['modifButton'], $this->pageContent);
+        $this->pageContent = str_replace('{speMedicBadges}', $this->contentSettingsList['speMedicBadges'], $this->pageContent);
+        $this->pageContent = str_replace('{contactContent}', $this->contentSettingsList['contactContent'], $this->pageContent);
+        $this->pageContent = str_replace('{commentPortion}', $this->contentSettingsList['commentPortion'], $this->pageContent);
+        $this->pageContent = str_replace('{medicEventsReport}', $this->contentSettingsList['medicEventsReport'], $this->pageContent);
+        $this->pageContent = str_replace('{docOfficeCards}', $this->contentSettingsList['docOfficeCards'], $this->pageContent);
+        $this->pageContent = str_replace('{docID}', $this->contentSettingsList['docID'], $this->pageContent);
+        $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
     }
 }

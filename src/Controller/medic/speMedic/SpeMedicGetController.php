@@ -47,7 +47,7 @@ class SpeMedicGetController
         $speMedicList = $speMedicModel->selectSpeMedicUsedByUser();
 
         $this->speView = new \HealthKerd\View\medic\speMedic\speMedicList\SpeMedicListPageBuilder();
-        $this->speView->dataReceiver($speMedicList);
+        $this->speView->buildOrder($speMedicList);
     }
 
     /** Affichage de tous les events vis à vis d'une spé en particulier
@@ -58,6 +58,6 @@ class SpeMedicGetController
         $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsFromSpeMedicId', $this->cleanedUpGet);
 
         $this->speView = new \HealthKerd\View\medic\speMedic\AllEventsRegrdOneSpe\AllEventsRegardOneSpePageBuilder();
-        $this->speView->dataReceiver($processedData);
+        $this->speView->buildOrder($processedData);
     }
 }

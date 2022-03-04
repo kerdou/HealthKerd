@@ -1,0 +1,55 @@
+<div id="main_container_row" class="row">
+    <!-- START OF #MY-CONTENT CONTAINER ROW -->
+
+    <aside id="desktop_sidebar" class="d-none d-lg-block col-lg-4 col-xxl-3">
+        <ul id="desktop_sidebar_menu_ul" class="list-unstyled ps-0">
+            {sidebarMenuUlContent}
+        </ul>
+    </aside> <!-- END OF NAV -->
+
+    <aside id="mobile_sidebar" class="offcanvas offcanvas-start">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">HealthKerd</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body">
+            <ul id="mobile_sidebar_menu_ul" class="list-unstyled ps-0">
+                {sidebarMenuUlContent}
+            </ul>
+        </div>
+        <hr>
+        <div class="dropup mb-3">
+            <button class="user-dropdown btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <svg class="bi bi-person-circle me-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                    <path fill-rule="evenodd"
+                        d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+                </svg>
+                {userFullName}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+                <li><a href="#" class="btn">Profil</a></li>
+                <li><a href="index.php?controller=login&action=killSession" class="btn">Déconnexion</a></li>
+            </ul>
+        </div>
+    </aside> <!-- END OF OFFCANVAS NAV -->
+
+    <div id="main_content" class="col-12 col-lg-8 col-xxl-9 px-0">
+        <div id="main_container_fluid" class="container-fluid px-0">
+            <div class="row">
+                <div class="col-12">
+                    {mainContent}
+                </div>
+            </div> <!-- END OF main-container-fluid row -->
+        </div> <!-- END OF main-container-fluid -->
+    </div> <!-- END OF "MAIN" :  VRAI CONTENU EN DEHORS DES MENUS -->
+</div> <!-- END OF #MY-CONTENT CONTAINER ROW -->
+
+<div id="modal_store">
+    {speMedicModal}
+</div> <!-- END OF modal_store -->
+
+{scrollUpButton}

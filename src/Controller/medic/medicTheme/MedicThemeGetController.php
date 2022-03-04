@@ -48,7 +48,7 @@ class MedicThemeGetController
         $medicThemeList = $medicThemeModel->selectMedicThemeByUserId();
 
         $this->medicThemeView = new \HealthKerd\View\medic\medicTheme\medicThemeList\MedicThemeListPageBuilder();
-        $this->medicThemeView->dataReceiver($medicThemeList);
+        $this->medicThemeView->buildOrder($medicThemeList);
     }
 
     /** Affichage de tous les events par rapport à un thème médical
@@ -59,6 +59,6 @@ class MedicThemeGetController
         $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsFromMedicThemeId', $this->cleanedUpGet);
 
         $this->medicThemeView = new \HealthKerd\View\medic\medicTheme\allEventsRegrdOneTheme\AllEventsRegrdOneThemePageBuilder();
-        $this->medicThemeView->dataReceiver($processedData);
+        $this->medicThemeView->buildOrder($processedData);
     }
 }

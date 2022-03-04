@@ -28,7 +28,7 @@ class EventCatGetController
                     $eventCatsList = $eventCatSelectModel->gatherAllEventsCats();
 
                     $this->catView = new \HealthKerd\View\medic\eventCats\eventCatsList\EventCatsListPageBuilder();
-                    $this->catView->dataReceiver($eventCatsList);
+                    $this->catView->buildOrder($eventCatsList);
                     break;
 
                 case 'dispAllEventsRegrdOneCat': // affichage de tous les events ayant une catégorie particulière
@@ -53,6 +53,6 @@ class EventCatGetController
         $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsbyCatId', $this->cleanedUpGet);
 
         $this->catView = new \HealthKerd\View\medic\eventCats\allEventsRegardingOneCat\AllEventsRegardingOneCatPageBuilder();
-        $this->catView->dataReceiver($processedData);
+        $this->catView->buildOrder($processedData);
     }
 }

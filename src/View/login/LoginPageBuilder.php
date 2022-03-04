@@ -10,8 +10,14 @@ class LoginPageBuilder extends \HealthKerd\View\common\ViewInChief
 
     public function __construct()
     {
+        parent::__construct();
         $this->pageSettingsList = array(
-            "pageTitle" => "Page de connexion"
+            'headContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/head.html'),
+            'pageTitle' => 'Page de connexion',
+            'headerContent' => '',
+            'mainContainer' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/unlogged/login/main.html'),
+            'footerContent' => '',
+            'HTMLBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/HTMLBottomDeclarations.html')
         );
     }
 
@@ -19,9 +25,21 @@ class LoginPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
     }
 
+    /** Configure le <title> de la page et passe l'icone du <nav> de la page en cours en active (classe Boostrap)
+     * @param array $pageSettings   Contient le paramêtrage de la page.
+     */
+    protected function pageSetup(array $pageSettings): void
+    {
+        $this->pageContent = str_replace("{headContent}", $pageSettings["headContent"], $this->pageContent);
+        $this->pageContent = str_replace("{pageTitle}", $pageSettings["pageTitle"], $this->pageContent);
+        $this->pageContent = str_replace("{headerContent}", $pageSettings["headerContent"], $this->pageContent);
+        $this->pageContent = str_replace("{mainContainer}", $pageSettings["mainContainer"], $this->pageContent);
+        $this->pageContent = str_replace("{footerContent}", $pageSettings["footerContent"], $this->pageContent);
+        $this->pageContent = str_replace("{HTMLBottomDeclarations}", $pageSettings["HTMLBottomDeclarations"], $this->pageContent);
+    }
+
     public function buildOrder()
     {
-        $this->pageContent = file_get_contents(__DIR__ . '../../../../public/html/login/login.html'); // HTML de la page de login
         $this->pageSetup($this->pageSettingsList); // configuration de la page
         $this->pageDisplay();
     }
