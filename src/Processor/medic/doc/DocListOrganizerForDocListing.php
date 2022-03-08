@@ -35,17 +35,18 @@ class DocListOrganizerForDocListing extends DocListFunctionsPool
             $tempArray['fullNameSentence'] = '';
             $tempArray['speMedicList'] = array();
 
+            $docTitleAndNameSentence = new \HealthKerd\Services\medic\doc\DocTitleAndNameSentence();
+            $tempArray['fullNameSentence'] = $docTitleAndNameSentence->dataReceiver(
+                $tempArray['docID'],
+                $tempArray['title'],
+                $tempArray['firstName'],
+                $tempArray['lastName']
+            );
+
             array_push($this->docArray['uniqueDocList'], $tempArray);
         }
 
-        $this->docTitleConversion();
-        $this->docFullNameSentenceCreator();
         $this->docSpeMedicAdder();
-
-        //echo '<pre>';
-        //    print_r($this->docArray['uniqueDocList']);
-        //    print_r($this->speMedicList);
-        //echo '</pre>';
 
         return $this->docArray['uniqueDocList'];
     }

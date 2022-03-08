@@ -8,8 +8,6 @@ class DocOfficeGetController
 {
     private array $cleanedUpGet;
 
-    private object $docOfficeView;
-
     public function __destruct()
     {
     }
@@ -45,21 +43,21 @@ class DocOfficeGetController
      */
     private function displayAllDocOfficesList(): void
     {
-        $this->docOfficeModel = new \HealthKerd\Model\modelInit\medic\docOffice\DocOfficeSelectModel();
-        $this->docOfficeList = $this->docOfficeModel->gatherAllDocOfficesModel();
+        $docOfficeModel = new \HealthKerd\Model\modelInit\medic\docOffice\DocOfficeSelectModel();
+        $docOfficeList = $docOfficeModel->gatherAllDocOfficesModel();
 
-        $this->docOfficeView = new \HealthKerd\View\medic\docOffice\docOfficeList\DocOfficeListPageBuilder();
-        $this->docOfficeView->buildOrder($this->docOfficeList);
+        $docOfficeView = new \HealthKerd\View\medic\docOffice\docOfficeList\DocOfficeListPageBuilder();
+        $docOfficeView->buildOrder($docOfficeList);
     }
 
     /** Affichage des events liés à un cabinet médical en particulier
     */
     private function displayEventsWithOneDocOffice(): void
     {
-        $this->eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
-        $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsByDocOfficeId', $this->cleanedUpGet);
+        $eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
+        $processedData = $eventFinderAndGathererController->actionReceiver('eventsIdsByDocOfficeId', $this->cleanedUpGet);
 
-        $this->docOfficeView = new \HealthKerd\View\medic\docOffice\allEventsRegrdOneDocOffice\AllEventsRegrdOneDocOfficePageBuilder();
-        $this->docOfficeView->buildOrder($processedData);
+        $docOfficeView = new \HealthKerd\View\medic\docOffice\allEventsRegrdOneDocOffice\AllEventsRegrdOneDocOfficePageBuilder();
+        $docOfficeView->buildOrder($processedData);
     }
 }

@@ -4,21 +4,6 @@ namespace HealthKerd\View\medic\eventsBuilder\eventBodyContent;
 
 class EventBodyContentBuilder
 {
-    public function __construct()
-    {
-        /*
-        $eventArray['diagAccordion'] = '';
-        if (sizeof($value['content']['diag']) > 0) {
-            $eventArray['diagAccordion'] = $this->diagAccordionObj->diagBuilder($value);
-        }
-
-        $eventArray['careSessionAccordion'] = '';
-        if (sizeof($value['content']['careSession']) > 0) {
-            $eventArray['careSessionAccordion'] = $this->careSessionAccordionObj->careSessionBuilder($value);
-        }
-        */
-    }
-
     public function __destruct()
     {
     }

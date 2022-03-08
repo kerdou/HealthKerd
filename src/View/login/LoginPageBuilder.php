@@ -17,7 +17,7 @@ class LoginPageBuilder extends \HealthKerd\View\common\ViewInChief
             'headerContent' => '',
             'mainContainer' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/unlogged/login/main.html'),
             'footerContent' => '',
-            'HTMLBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/HTMLBottomDeclarations.html')
+            'BodyBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/BodyBottomDeclarations.html')
         );
     }
 
@@ -35,7 +35,7 @@ class LoginPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageContent = str_replace("{headerContent}", $pageSettings["headerContent"], $this->pageContent);
         $this->pageContent = str_replace("{mainContainer}", $pageSettings["mainContainer"], $this->pageContent);
         $this->pageContent = str_replace("{footerContent}", $pageSettings["footerContent"], $this->pageContent);
-        $this->pageContent = str_replace("{HTMLBottomDeclarations}", $pageSettings["HTMLBottomDeclarations"], $this->pageContent);
+        $this->pageContent = str_replace("{BodyBottomDeclarations}", $pageSettings["BodyBottomDeclarations"], $this->pageContent);
     }
 
     public function buildOrder()

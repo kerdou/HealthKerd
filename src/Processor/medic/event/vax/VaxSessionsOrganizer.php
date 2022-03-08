@@ -29,10 +29,6 @@ class VaxSessionsOrganizer
         $this->vaxSessionsContentOrganizer();
         $this->vaxSideEffectsAddition();
 
-        //echo '<pre>';
-        //    print_r($this->vaxSessionsList);
-        //echo '</pre>';
-
         return $this->vaxSessionsList;
     }
 

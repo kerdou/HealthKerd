@@ -8,9 +8,6 @@ class DocPostController
     private array $cleanedUpGet = array();
     private array $cleanedUpPost = array();
 
-    private object $docFormChecker;
-
-
     public function __destruct()
     {
     }
@@ -19,7 +16,7 @@ class DocPostController
      * @param array $cleanedUpGet       Données nettoyées du GET
      * @param array $cleanedUpPost      Données nettoyées du POST
      */
-    public function actionReceiver(array $cleanedUpGet, array $cleanedUpPost)
+    public function actionReceiver(array $cleanedUpGet, array $cleanedUpPost): void
     {
         $this->cleanedUpGet = $cleanedUpGet;
         $this->cleanedUpPost = $cleanedUpPost;
@@ -29,13 +26,13 @@ class DocPostController
                 case 'addDoc': // ajout d'un docteur
                     // vérification des données contenues dans le POST
                     $checksArray = array();
-                    $this->docFormChecker = new \HealthKerd\Controller\medic\doc\DocFormChecker();
-                    $checksArray = $this->docFormChecker->docFormChecks($this->cleanedUpPost);
+                    $docFormChecker = new \HealthKerd\Controller\medic\doc\DocFormChecker();
+                    $checksArray = $docFormChecker->docFormChecks($this->cleanedUpPost);
 
                     // si $checksArray contient des erreurs (des false), on réaffich le formulaire en indiquant les champs à modifier
                     if (in_array(false, $checksArray)) {
                         $docView = new \HealthKerd\View\medic\doc\docForm\DocFailedAddFormPageBuilder();
-                        $docView->dataReceiver($this->cleanedUpPost, $checksArray);
+                        $docView->buildOrder($this->cleanedUpPost, $checksArray);
                     } else {
                         $insertModel = new \HealthKerd\Model\modelInit\medic\doc\DocInsertModel();
                         $pdoErrorMessage = $insertModel->addDocModel($this->cleanedUpPost);
@@ -54,13 +51,13 @@ class DocPostController
                 case 'editDoc': // modification d'un docteur
                     // vérification des données contenues dans le POST
                     $checksArray = array();
-                    $this->docFormChecker = new \HealthKerd\Controller\medic\doc\DocFormChecker();
-                    $checksArray = $this->docFormChecker->docFormChecks($this->cleanedUpPost);
+                    $docFormChecker = new \HealthKerd\Controller\medic\doc\DocFormChecker();
+                    $checksArray = $docFormChecker->docFormChecks($this->cleanedUpPost);
 
                     // si $checksArray contient des erreurs (des false), on réaffich le formulaire en indiquant les champs à modifier
                     if (in_array(false, $checksArray)) {
-                        $docView = new \HealthKerd\View\medic\doc\docForm\DocFailedEditFormPageBuilder();
-                        $docView->dataReceiver($this->cleanedUpPost, $checksArray, $this->cleanedUpGet['docID']);
+                        $docView = new \HealthKerd\View\medic\doc\docForm\DocFaildedEditFormPageBuilder();
+                        $docView->buildOrder($this->cleanedUpPost, $checksArray, $this->cleanedUpGet['docID']);
                     } else {
                         $docUpdateModel = new \HealthKerd\Model\modelInit\medic\doc\DocUpdateModel();
                         $pdoErrorMessage = $docUpdateModel->editDocModel($this->cleanedUpPost, $this->cleanedUpGet['docID']);

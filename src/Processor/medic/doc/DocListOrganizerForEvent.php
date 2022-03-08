@@ -64,18 +64,18 @@ class DocListOrganizerForEvent extends DocListFunctionsPool
             $tempArray['booleans']['isRetired'] = $value['isRetired'];
             $tempArray['booleans']['isBlacklisted'] = $value['isBlacklisted'];
 
+            $docTitleAndNameSentence = new \HealthKerd\Services\medic\doc\DocTitleAndNameSentence();
+            $tempArray['fullNameSentence'] = $docTitleAndNameSentence->dataReceiver(
+                $tempArray['docID'],
+                $tempArray['title'],
+                $tempArray['firstName'],
+                $tempArray['lastName']
+            );
+
             $this->docArray['uniqueDocList'][$key] = $tempArray;
         }
 
-        $this->docTitleConversion();
-        $this->docFullNameSentenceCreator();
         $this->docSpeMedicAdder();
-
-        //echo '<pre>';
-        //    print_r($replacedDoc);
-        //    print_r($this->docArray['uniqueDocList']);
-        //    print_r($this->speMedicList);
-        //echo '</pre>';
 
         return $this->docArray['uniqueDocList'];
     }

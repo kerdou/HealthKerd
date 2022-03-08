@@ -6,8 +6,6 @@ namespace HealthKerd\Processor\medic\event\diag\ordo;
  */
 class OrdoGatherAndSorting
 {
-    private array $ordoGlobalArray = array();
-
     /**
      * @param array $ordoLabo       Liste des ordonnances de prélèvement médical déjà complétées
      * @param array $ordoPharma     Liste des ordonnances pharmacologiques déjà complétées
@@ -20,30 +18,17 @@ class OrdoGatherAndSorting
         array $ordoPharma,
         array $ordoVax,
         array $ordoSight
-    ) {
-        $this->ordoGlobalArray = [
+    ): array {
+        $ordoGlobalArray = [
             ...$ordoLabo,
             ...$ordoPharma,
             ...$ordoVax,
             ...$ordoSight
         ];
 
-        uasort($this->ordoGlobalArray, array($this, "timestampSorting")); // tri des ordonnances par ordre croissant des timestamps
+        $timestampSorter = new \HealthKerd\Services\common\TimestampSorting();
+        $ordoGlobalArray = $timestampSorter->incrTimestampSortLauncher($ordoGlobalArray);
 
-        //echo '<pre>';
-        //    print_r($this->ordoGlobalArray);
-        //echo '</pre>';
-
-        return $this->ordoGlobalArray;
-    }
-
-    /** Tri des ordonnances par timestamp en ordre croissant
-    */
-    private function timestampSorting(array $firstValue, array $secondValue)
-    {
-        if ($firstValue['time']['timestamp'] == $secondValue['time']['timestamp']) {
-            return 0;
-        }
-        return ($firstValue['time']['timestamp'] < $secondValue['time']['timestamp']) ? -1 : 1;
+        return $ordoGlobalArray;
     }
 }

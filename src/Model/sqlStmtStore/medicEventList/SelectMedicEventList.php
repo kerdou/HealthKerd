@@ -44,16 +44,11 @@ class SelectMedicEventList
     public function comingEventsIdsStmt(): string
     {
         $stmt =
-            'SELECT
-                medicEventID
-            FROM
-                medic_event_list
-            WHERE
-                userID = ' . $_SESSION['userID'] .
-            ' AND
-                dateTime >= CURRENT_DATE
-            ORDER BY
-                dateTime;';
+            'SELECT medicEventID
+            FROM medic_event_list
+            WHERE userID = ' . $_SESSION['userID'] .
+            ' AND dateTime >= CURRENT_DATE
+            ORDER BY dateTime;';
 
         return $stmt;
     }
@@ -64,13 +59,9 @@ class SelectMedicEventList
     public function eventsIdsByUserIdStmt(): string
     {
         $stmt =
-            'SELECT
-                medicEventID
-            FROM
-                medic_event_list
-            WHERE
-                userID = ' . $_SESSION['userID'] .
-            ';';
+            'SELECT medicEventID
+            FROM medic_event_list
+            WHERE userID = ' . $_SESSION['userID'] . ';';
 
         return $stmt;
     }
@@ -83,14 +74,10 @@ class SelectMedicEventList
     public function eventsIdsbyCatIdStmt(): string
     {
         $stmt =
-            'SELECT
-                medicEventID
-            FROM
-                medic_event_list
-            WHERE
-                medicEventCatID = :medicEventCatID
-            AND
-                userID = :userID;';
+            'SELECT medicEventID
+            FROM medic_event_list
+            WHERE medicEventCatID = :medicEventCatID
+            AND userID = :userID;';
 
         return $stmt;
     }
@@ -103,15 +90,11 @@ class SelectMedicEventList
     public function eventsIdsFromMedicThemeIdStmt(): string
     {
         $stmt =
-            'SELECT
-                medic_event_list.medicEventID
-            FROM
-                medic_event_list
+            'SELECT medic_event_list.medicEventID
+            FROM medic_event_list
             INNER JOIN medic_event_themes_relation ON medic_event_list.medicEventID = medic_event_themes_relation.medicEventID
-            WHERE
-                medic_event_themes_relation.medicThemeID = :medicThemeID
-            AND
-                medic_event_list.userID = :userID;';
+            WHERE medic_event_themes_relation.medicThemeID = :medicThemeID
+            AND medic_event_list.userID = :userID;';
 
         return $stmt;
     }
@@ -124,15 +107,11 @@ class SelectMedicEventList
     public function eventsIdsFromSpeMedicIdStmt(): string
     {
         $stmt =
-            'SELECT
-                medic_event_list.medicEventID
-            FROM
-                medic_event_list
+            'SELECT medic_event_list.medicEventID
+            FROM medic_event_list
             INNER JOIN medic_event_spemedic_relation ON medic_event_list.medicEventID = medic_event_spemedic_relation.medicEventID
-            WHERE
-                medic_event_spemedic_relation.speMedicID = :speMedicID
-            AND
-                medic_event_list.userID = :userID;';
+            WHERE medic_event_spemedic_relation.speMedicID = :speMedicID
+            AND medic_event_list.userID = :userID;';
 
         return $stmt;
     }
@@ -145,14 +124,10 @@ class SelectMedicEventList
     public function eventsIdsByDocOfficeIdStmt(): string
     {
         $stmt =
-            'SELECT
-                medicEventID
-            FROM
-                medic_event_list
-            WHERE
-                docOfficeID = :docOfficeID
-            AND
-                userID = :userID;';
+            'SELECT medicEventID
+            FROM medic_event_list
+            WHERE docOfficeID = :docOfficeID
+            AND userID = :userID;';
 
         return $stmt;
     }
@@ -165,14 +140,10 @@ class SelectMedicEventList
     public function eventsIdsFromOneDocIdStmt(): string
     {
         $stmt =
-            'SELECT
-                medicEventID
-            FROM
-                medic_event_list
-            WHERE
-                docID = :docID
-            AND
-                userID = :userID;';
+            'SELECT medicEventID
+            FROM medic_event_list
+            WHERE docID = :docID
+            AND userID = :userID;';
 
         return $stmt;
     }
@@ -185,14 +156,10 @@ class SelectMedicEventList
     public function eventsFromOneDocIdStmt(): string
     {
         $stmt =
-            'SELECT
-                *
-            FROM
-                medic_event_list
-            WHERE
-                docID = :docID
-            AND
-                userID = :userID;';
+            'SELECT *
+            FROM medic_event_list
+            WHERE docID = :docID
+            AND userID = :userID;';
 
         return $stmt;
     }
@@ -204,13 +171,9 @@ class SelectMedicEventList
     public function onlyOneEventStmt(): string
     {
         $stmt =
-            'SELECT
-                medicEventID
-            FROM
-                medic_event_list
-            WHERE
-                medicEventID = 54
-            ;';
+            'SELECT medicEventID
+            FROM medic_event_list
+            WHERE medicEventID = 54;';
 
         return $stmt;
     }

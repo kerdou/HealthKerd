@@ -8,8 +8,6 @@ class EventCatGetController
 {
     private array $cleanedUpGet;
 
-    private object $catView;
-
     public function __destruct()
     {
     }
@@ -27,8 +25,8 @@ class EventCatGetController
                     $eventCatSelectModel = new \HealthKerd\Model\modelInit\medic\eventCat\EventCatSelectModel();
                     $eventCatsList = $eventCatSelectModel->gatherAllEventsCats();
 
-                    $this->catView = new \HealthKerd\View\medic\eventCats\eventCatsList\EventCatsListPageBuilder();
-                    $this->catView->buildOrder($eventCatsList);
+                    $catView = new \HealthKerd\View\medic\eventCats\eventCatsList\EventCatsListPageBuilder();
+                    $catView->buildOrder($eventCatsList);
                     break;
 
                 case 'dispAllEventsRegrdOneCat': // affichage de tous les events ayant une catégorie particulière
@@ -47,12 +45,12 @@ class EventCatGetController
 
     /** Affichage de tous les events ayant une catégorie particulière
     */
-    public function dispAllEventsRegardingOneCat()
+    public function dispAllEventsRegardingOneCat(): void
     {
-        $this->eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
-        $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsbyCatId', $this->cleanedUpGet);
+        $eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
+        $processedData = $eventFinderAndGathererController->actionReceiver('eventsIdsbyCatId', $this->cleanedUpGet);
 
-        $this->catView = new \HealthKerd\View\medic\eventCats\allEventsRegardingOneCat\AllEventsRegardingOneCatPageBuilder();
-        $this->catView->buildOrder($processedData);
+        $catView = new \HealthKerd\View\medic\eventCats\allEventsRegardingOneCat\AllEventsRegardingOneCatPageBuilder();
+        $catView->buildOrder($processedData);
     }
 }

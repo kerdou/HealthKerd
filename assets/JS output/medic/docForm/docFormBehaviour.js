@@ -1,5 +1,5 @@
 "use strict";
-if (document.body.contains(document.getElementById('docForm'))) {
+if (document.body.contains(document.getElementById('doc_form_page'))) {
     var formSubmitButton = document.getElementById('formSubmitButton');
     var formResetButton = document.getElementById('formResetButton');
     var telInput = document.getElementById('tel');
@@ -75,7 +75,7 @@ function submitForm() {
     formValidity = formChecks();
     var validityStatus = formValidity.findIndex(formValidityArrayChecker);
     if (validityStatus == -1) {
-        var docForm = document.getElementById('docForm');
+        var docForm = document.getElementById('doc_form_page');
         docForm.submit();
     }
 }

@@ -10,7 +10,7 @@ abstract class GetAndPostCleaner
      * @param array $inputData      Données entrantes provenant du $_GET ou du $_POST
      * @return array                Données nettoyées
      */
-    protected function inputCleaner(array $inputData)
+    protected function inputCleaner(array $inputData): array
     {
         $cleanedUpArray = array();
 

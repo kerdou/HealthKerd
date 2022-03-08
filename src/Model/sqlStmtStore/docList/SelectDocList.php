@@ -51,8 +51,8 @@ class SelectDocList
     */
     public function stmtSelectDistinctAttendedDocForEvent(string $whereString): string
     {
-        $stmtStart = '
-            SELECT DISTINCT
+        $stmtStart =
+            ' SELECT DISTINCT
                 medic_event_list.docID,
                 doc_list.docID,
                 doc_list.title,
@@ -69,10 +69,8 @@ class SelectDocList
 
         // ajouter medic_event_list.medicEventID = 35 OR ...;
 
-        $stmtEnd = '
-            ORDER BY
-                medic_event_list.docID
-            ;';
+        $stmtEnd =
+            ' ORDER BY medic_event_list.docID;';
 
         return $stmtStart . $whereString . $stmtEnd;
     }
@@ -83,8 +81,8 @@ class SelectDocList
     */
     public function stmtSelectDistinctReplacedDocForEvent(string $whereString): string
     {
-        $stmtStart = '
-            SELECT DISTINCT
+        $stmtStart =
+            'SELECT DISTINCT
                 medic_event_list.replacedDocID,
                 doc_list.docID,
                 doc_list.title,
@@ -99,12 +97,11 @@ class SelectDocList
             INNER JOIN doc_list ON medic_event_list.replacedDocID = doc_list.docID
             WHERE';
 
-        $stmtEnd = '
-            HAVING
+        $stmtEnd =
+            ' HAVING
                 medic_event_list.replacedDocID != 0
             ORDER BY
-                medic_event_list.replacedDocID
-            ;';
+                medic_event_list.replacedDocID;';
         // ajouter medic_event_list.medicEventID = 35 OR ...;
 
         return $stmtStart . $whereString . $stmtEnd;
@@ -116,8 +113,8 @@ class SelectDocList
     */
     public function stmtSelectDistinctLaboOrdoDocForEvent(string $whereString): string
     {
-        $stmtStart = '
-            SELECT DISTINCT
+        $stmtStart =
+            ' SELECT DISTINCT
                 medic_event_list.laboOrdoDocID,
                 doc_list.docID,
                 doc_list.title,
@@ -134,12 +131,11 @@ class SelectDocList
 
         // ajouter medic_event_list.medicEventID = 35 OR ...;
 
-        $stmtEnd = '
-            HAVING
+        $stmtEnd =
+            ' HAVING
                 medic_event_list.laboOrdoDocID != 0
             ORDER BY
-                medic_event_list.laboOrdoDocID
-            ;';
+                medic_event_list.laboOrdoDocID;';
 
         return $stmtStart . $whereString . $stmtEnd;
     }
@@ -150,8 +146,8 @@ class SelectDocList
     */
     public function stmtSelectDistinctLaboOrdoReplacedDocForEvent(string $whereString): string
     {
-        $stmtStart = '
-            SELECT DISTINCT
+        $stmtStart =
+            'SELECT DISTINCT
                 medic_event_list.laboOrdoReplacedDocDiagID,
                 doc_list.docID,
                 doc_list.title,
@@ -168,12 +164,11 @@ class SelectDocList
 
         // ajouter medic_event_list.medicEventID = 35 OR ...;
 
-        $stmtEnd = '
-            HAVING
+        $stmtEnd =
+            ' HAVING
                 medic_event_list.laboOrdoReplacedDocDiagID != 0
             ORDER BY
-                medic_event_list.laboOrdoReplacedDocDiagID
-            ;';
+                medic_event_list.laboOrdoReplacedDocDiagID;';
 
         return $stmtStart . $whereString . $stmtEnd;
     }
@@ -189,16 +184,12 @@ class SelectDocList
     public function stmtAllDocsBasicsInfos(string $whereString): string
     {
         $stmtStart =
-            'SELECT
-                docID, title, firstName, lastName
-            FROM
-                doc_list
+            'SELECT docID, title, firstName, lastName
+            FROM doc_list
             WHERE';
         // ajouter doc_list.userID = 1
         $stmtEnd =
-            'ORDER BY
-                lastName;
-            ';
+            ' ORDER BY lastName;';
 
         return $stmtStart . $whereString . $stmtEnd;
     }
@@ -211,14 +202,10 @@ class SelectDocList
     public function selectPrepAllDataFromOneDocStmt(): string
     {
         $stmt =
-            'SELECT
-                *
-            FROM
-                doc_list
-            WHERE
-                docID = :docID
-            HAVING
-                userID = :userID;';
+            'SELECT *
+            FROM doc_list
+            WHERE docID = :docID
+            HAVING userID = :userID;';
 
         return $stmt;
     }
@@ -230,10 +217,8 @@ class SelectDocList
     public function getNewDocIDStmt(): string
     {
         $stmt =
-            'SELECT
-                docID
-            FROM
-                doc_list
+            'SELECT docID
+            FROM doc_list
             WHERE ' . $_SESSION['userID'] .
             ' ORDER BY docID
             DESC LIMIT 1;';

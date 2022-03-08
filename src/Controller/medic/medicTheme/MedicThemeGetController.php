@@ -8,8 +8,6 @@ class MedicThemeGetController
 {
     private array $cleanedUpGet;
 
-    private object $medicThemeView;
-
     public function __destruct()
     {
     }
@@ -18,7 +16,7 @@ class MedicThemeGetController
      * @param array $cleanedUpGet   Infos nettoyées provenants du GET
      * @return void
      */
-    public function actionReceiver(array $cleanedUpGet)
+    public function actionReceiver(array $cleanedUpGet): void
     {
         $this->cleanedUpGet = $cleanedUpGet;
 
@@ -42,23 +40,23 @@ class MedicThemeGetController
 
     /** Affichage de tous les thèmes médicaux utilisés par le user
     */
-    private function displayUsedMedicThemes()
+    private function displayUsedMedicThemes(): void
     {
         $medicThemeModel = new \HealthKerd\Model\modelInit\medic\medicTheme\MedicThemeModel();
         $medicThemeList = $medicThemeModel->selectMedicThemeByUserId();
 
-        $this->medicThemeView = new \HealthKerd\View\medic\medicTheme\medicThemeList\MedicThemeListPageBuilder();
-        $this->medicThemeView->buildOrder($medicThemeList);
+        $medicThemeView = new \HealthKerd\View\medic\medicTheme\medicThemeList\MedicThemeListPageBuilder();
+        $medicThemeView->buildOrder($medicThemeList);
     }
 
     /** Affichage de tous les events par rapport à un thème médical
     */
-    private function displayAllEventsRegardingOneTheme()
+    private function displayAllEventsRegardingOneTheme(): void
     {
-        $this->eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
-        $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsFromMedicThemeId', $this->cleanedUpGet);
+        $eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
+        $processedData = $eventFinderAndGathererController->actionReceiver('eventsIdsFromMedicThemeId', $this->cleanedUpGet);
 
-        $this->medicThemeView = new \HealthKerd\View\medic\medicTheme\allEventsRegrdOneTheme\AllEventsRegrdOneThemePageBuilder();
-        $this->medicThemeView->buildOrder($processedData);
+        $medicThemeView = new \HealthKerd\View\medic\medicTheme\allEventsRegrdOneTheme\AllEventsRegrdOneThemePageBuilder();
+        $medicThemeView->buildOrder($processedData);
     }
 }

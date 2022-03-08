@@ -7,7 +7,6 @@ namespace HealthKerd\View\medic\medicTheme\allEventsRegrdOneTheme;
 class AllEventsRegrdOneThemePageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
-    private array $eventsData = array();
     private string $eventsContent = '';
 
 
@@ -35,7 +34,7 @@ class AllEventsRegrdOneThemePageBuilder extends \HealthKerd\View\common\ViewInCh
             'userFullName' => $_SESSION['firstName'] . ' ' . $_SESSION['lastName'],
             'scrollUpButton' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/scrollUpArrow.html'),
             'footerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/footer.html'),
-            'HTMLBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/HTMLBottomDeclarations.html')
+            'BodyBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/BodyBottomDeclarations.html')
         );
     }
 
@@ -51,7 +50,7 @@ class AllEventsRegrdOneThemePageBuilder extends \HealthKerd\View\common\ViewInCh
         $this->pageContent = str_replace('{userFullName}', $this->pageSettingsList['userFullName'], $this->pageContent);
         $this->pageContent = str_replace('{scrollUpButton}', $this->pageSettingsList['scrollUpButton'], $this->pageContent);
         $this->pageContent = str_replace('{footerContent}', $this->pageSettingsList['footerContent'], $this->pageContent);
-        $this->pageContent = str_replace('{HTMLBottomDeclarations}', $this->pageSettingsList['HTMLBottomDeclarations'], $this->pageContent);
+        $this->pageContent = str_replace('{BodyBottomDeclarations}', $this->pageSettingsList['BodyBottomDeclarations'], $this->pageContent);
     }
 
     /** Recoit les données de tous les rendez-vous puis lance la construction du HTML de ce contenu

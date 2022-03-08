@@ -10,6 +10,8 @@ class DocFaildedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     protected string $pageContent = '';
     private array $docData = array();
     private string $formTemplate = '';
+    private array $checksArray = array();
+    private string $docID;
     private array $checkStatusArray = array();
 
     public function __construct()
@@ -36,7 +38,7 @@ class DocFaildedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
             'userFullName' => $_SESSION['firstName'] . ' ' . $_SESSION['lastName'],
             'scrollUpButton' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/scrollUpArrow.html'),
             'footerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/footer.html'),
-            'HTMLBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/HTMLBottomDeclarations.html')
+            'BodyBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/BodyBottomDeclarations.html')
         );
     }
 
@@ -52,14 +54,16 @@ class DocFaildedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageContent = str_replace('{userFullName}', $this->pageSettingsList['userFullName'], $this->pageContent);
         $this->pageContent = str_replace('{scrollUpButton}', $this->pageSettingsList['scrollUpButton'], $this->pageContent);
         $this->pageContent = str_replace('{footerContent}', $this->pageSettingsList['footerContent'], $this->pageContent);
-        $this->pageContent = str_replace('{HTMLBottomDeclarations}', $this->pageSettingsList['HTMLBottomDeclarations'], $this->pageContent);
+        $this->pageContent = str_replace('{BodyBottomDeclarations}', $this->pageSettingsList['BodyBottomDeclarations'], $this->pageContent);
     }
 
     /** Configuration de tous les élèments du formulaire
      */
-    public function buildOrder(array $docData): void
+    public function buildOrder(array $docData, array $checksArray, string $docID): void
     {
         $this->docData = $docData;
+        $this->checksArray = $checksArray;
+        $this->docID = $docID;
 
         $this->formTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/docForm.html');
         $this->formConfLauncher();

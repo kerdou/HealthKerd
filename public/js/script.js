@@ -1,56 +1,34 @@
 "use strict";
-var currentPage = '';
+/*
+
+let currentPage: string = '';
+
 if (document.body.contains(document.getElementById('login_form'))) {
     currentPage = 'login_form';
 }
+
 if (document.body.contains(document.getElementById('docForm'))) {
     currentPage = 'docForm';
 }
+*/
 
 "use strict";
-var windowWidth = window.innerWidth;
 window.addEventListener('resize', windowResize);
+var mobileSidebar = document.getElementById('mobile_sidebar'); // trouvable dans mainContainer.html
+var boostrapSidebarObj = new bootstrap.Offcanvas(mobileSidebar);
+var windowWidth = window.innerWidth;
 /** Se déclenche au resize de la page
  * Au delà de 992px de large (format LG sur Bootstrap), l'offcanvas menu se rétracte
- * Bootstrap fait apparaitre un <div class="offcanvas-backdrop fade show" qui grise le reste de l'écran
- * Quand on supprime la classe "show" du sidebar, il faut aussi supprimer cette div supplémentaire
- * pour supprimer ce grisage *
 */
 function windowResize() {
-    var mobileSidebar = document.getElementById('mobile_sidebar'); // trouvable dans mainContainer.html
     windowWidth = window.innerWidth;
     if (windowWidth >= 992 && mobileSidebar.classList.contains('show')) {
-        mobileSidebar.classList.remove('show');
-        if (document.getElementsByClassName('offcanvas-backdrop').length != 0) {
-            document.getElementsByClassName('offcanvas-backdrop')[0].remove();
-        }
-    }
-}
-
-"use strict";
-var windowWidth = window.innerWidth;
-window.addEventListener('resize', windowResize);
-/** Se déclenche au resize de la page
- * Au delà de 992px de large (format LG sur Bootstrap), l'offcanvas menu se rétracte
- * Bootstrap fait apparaitre un <div class="offcanvas-backdrop fade show" qui grise le reste de l'écran
- * Quand on supprime la classe "show" du sidebar, il faut aussi supprimer cette div supplémentaire
- * pour supprimer ce grisage *
-*/
-function windowResize() {
-    var mobileSidebar = document.getElementById('mobile_sidebar'); // trouvable dans mainContainer.html
-    windowWidth = window.innerWidth;
-    if (windowWidth >= 992 && mobileSidebar.classList.contains('show')) {
-        mobileSidebar.classList.remove('show');
-        if (document.getElementsByClassName('offcanvas-backdrop').length != 0) {
-            document.getElementsByClassName('offcanvas-backdrop')[0].remove();
-        }
+        boostrapSidebarObj.hide();
     }
 }
 
 "use strict";
 window.addEventListener('load', scrollUpAtLoad);
-/** Copie du contenu du sidebar dans le off canvas sidebar au chargement de la page
-*/
 function scrollUpAtLoad() {
     if (document.body.contains(document.getElementById('desktop_sidebar'))) {
         var scrollUpButton = document.getElementById('scrollUpButton'); // trouvable dans pageBottom.html
@@ -64,17 +42,16 @@ window.onscroll = function () {
 /**   */
 function scrollFunction() {
     var scrollUpButton = document.getElementById('scrollUpButton');
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    if (document.body.scrollTop > 20 ||
+        document.documentElement.scrollTop > 20) {
         scrollUpButton.style.visibility = 'visible';
         scrollUpButton.style.opacity = '1';
-        scrollUpButton.style.cursor = 'cursor';
+        scrollUpButton.style.cursor = 'pointer';
     }
     else {
         scrollUpButton.style.opacity = '0';
-        // retard de visiblity=hiden et pointer=none pour garantir une disparition fluide du scrollUpButton
         setTimeout(function () {
-            // le if évite d'avoir des changements intempestifs d'état
-            if (scrollUpButton.style.opacity == '0') {
+            if (scrollUpButton.style.opacity === '0') { // le if évite d'avoir des changements intempestifs d'état
                 scrollUpButton.style.visibility = 'hidden';
                 scrollUpButton.style.cursor = 'none';
             }
@@ -84,7 +61,7 @@ function scrollFunction() {
 // remonte l'écran quand la fonction est activée
 function scrollToTop() {
     var scrollUpButton = document.getElementById('scrollUpButton');
-    if (scrollUpButton.style.opacity == '1') {
+    if (scrollUpButton.style.opacity === '1') {
         document.body.scrollTop = 0; // For Safari
         document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
     }
@@ -92,14 +69,13 @@ function scrollToTop() {
 
 "use strict";
 window.addEventListener('load', operationsAtLoad);
-/** Copie du contenu du sidebar dans le off canvas sidebar au chargement de la page
-*/
 function operationsAtLoad() {
     if (document.body.contains(document.getElementById('desktop_sidebar'))) {
         textAreaRidonliListenersAddition(); // Pour faire disparaitre "Informations complémentaires" au scroll des textarea
     }
 }
-/** Pour faire disparaitre "Informations complémentaires" au scroll des textarea
+/** Ajout d'events liseners sur tous les textareas qui ont la classe 'textarea-ridonli'
+ * pour faire disparaitre "Informations complémentaires" au scroll des textareas
  */
 function textAreaRidonliListenersAddition() {
     var ridonList = Array.from(document.getElementsByClassName('textarea-ridonli'));
@@ -107,9 +83,8 @@ function textAreaRidonliListenersAddition() {
         element.addEventListener('scroll', textAreaScrollDown);
     });
 }
-/**
- *
- * @param this
+/** Disparisation de la phrase 'Informations complémentaires sur l'évènement' quand on scroll down dans les textareas
+ * @param {HTMLTextAreaElement} this
  */
 function textAreaScrollDown() {
     var label = this.nextElementSibling;
@@ -117,7 +92,7 @@ function textAreaScrollDown() {
 }
 
 "use strict";
-if (document.body.contains(document.getElementById('docForm'))) {
+if (document.body.contains(document.getElementById('doc_form_page'))) {
     var formSubmitButton = document.getElementById('formSubmitButton');
     var formResetButton = document.getElementById('formResetButton');
     var telInput = document.getElementById('tel');
@@ -193,7 +168,7 @@ function submitForm() {
     formValidity = formChecks();
     var validityStatus = formValidity.findIndex(formValidityArrayChecker);
     if (validityStatus == -1) {
-        var docForm = document.getElementById('docForm');
+        var docForm = document.getElementById('doc_form_page');
         docForm.submit();
     }
 }

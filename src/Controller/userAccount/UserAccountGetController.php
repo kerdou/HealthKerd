@@ -6,9 +6,6 @@ namespace HealthKerd\Controller\userAccount;
  */
 class UserAccountGetController
 {
-    private object $homeModel; // Récupére les données des 3 derniers clients et des 3 derniers prospects
-    private object $homeView; // Affichage des tableaux de la section accueil
-
     public function __destruct()
     {
     }
@@ -17,7 +14,7 @@ class UserAccountGetController
      * @param array $cleanedUpGet   Infos nettoyées provenants du GET
      * @return void
      */
-    public function actionReceiver(array $cleanedUpGet)
+    public function actionReceiver(array $cleanedUpGet): void
     {
         echo '<h1>PLOP ACCOUNT GET CONTROLLER</h1>';
         var_dump($cleanedUpGet);

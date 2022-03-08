@@ -6,9 +6,6 @@ namespace HealthKerd\Controller\userAccount;
  */
 class UserAccountPostController
 {
-    private object $homeModel; // Récupére les données des 3 derniers clients et des 3 derniers prospects
-    private object $homeView; // Affichage des tableaux de la section accueil
-
     public function __destruct()
     {
     }
@@ -17,7 +14,7 @@ class UserAccountPostController
      * @param array $cleanedUpPost   Infos nettoyées provenants du POST
      * @return void
      */
-    public function actionReceiver(array $cleanedUpPost)
+    public function actionReceiver(array $cleanedUpPost): void
     {
         if (isset($cleanedUpPost['action'])) {
             switch ($cleanedUpPost['action']) {

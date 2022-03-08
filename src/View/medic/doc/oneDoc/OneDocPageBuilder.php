@@ -41,7 +41,7 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
             'userFullName' => $_SESSION['firstName'] . ' ' . $_SESSION['lastName'],
             'scrollUpButton' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/scrollUpArrow.html'),
             'footerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/footer.html'),
-            'HTMLBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/HTMLBottomDeclarations.html')
+            'BodyBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/BodyBottomDeclarations.html')
         );
     }
 
@@ -57,7 +57,7 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageContent = str_replace('{userFullName}', $this->pageSettingsList['userFullName'], $this->pageContent);
         $this->pageContent = str_replace('{scrollUpButton}', $this->pageSettingsList['scrollUpButton'], $this->pageContent);
         $this->pageContent = str_replace('{footerContent}', $this->pageSettingsList['footerContent'], $this->pageContent);
-        $this->pageContent = str_replace('{HTMLBottomDeclarations}', $this->pageSettingsList['HTMLBottomDeclarations'], $this->pageContent);
+        $this->pageContent = str_replace('{BodyBottomDeclarations}', $this->pageSettingsList['BodyBottomDeclarations'], $this->pageContent);
     }
 
     /** Génération de tous les blocs HTML et stockage dans $builtContentArray avant affichage
@@ -102,6 +102,7 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         $speMedicBadgesHTML = '';
 
         foreach ($this->docDataArray['speMedicList'] as $value) {
+            //var_dump($value);
             $badgeTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/badges/docSpeMedic/docSpeMedic.html');
             $badgeTemplate = str_replace('{speMedicName}', $value['name'], $badgeTemplate);
             $speMedicBadgesHTML .= $badgeTemplate;

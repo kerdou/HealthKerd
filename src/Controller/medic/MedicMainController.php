@@ -14,7 +14,7 @@ class MedicMainController
      * @param array $cleanedUpGet       Contenu du GET nettoyé
      * @param array $cleanedUpPost      Contenu du POST nettoyé
     */
-    public function subContReceiver(array $cleanedUpGet, array $cleanedUpPost)
+    public function subContReceiver(array $cleanedUpGet, array $cleanedUpPost): void
     {
         if (isset($cleanedUpGet['subCtrlr'])) {
             switch ($cleanedUpGet['subCtrlr']) {

@@ -8,12 +8,6 @@ class DocGetController extends DocGetControllerFunctionsPool
 {
     protected array $cleanedUpGet = array();
     protected array $docList = array();
-    protected array $speMedicList = array();
-    protected array $docOfficeList = array();
-    protected array $medicEventList = array();
-    protected array $pastEvents = array();
-    protected array $futureEvents = array();
-    protected array $dataWorkbench = array();
 
     protected object $docSelectModel;
     protected object $docView;
@@ -80,11 +74,11 @@ class DocGetController extends DocGetControllerFunctionsPool
         $combinedData = array();
         $combinedData = $this->docSelectModel->displayAllDocsListModel();
 
-        $DocListOrganizerForDocListing = new \HealthKerd\Processor\medic\doc\DocListOrganizerForDocListing();
-        $organizedData = $DocListOrganizerForDocListing->docListOrganizer($combinedData['doc_list'], $combinedData['doc_spemedic_relation']);
+        $docListOrganizerForDocListing = new \HealthKerd\Processor\medic\doc\DocListOrganizerForDocListing();
+        $organizedData = $docListOrganizerForDocListing->docListOrganizer($combinedData['doc_list'], $combinedData['doc_spemedic_relation']);
 
-        $this->docView = new \HealthKerd\View\medic\doc\docList\DocListPageBuilder();
-        $this->docView->buildOrder($organizedData, $combinedData['used_spemedics']); // view
+        $docView = new \HealthKerd\View\medic\doc\docList\DocListPageBuilder();
+        $docView->buildOrder($organizedData, $combinedData['used_spemedics']); // view
     }
 
     /** Affichage de la fiche d'un seul doc
@@ -94,58 +88,68 @@ class DocGetController extends DocGetControllerFunctionsPool
     {
         $mixedDataResult = $this->docSelectModel->getDataForOneDocPageModel($docID); // model
 
-        array_push($this->docList, $mixedDataResult['doc']);
-        $this->speMedicList = $mixedDataResult['speMedic'];
-        $this->docOfficeList = $mixedDataResult['docOffice'];
-        $this->medicEventList = $mixedDataResult['medicEvent'];
+        // Création de la phrase combinant civilité / prénom / nom du docteur
+        $docTitleAndNameSentenceBuilder = new \HealthKerd\Services\medic\doc\DocTitleAndNameSentence();
+        $fullNameSentence = $docTitleAndNameSentenceBuilder->dataReceiver(
+            $docID,
+            $mixedDataResult['doc']['title'],
+            $mixedDataResult['doc']['firstName'],
+            $mixedDataResult['doc']['lastName']
+        );
 
-        // préparation à l'ajout de données du doc:
-        foreach ($this->docList as $key => $value) {
-            $this->docList[$key]['fullNameSentence'] = ''; // titre et nom complet du doc
-            $this->docList[$key]['speMedicList'] = array(); // spécialités médicales
-            $this->docList[$key]['docOfficeList'] = array(); // mliste des cabinets médicaux
-            $this->docList[$key]['medicEvent'] = array(); // liste des events
+        // ajout des données temporelles des events
+        foreach ($mixedDataResult['medicEvent'] as $key => $value) {
+            $DateAndTimeManagement = new \HealthKerd\Services\common\DateAndTimeManagement();
+            $convertedTimeAndDate = $DateAndTimeManagement->dateAndTimeConverter(
+                $value['dateTime'],
+                $_ENV['DATEANDTIME']['timezoneObj']
+            );
+
+            $mixedDataResult['medicEvent'][$key]['time']['dateTime'] = $value['dateTime'];
+            $mixedDataResult['medicEvent'][$key]['time']['timestamp'] = $convertedTimeAndDate['timestamp'];
+            $mixedDataResult['medicEvent'][$key]['time']['frenchDate'] = $convertedTimeAndDate['frenchDate'];
+            $mixedDataResult['medicEvent'][$key]['time']['time'] = $convertedTimeAndDate['time'];
         }
 
-        // pour le doc
-        $this->docTitleAddition();
-        $this->docFullNameSentenceCreator();
+        // dispatch des events suivants qu'ils appartiennent au passé ou au futur
+        $timestampDispatcher = new \HealthKerd\Services\common\TimestampDispatcher();
+        $mixedDataResult['medicEvent'] = $timestampDispatcher->timestampDispatcher($mixedDataResult['medicEvent']);
 
-        // pour les speMedics
-        $this->speMedicAdditionToDocs();
+        // tri des events passés et futurs par ordre croissant de timestamp
+        $timestampSorter = new \HealthKerd\Services\common\TimestampSorting();
+        $mixedDataResult['medicEvent']['past'] = $timestampSorter->incrTimestampSortLauncher($mixedDataResult['medicEvent']['past']);
+        $mixedDataResult['medicEvent']['future'] = $timestampSorter->incrTimestampSortLauncher($mixedDataResult['medicEvent']['future']);
 
-        // pour le docOffice
-        $this->docOfficeAddition();
 
-        // pour les medicEvents
-        $this->dateAndTimeCreator();
-        $this->medicEventArrayTimeModifier();
-        $this->timeManagement();
-        $this->eventTimeDispatcher();
-        $this->pastAndFutureEventsTimeSorting();
-        $this->eventsSummaryCreation();
+        $this->docList = $mixedDataResult['doc'];
+        $this->docList['fullNameSentence'] = $fullNameSentence; // titre et nom complet du doc
+        $this->docList['speMedicList'] = $mixedDataResult['speMedic']; // spécialités médicales
+        $this->docList['docOfficeList'] = $mixedDataResult['docOffice']; // mliste des cabinets médicaux
+        $this->docList['medicEvent'] = $mixedDataResult['medicEvent']; // liste des events
 
-        $this->docView = new \HealthKerd\View\medic\doc\oneDoc\OneDocPageBuilder();
-        $this->docView->buildOrder($this->docList[0]); // view
+        $this->eventsSummaryCreation($mixedDataResult['medicEvent']);
+
+        $docView = new \HealthKerd\View\medic\doc\oneDoc\OneDocPageBuilder();
+        $docView->buildOrder($this->docList); // view
     }
 
     /** Affichage de tous les events liés à un doc
     */
     private function showEventsWithOneDoc(): void
     {
-        $this->eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
-        $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsFromOneDocId', $this->cleanedUpGet);
+        $eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
+        $processedData = $eventFinderAndGathererController->actionReceiver('eventsIdsFromOneDocId', $this->cleanedUpGet);
 
-        $this->docView = new \HealthKerd\View\medic\doc\eventsWithOneDoc\EventsWithOneDocPageBuilder();
-        $this->docView->buildOrder($processedData);
+        $docView = new \HealthKerd\View\medic\doc\eventsWithOneDoc\EventsWithOneDocPageBuilder();
+        $docView->buildOrder($processedData);
     }
 
     /** Affichage du formulaire d'ajout de doc
     */
     private function showDocAddForm(): void
     {
-        $this->docView = new \HealthKerd\View\medic\doc\docForm\DocAddFormPageBuilder();
-        $this->docView->buildOrder();
+        $docView = new \HealthKerd\View\medic\doc\docForm\DocAddFormPageBuilder();
+        $docView->buildOrder();
     }
 
     /** Affichage du formulaire de modif de doc
@@ -155,8 +159,8 @@ class DocGetController extends DocGetControllerFunctionsPool
     {
         $docData = $this->docSelectModel->getAllDataForOneDocFromDocListModel($docID);
 
-        $this->docView = new \HealthKerd\View\medic\doc\docForm\DocEditFormPageBuilder();
-        $this->docView->buildOrder($docData);
+        $docView = new \HealthKerd\View\medic\doc\docForm\DocEditFormPageBuilder();
+        $docView->buildOrder($docData);
     }
 
     /** Affichage du formulaire de suppr de doc
@@ -166,7 +170,7 @@ class DocGetController extends DocGetControllerFunctionsPool
     {
         $docData = $this->docSelectModel->getAllDataForOneDocFromDocListModel($docID);
 
-        $this->docView = new \HealthKerd\View\medic\doc\docForm\DocDeleteFormPageBuilder();
-        $this->docView->buildOrder($docData);
+        $docView = new \HealthKerd\View\medic\doc\docForm\DocDeleteFormPageBuilder();
+        $docView->buildOrder($docData);
     }
 }

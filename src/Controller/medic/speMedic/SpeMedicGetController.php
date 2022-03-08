@@ -7,8 +7,6 @@ class SpeMedicGetController
 {
     private array $cleanedUpGet;
 
-    private object $speView;
-
     public function __destruct()
     {
     }
@@ -46,18 +44,18 @@ class SpeMedicGetController
         $speMedicModel = new \HealthKerd\Model\modelInit\medic\speMedic\speMedicSelectModel();
         $speMedicList = $speMedicModel->selectSpeMedicUsedByUser();
 
-        $this->speView = new \HealthKerd\View\medic\speMedic\speMedicList\SpeMedicListPageBuilder();
-        $this->speView->buildOrder($speMedicList);
+        $speView = new \HealthKerd\View\medic\speMedic\speMedicList\SpeMedicListPageBuilder();
+        $speView->buildOrder($speMedicList);
     }
 
     /** Affichage de tous les events vis à vis d'une spé en particulier
      */
     private function dispAllEventsRegardingOneSpeMedic(): void
     {
-        $this->eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
-        $processedData = $this->eventFinderAndGathererController->actionReceiver('eventsIdsFromSpeMedicId', $this->cleanedUpGet);
+        $eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
+        $processedData = $eventFinderAndGathererController->actionReceiver('eventsIdsFromSpeMedicId', $this->cleanedUpGet);
 
-        $this->speView = new \HealthKerd\View\medic\speMedic\AllEventsRegrdOneSpe\AllEventsRegardOneSpePageBuilder();
-        $this->speView->buildOrder($processedData);
+        $speView = new \HealthKerd\View\medic\speMedic\AllEventsRegrdOneSpe\AllEventsRegardOneSpePageBuilder();
+        $speView->buildOrder($processedData);
     }
 }

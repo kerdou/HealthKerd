@@ -7,29 +7,19 @@ namespace HealthKerd\Processor\medic\event\diag\ordo;
  */
 class OrdoSightOrganizer
 {
-
-    private array|null $ordoSightList = array();
-    private array|null $dateAndTime = array();
+    private array $ordoSightList = array();
 
     /** Ordre de modification des ordonnances optiques
      * @param array $ordoSightList      Liste des ordonnances optiques
-     * @param array $dateAndTime        Informations de temps utilisées pour dater les ordonnances
      * @return array                    Données modifiées
      */
     public function ordoSightGeneralBuildOrder(
-        array|null $ordoSightList,
-        array|null $dateAndTime
+        array $ordoSightList
     ) {
         $this->ordoSightList = $ordoSightList;
-        $this->dateAndTime = $dateAndTime;
 
         $this->ordoSightContentOrganizer();
-        $this->timeManagement();
         $this->glassAndLensOrdoSentenceBuilder();
-
-        //echo '<pre>';
-        //    print_r($this->ordoSightList);
-        //echo '</pre>';
 
         return $this->ordoSightList;
     }
@@ -66,16 +56,20 @@ class OrdoSightOrganizer
      */
     private function glassOrganizer(array $value)
     {
-        //var_dump($value);
-        $tempArray = array();
+        // service de gestion du temps
+        $dateAndTimeManagementBuilder = new \HealthKerd\Services\common\DateAndTimeManagement();
+        $dateAndTimeProcessedData = $dateAndTimeManagementBuilder->dateAndTimeConverter(
+            $value['date'],
+            $_ENV['DATEANDTIME']['timezoneObj']
+        );
 
         $tempArray['ordoSightID'] = $value['ordoSightID'];
         $tempArray['ordoType'] = 'glass';
         $tempArray['diagID'] = $value['diagID'];
 
         $tempArray['time']['date'] = $value['date'];
-        $tempArray['time']['timestamp'] = '';
-        $tempArray['time']['frenchDate'] = '';
+        $tempArray['time']['timestamp'] = $dateAndTimeProcessedData['timestamp'];
+        $tempArray['time']['frenchDate'] = $dateAndTimeProcessedData['frenchDate'];
 
         $tempArray['comment'] = $value['comment'];
 
@@ -111,16 +105,20 @@ class OrdoSightOrganizer
      */
     private function lensOrganizer(array $value)
     {
-        //var_dump($value);
-        $tempArray = array();
+        // service de gestion du temps
+        $dateAndTimeManagementBuilder = new \HealthKerd\Services\common\DateAndTimeManagement();
+        $dateAndTimeProcessedData = $dateAndTimeManagementBuilder->dateAndTimeConverter(
+            $value['date'],
+            $_ENV['DATEANDTIME']['timezoneObj']
+        );
 
         $tempArray['ordoSightID'] = $value['ordoSightID'];
         $tempArray['ordoType'] = 'lens';
         $tempArray['diagID'] = $value['diagID'];
 
         $tempArray['time']['date'] = $value['date'];
-        $tempArray['time']['timestamp'] = '';
-        $tempArray['time']['frenchDate'] = '';
+        $tempArray['time']['timestamp'] = $dateAndTimeProcessedData['timestamp'];
+        $tempArray['time']['frenchDate'] = $dateAndTimeProcessedData['frenchDate'];
 
         $tempArray['comment'] = $value['comment'];
 
@@ -148,19 +146,6 @@ class OrdoSightOrganizer
         $tempArray['idStorage']['replacedDocID'] = $value['replacedDocID'];
 
         return $tempArray;
-    }
-
-    /** Ajout de timestamp et de date compléte écrite en français
-     */
-    private function timeManagement()
-    {
-        foreach ($this->ordoSightList as $key => $value) {
-            $dateObj = date_create($value['time']['date'], $this->dateAndTime['timezoneObj']);
-            $UTCOffset = date_offset_get($dateObj); // récupération de l'offset de timezone
-            $timestamp = date_timestamp_get($dateObj) + $UTCOffset; // on ajout l'écart de timezone au timestamp pour qu'il soit correct
-            $this->ordoSightList[$key]['time']['timestamp'] = $timestamp;
-            $this->ordoSightList[$key]['time']['frenchDate'] = utf8_encode(ucwords(gmstrftime('%A %e %B %Y', $timestamp))); // utf8_encode() pour s'assurer que les accents passent bien
-        }
     }
 
     /** Ajout des phrases pour les ordonnances d'oeil gauche et droite de lunettes et photos

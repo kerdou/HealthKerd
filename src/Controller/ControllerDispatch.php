@@ -17,6 +17,8 @@ class ControllerDispatch extends GetAndPostCleaner
     {
         $this->cleanedUpGet = (isset($_GET)) ? $this->inputCleaner($_GET) : array();
         $this->cleanedUpPost = (isset($_POST)) ? $this->inputCleaner($_POST) : array();
+
+        $this->generalSetter();
         $this->sessionChecker();
     }
 
@@ -24,15 +26,22 @@ class ControllerDispatch extends GetAndPostCleaner
     {
     }
 
+    /** Lancement de fonctions et options pouvant être utilisées sur toute l'appli
+     */
+    private function generalSetter(): void
+    {
+        session_start();
+        setlocale(LC_TIME, 'fr_FR', 'fra');
+        date_default_timezone_set('Europe/Paris');
+        \HealthKerd\Services\common\DateAndTimeManagement::envDateSetter();
+        $_ENV['APPROOTPATH'] = __DIR__ . '/' . '../../'; // pour avoir le chemin de la racine du projet accessible depuis n'importe quel fichier
+    }
+
     /** Vérifie si $_SESSION contient des données ou pas, s'il n'en contient pas ce qu'on est pas loggé
      * Donc on part sur différents controleurs adaptés au bon cas de figure
     */
-    private function sessionChecker()
+    private function sessionChecker(): void
     {
-        session_start();
-        date_default_timezone_set('Europe/Paris');
-        $_ENV['APPROOTPATH'] = __DIR__ . '/' . '../../'; // pour avoir le chemin de la racine du projet accessible depuis n'importe quel fichier
-
         if (empty($_SESSION)) {
             // récupération du controleur voulu, si aucun n'est précisé on part sur 'login'
             $this->selectedController = (isset($this->cleanedUpGet['controller'])) ? $this->cleanedUpGet['controller'] : 'loginPage';
@@ -46,7 +55,7 @@ class ControllerDispatch extends GetAndPostCleaner
 
     /** Oriente vers la page de login ou de création de compte si $_SESSION est vide
      */
-    private function unloggedDispatcher()
+    private function unloggedDispatcher(): void
     {
         switch ($this->selectedController) {
             case 'login': // Afficher la page de login
@@ -76,7 +85,7 @@ class ControllerDispatch extends GetAndPostCleaner
      * * Les cases finissant par Post viennent des submits de formulaires, les autres viennent des liens de nav
      * * Cette technique empeche l'insertion de données venant du $_POST en appuyant sur F5 puisque le $_POST n'est pas sollicité
      */
-    private function loggedInDispatcher()
+    private function loggedInDispatcher(): void
     {
         switch ($this->selectedController) {
             case 'login':

@@ -43,11 +43,6 @@ class DocSpeMedicOrganizer
             }
         }
 
-        //echo '<pre>';
-        //    print_r($speArray['docandSpeIdList']);
-        //    print_r($speArray['uniqueSpeList']);
-        //echo '</pre>';
-
         return $speArray['uniqueSpeList'];
     }
 }

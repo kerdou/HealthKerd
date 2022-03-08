@@ -39,7 +39,7 @@ class EventsFinderAndGathererGetController
         string $actionType,
         array $cleanedUpGet = array(),
         array $cleanedUpPost = array()
-    ) {
+    ): array {
         $this->cleanedUpGet = $cleanedUpGet;
         $this->cleanedUpPost = $cleanedUpPost;
 

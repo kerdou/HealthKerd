@@ -6,7 +6,6 @@ namespace HealthKerd\Processor\medic\event;
 class EventDataOrganizer
 {
     private array $eventArray = array();
-    private array $dateAndTime = array();
     private array $medicEventThemesRelation = array();
     private array $medicEventSpemedicRelation = array();
     private array $docList = array();
@@ -20,33 +19,23 @@ class EventDataOrganizer
      * @param array $medicEventThemesRelation       Liste des thèmes médicaux de l'event
      * @param array $medicEventSpemedicRelation     Liste des spécialités médicales de l'event
      * @param array $docList                        Données des docteurs
-     * @param array $dateAndTime                    Informations de temps de la journée en cours
      * @return array                                Contenu réorgnisé et remplit
      */
     public function eventGeneralBuildOrder(
         array $eventArray,
         array $medicEventThemesRelation,
         array $medicEventSpemedicRelation,
-        array $docList,
-        array $dateAndTime
+        array $docList
     ) {
         $this->eventArray = $eventArray;
         $this->medicEventThemesRelation = $medicEventThemesRelation;
         $this->medicEventSpemedicRelation = $medicEventSpemedicRelation;
         $this->docList = $docList;
-        $this->dateAndTime = $dateAndTime;
 
         $this->contentOrganizer();
-        $this->timeManagement();
         $this->eventThemesAddition();
         $this->eventSpeMedicAddition();
         $this->docManagement();
-
-        //echo '<pre>';
-        //    var_dump($this->docList);
-        //    print_r($this->speMedicFullList);
-        //    print_r($this->eventArray);
-        //echo '</pre>';
 
         return $this->eventArray;
     }
@@ -66,11 +55,12 @@ class EventDataOrganizer
         $localEventArray = array();
 
         foreach ($this->eventArray as $value) {
-            //echo '<pre>';
-            //  print_r($value);
-            //echo '</pre>';
-
-            $tempArray = array();
+            // service de gestion du temps
+            $dateAndTimeManagementBuilder = new \HealthKerd\Services\common\DateAndTimeManagement();
+            $dateAndTimeProcessedData = $dateAndTimeManagementBuilder->dateAndTimeConverter(
+                $value['dateTime'],
+                $_ENV['DATEANDTIME']['timezoneObj']
+            );
 
             $tempArray['medicEventID'] = $value['medicEventID'];
             $tempArray['title'] = $value['title'];
@@ -78,9 +68,9 @@ class EventDataOrganizer
             $tempArray['comment'] = $value['comment'];
 
             $tempArray['time']['dateTime'] = $value['dateTime'];
-            $tempArray['time']['timestamp'] = '';
-            $tempArray['time']['frenchDate'] = '';
-            $tempArray['time']['time'] = '';
+            $tempArray['time']['timestamp'] = $dateAndTimeProcessedData['timestamp'];
+            $tempArray['time']['frenchDate'] = $dateAndTimeProcessedData['frenchDate'];
+            $tempArray['time']['time'] = $dateAndTimeProcessedData['time'];
 
             $tempArray['eventMedicThemes'] = array();
             $tempArray['eventSpeMedic'] = array();
@@ -123,31 +113,10 @@ class EventDataOrganizer
             $tempArray['contentType']['containsLaboSampling'] = $value['containsLaboSampling'];
             $tempArray['contentType']['containsLaboAwaitingSlot'] = $value['containsLaboAwaitingSlot'];
 
-            //echo '<pre>';
-            //print_r($tempArray);
-            //echo '</pre>';
-
             array_push($localEventArray, $tempArray);
         }
 
         $this->eventArray = $localEventArray;
-    }
-
-    /** Gestion du temps pour chaque event et envoie dans infos dans $eventArray[$key]['time'][]
-     * * Création de timestamp
-     * * Création de date sous forme de phrase française. Ex: Lundi 28 Janvier 2022
-     * * Création d'heure au format HH:MM
-     */
-    private function timeManagement()
-    {
-        foreach ($this->eventArray as $key => $value) {
-            $dateObj = date_create($value['time']['dateTime'], $this->dateAndTime['timezoneObj']);
-            $UTCOffset = date_offset_get($dateObj); // récupération de l'offset de timezone
-            $timestamp = date_timestamp_get($dateObj) + $UTCOffset; // on ajout l'écart de timezone au timestamp pour qu'il soit correct
-            $this->eventArray[$key]['time']['timestamp'] = $timestamp;
-            $this->eventArray[$key]['time']['frenchDate'] = utf8_encode(ucwords(gmstrftime('%A %e %B %Y', $timestamp))); // utf8_encode() pour s'assurer que les accents passent bien
-            $this->eventArray[$key]['time']['time'] = gmstrftime('%H:%M', $timestamp);
-        }
     }
 
     /** Ajout des thèmes médicaux des events dans $eventArray[$eventKey]['eventMedicThemes'][]

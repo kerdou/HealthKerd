@@ -45,10 +45,6 @@ class DiagListOrganizer
         $this->conclusionsAddition();
         $this->ordoAddition();
 
-        //echo '<pre>';
-        //    print_r($this->diagList);
-        //echo '</pre>';
-
         return $this->diagList;
     }
 

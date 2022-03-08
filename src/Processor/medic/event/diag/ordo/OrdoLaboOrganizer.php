@@ -10,39 +10,30 @@ class OrdoLaboOrganizer
     private array $prescOrdoLabo = array();
     private array $prescLaboElements = array();
     private array $ordoLaboSlots = array();
-    private array $dateAndTime = array();
 
     /** Ordre de modification des ordonnances de prélèvements en laboratoire médical
      * @param array $ordoLaboList       Liste des ordonnances de prélèvements en laboratoire médical
      * @param array $prescOrdoLabo      Liste des prescriptions
      * @param array $prescLaboElements  Liste des éléments de prescriptions
      * @param array $ordoLaboSlots      Liste des slots de prélèvements
-     * @param array $dateAndTime        Informations de temps utilisées pour dater les ordonnances
      * @return array                    Données modifiées
      */
     public function ordoLaboGeneralBuildOrder(
         array $ordoLaboList,
         array $prescOrdoLabo,
         array $prescLaboElements,
-        array $ordoLaboSlots,
-        array $dateAndTime,
-    ) {
+        array $ordoLaboSlots
+    ): array {
         $this->ordoLaboList = $ordoLaboList;
         $this->prescOrdoLabo = $prescOrdoLabo;
         $this->prescLaboElements = $prescLaboElements;
         $this->ordoLaboSlots = $ordoLaboSlots;
-        $this->dateAndTime = $dateAndTime;
 
         $this->ordoLaboContentOrganizer();
         $this->prescOrganizer();
         $this->elementsAdder();
-        $this->timeManagement();
         $this->prescAdder();
         $this->slotsAdder();
-
-        //echo '<pre>';
-        //    print_r($this->prescOrdoLabo);
-        //echo '</pre>';
 
         return $this->ordoLaboList;
     }
@@ -54,15 +45,20 @@ class OrdoLaboOrganizer
         $ordoTempArray = array();
 
         foreach ($this->ordoLaboList as $value) {
-            $tempArray = array();
+            // service de gestion du temps
+            $dateAndTimeManagementBuilder = new \HealthKerd\Services\common\DateAndTimeManagement();
+            $dateAndTimeProcessedData = $dateAndTimeManagementBuilder->dateAndTimeConverter(
+                $value['date'],
+                $_ENV['DATEANDTIME']['timezoneObj']
+            );
 
             $tempArray['ordoLaboID'] = $value['ordoLaboID'];
             $tempArray['ordoType'] = 'laboSampling';
             $tempArray['diagID'] = $value['diagID'];
 
             $tempArray['time']['date'] = $value['date'];
-            $tempArray['time']['timestamp'] = '';
-            $tempArray['time']['frenchDate'] = '';
+            $tempArray['time']['timestamp'] = $dateAndTimeProcessedData['timestamp'];
+            $tempArray['time']['frenchDate'] = $dateAndTimeProcessedData['frenchDate'];
 
             $tempArray['renewal'] = $value['renewal'];
             $tempArray['comment'] = $value['comment'];
@@ -95,19 +91,6 @@ class OrdoLaboOrganizer
                     array_push($this->prescOrdoLabo[$prescKey]['elements'], $elemValue);
                 }
             }
-        }
-    }
-
-    /** Ajout de timestamp et de date compléte écrite en français
-     */
-    private function timeManagement()
-    {
-        foreach ($this->ordoLaboList as $key => $value) {
-            $dateObj = date_create($value['time']['date'], $this->dateAndTime['timezoneObj']);
-            $UTCOffset = date_offset_get($dateObj); // récupération de l'offset de timezone
-            $timestamp = date_timestamp_get($dateObj) + $UTCOffset; // on ajout l'écart de timezone au timestamp pour qu'il soit correct
-            $this->ordoLaboList[$key]['time']['timestamp'] = $timestamp;
-            $this->ordoLaboList[$key]['time']['frenchDate'] = utf8_encode(ucwords(gmstrftime('%A %e %B %Y', $timestamp))); // utf8_encode() pour s'assurer que les accents passent bien
         }
     }
 

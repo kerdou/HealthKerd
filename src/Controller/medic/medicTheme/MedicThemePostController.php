@@ -14,7 +14,7 @@ class MedicThemePostController
      * @param array $cleanedUpGet   Infos nettoyées provenants du GET
      * @return void
      */
-    public function actionReceiver(array $cleanedUpGet)
+    public function actionReceiver(array $cleanedUpGet): void
     {
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {

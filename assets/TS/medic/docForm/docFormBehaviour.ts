@@ -1,4 +1,4 @@
-if (document.body.contains(document.getElementById('docForm'))) {
+if (document.body.contains(document.getElementById('doc_form_page'))) {
     const formSubmitButton = document.getElementById('formSubmitButton') as HTMLButtonElement;
     const formResetButton = document.getElementById('formResetButton') as HTMLButtonElement;
     const telInput = document.getElementById('tel') as HTMLInputElement;
@@ -85,7 +85,7 @@ function submitForm(): void {
     let validityStatus = formValidity.findIndex(formValidityArrayChecker);
 
     if (validityStatus == -1) {
-        const docForm = document.getElementById('docForm') as HTMLFormElement;
+        const docForm = document.getElementById('doc_form_page') as HTMLFormElement;
         docForm.submit();
     }
 }
