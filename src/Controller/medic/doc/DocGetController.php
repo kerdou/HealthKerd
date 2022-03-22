@@ -113,7 +113,7 @@ class DocGetController extends DocGetControllerFunctionsPool
 
         // dispatch des events suivants qu'ils appartiennent au passé ou au futur
         $timestampDispatcher = new \HealthKerd\Services\common\TimestampDispatcher();
-        $mixedDataResult['medicEvent'] = $timestampDispatcher->timestampDispatcher($mixedDataResult['medicEvent']);
+        $mixedDataResult['medicEvent'] = $timestampDispatcher->nowTimestampDispatcher($mixedDataResult['medicEvent']);
 
         // tri des events passés et futurs par ordre croissant de timestamp
         $timestampSorter = new \HealthKerd\Services\common\TimestampSorting();

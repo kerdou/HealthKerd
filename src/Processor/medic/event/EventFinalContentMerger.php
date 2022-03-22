@@ -38,7 +38,7 @@ class EventFinalContentMerger
         $this->vaxSessionsContentMerger();
 
         $timestampDispatcher = new \HealthKerd\Services\common\TimestampDispatcher();
-        $dispatchedEvents = $timestampDispatcher->timestampDispatcher($this->eventArray);
+        $dispatchedEvents = $timestampDispatcher->nowTimestampDispatcher($this->eventArray);
 
         $timestampSorter = new \HealthKerd\Services\common\TimestampSorting();
         $timeSortedEvents['pastEvents'] = $timestampSorter->decrTimestampSortLauncher($dispatchedEvents['past']);
