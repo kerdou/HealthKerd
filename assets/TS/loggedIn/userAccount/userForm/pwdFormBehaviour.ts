@@ -53,8 +53,7 @@ export default class PwdFormBehaviour extends PwdFormChecks
 
         // Si aucun test ne renvoie false, on peut submit le form
         if (formHasIssues == false) {
-            console.log('TOUT BON!!!!');
-            //this.pwdForm.submit();
+            this.pwdForm.submit();
         }
     }
 
@@ -62,16 +61,11 @@ export default class PwdFormBehaviour extends PwdFormChecks
      * @returns {boolean} Renvoie du statut de vérification du formulaire
      */
     private formChecks(): boolean {
-        let formValidity = {
-            pwdCheck: {},
-            confPwdCheck: {}
-        };
-
-        formValidity.pwdCheck = super.pwdCheck('pwd');
-        formValidity.confPwdCheck = super.pwdCheck('confPwd');
+        let pwdCheck = super.pwdCheck('pwd');
+        let confPwdCheck = super.pwdCheck('confPwd');
 
         let formHasIssues = false;
-        formHasIssues = super.samePwdCheck(formValidity.pwdCheck, formValidity.confPwdCheck);
+        formHasIssues = super.samePwdCheck(pwdCheck, confPwdCheck);
 
         return formHasIssues;
     }

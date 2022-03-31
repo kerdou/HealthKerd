@@ -10,20 +10,29 @@ interface rulesChecksInter {
     [name: string]: boolean;
 }
 
-interface pwdChecksInter {
+interface emptyPwdChecksInter {
     pwdSummary: {};
-    ruleCheck: {};
+    rulesCheck: {};
+}
+
+interface completePwdChecksInter {
+    pwdSummary: {
+        [name: string]: number;
+    };
+    rulesCheck: {
+        [name: string]: boolean;
+    };
 }
 
 
 export default class PwdFormChecks
 {
-    /** Vérification du nom de famille:
-     * * Lancement du regex 'nameRegex'
-     * * Si le test n'est pas bon, le champ passe en rouge
-     * @returns {boolean} - Renvoie l'état du test
+    /** Vérification d'un champ de mot de passe:
+     * Modifie
+     * @param {string} [field] - Nom du champ en cours de vérification
+     * @returns {emptyPwdChecksInter} - Renvoie l'état du test
      */
-    protected pwdCheck(field: string): pwdChecksInter {
+    protected pwdCheck(field: string): emptyPwdChecksInter {
         const fieldInput = document.getElementById(field) as HTMLInputElement;
         let fieldValue: string = fieldInput.value;
         fieldValue = fieldValue.trim();
@@ -32,7 +41,7 @@ export default class PwdFormChecks
 
         let results = {
             pwdSummary: {},
-            ruleCheck: {}
+            rulesCheck: {}
         };
 
         if (fieldValue.length == 0) {
@@ -40,12 +49,12 @@ export default class PwdFormChecks
         } else {
             const fieldTestObj = new PwdRegex;
             let pwdSummary = fieldTestObj.pwdRegex(fieldValue);
-            let ruleCheck = this.rulesChecker(pwdSummary);
+            let rulesCheck = this.rulesChecker(pwdSummary);
 
             results.pwdSummary = pwdSummary;
-            results.ruleCheck = ruleCheck;
+            results.rulesCheck = rulesCheck;
 
-            if (ruleCheck.isValid) {
+            if (rulesCheck.isValid) {
                 fieldValidity = true;
                 fieldInput.classList.remove('is-invalid');
             } else {
@@ -57,10 +66,9 @@ export default class PwdFormChecks
         return results;
     }
 
-    /**
-     *
-     * @param pwdSummary
-     * @returns
+    /** Traduit les données de chaque champ en une série de booléens selon la conformité
+     * @param {pwdSummaryInter} [pwdSummary] - Récap des caractéres du pwd
+     * @returns {rulesChecksInter} - Série de booléens
      */
     private rulesChecker(pwdSummary: pwdSummaryInter): rulesChecksInter
     {
@@ -84,17 +92,25 @@ export default class PwdFormChecks
         return rulesChecks;
     }
 
-
-    public samePwdCheck(pwdCheck: any, confPwdCheck: any): boolean
+    /** Vérification de la similarité et validité entre les 2 champs de mdp
+     * @param {completePwdChecksInter} [pwdCheck] -     Données du 1er champ
+     * @param {completePwdChecksInter} [confPwdCheck] - Données du 2éme champ
+     * @returns {boolean} - Renvoi TRUE si le form n'est pas valide
+     */
+    public samePwdCheck(
+        pwdCheck: completePwdChecksInter,
+        confPwdCheck: completePwdChecksInter
+    ): boolean
     {
         let results = {
             bothAreValid: false,
             areIdentical: false
         }
 
+        // lancement des comparaisons des 2 champs uniquement si aucun n'est vide
         if (
-            (Object.entries(pwdCheck.ruleCheck).length != 0) &&
-            (Object.entries(confPwdCheck.ruleCheck).length != 0)
+            (Object.entries(pwdCheck.rulesCheck).length != 0) &&
+            (Object.entries(confPwdCheck.rulesCheck).length != 0)
         ) {
             const pwdInput = document.getElementById('pwd') as HTMLInputElement;
             const confPwdInput = document.getElementById('confPwd') as HTMLInputElement;
@@ -109,17 +125,19 @@ export default class PwdFormChecks
             }
         }
 
-        let pwdStatusIsOk = false;
-        let confPwdStatusIsOk = false;
-
-        if (Object.entries(pwdCheck.ruleCheck).length != 0) {
-            pwdStatusIsOk = pwdCheck.ruleCheck.isValid;
+        // vérification de la validité du premier champ, seulement s'il n'est pas vide
+        let pwdStatusIsOk: boolean | undefined = false;
+        if (Object.entries(pwdCheck.rulesCheck).length != 0) {
+            pwdStatusIsOk = pwdCheck.rulesCheck.isValid;
         }
 
-        if (Object.entries(confPwdCheck.ruleCheck).length != 0) {
-            confPwdStatusIsOk = confPwdCheck.ruleCheck.isValid;
+        // vérification de la validité du deuxieme champ, seulement s'il n'est pas vide
+        let confPwdStatusIsOk: boolean | undefined = false;
+        if (Object.entries(confPwdCheck.rulesCheck).length != 0) {
+            confPwdStatusIsOk = confPwdCheck.rulesCheck.isValid;
         }
 
+        // vérification de la validité des 2 champs
         if ((pwdStatusIsOk == true) && (confPwdStatusIsOk == true)) {
             results.bothAreValid = true;
         }

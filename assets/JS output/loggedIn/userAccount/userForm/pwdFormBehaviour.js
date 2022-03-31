@@ -60,22 +60,17 @@ var PwdFormBehaviour = /** @class */ (function (_super) {
         var formHasIssues = this.formChecks();
         // Si aucun test ne renvoie false, on peut submit le form
         if (formHasIssues == false) {
-            console.log('TOUT BON!!!!');
-            //this.pwdForm.submit();
+            this.pwdForm.submit();
         }
     };
     /** Série de vérifications des champs du formulaire
      * @returns {boolean} Renvoie du statut de vérification du formulaire
      */
     PwdFormBehaviour.prototype.formChecks = function () {
-        var formValidity = {
-            pwdCheck: {},
-            confPwdCheck: {}
-        };
-        formValidity.pwdCheck = _super.prototype.pwdCheck.call(this, 'pwd');
-        formValidity.confPwdCheck = _super.prototype.pwdCheck.call(this, 'confPwd');
+        var pwdCheck = _super.prototype.pwdCheck.call(this, 'pwd');
+        var confPwdCheck = _super.prototype.pwdCheck.call(this, 'confPwd');
         var formHasIssues = false;
-        formHasIssues = _super.prototype.samePwdCheck.call(this, formValidity.pwdCheck, formValidity.confPwdCheck);
+        formHasIssues = _super.prototype.samePwdCheck.call(this, pwdCheck, confPwdCheck);
         return formHasIssues;
     };
     return PwdFormBehaviour;
