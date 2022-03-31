@@ -29,11 +29,14 @@ class LoginPostController extends LoginCommonController
                     $userData = $this->loginModel->checkUserLogs($cleanedUpPost);
 
                     if (!empty($userData)) { // en cas de succés, on part vers la homepage
-                        $_SESSION['userID'] = intval($userData['userID']);
-                        $_SESSION['isAdmin'] = intval($userData['isAdmin']);
-                        $_SESSION['firstName'] = $userData['firstName'];
-                        $_SESSION['lastName'] = $userData['lastName'];
-                        echo "<script>window.location = 'index.php?controller=home';</script>";
+                        $pwdMatch = password_verify($cleanedUpPost['userPwd'], $userData['userPwd']);
+
+                        if ($pwdMatch) {
+                            $this->acceptedLogin($userData);
+                        } else {
+                            echo "<script>window.location = 'index.php';</script>";
+                        }
+
                     } else { // en cas d'échec, on retourne à la page de login
                         echo "<script>window.location = 'index.php';</script>";
                     }
@@ -47,5 +50,16 @@ class LoginPostController extends LoginCommonController
             // si $cleanedUpPost['action'] n'est pas défini, on repart vers le controlleur maître
             echo "<script>window.location = 'index.php';</script>";
         }
+    }
+
+    /**
+     *
+     */
+    private function acceptedLogin(array $userData): void {
+            $_SESSION['userID'] = intval($userData['userID']);
+            $_SESSION['isAdmin'] = intval($userData['isAdmin']);
+            $_SESSION['firstName'] = $userData['firstName'];
+            $_SESSION['lastName'] = $userData['lastName'];
+            echo "<script>window.location = 'index.php?controller=home';</script>";
     }
 }

@@ -4,7 +4,7 @@ namespace HealthKerd\View\medic\doc\docForm;
 
 /** Construction puis affichage du formulaire de modification de docteur
  */
-class DocFaildedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
+class DocFailedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
     protected string $pageContent = '';

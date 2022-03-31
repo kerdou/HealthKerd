@@ -16,14 +16,38 @@ class UserAccountGetController
      */
     public function actionReceiver(array $cleanedUpGet): void
     {
-        echo '<h1>PLOP ACCOUNT GET CONTROLLER</h1>';
-        var_dump($cleanedUpGet);
 
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
-                case 'creationForm':
-                    echo '<h1>CREATION FORM DISPLAY!!!!!!!!!!</h1>';
+                case 'showAccountPage':
+                    $userSelectModel = new \HealthKerd\Model\modelInit\userAccount\UserSelectModel();
+                    $userAccountData = $userSelectModel->gatherAllUserAccountData();
+                    $view = new \HealthKerd\View\userAccount\userPage\UserAccountPageBuilder();
+                    $view->buildOrder($userAccountData);
                     break;
+
+                case 'showCreatForm':
+                    break;
+
+                case 'showEditForm':
+                    $userSelectModel = new \HealthKerd\Model\modelInit\userAccount\UserSelectModel();
+                    $userAccountData = $userSelectModel->gatherAllUserAccountData();
+                    $view = new \HealthKerd\View\userAccount\userForm\EditFormBuilder();
+                    $view->buildOrder($userAccountData);
+                    break;
+
+                case 'showPwdEditForm':
+                    $view = new \HealthKerd\View\userAccount\userForm\EditPwdFormBuilder();
+                    $view->buildOrder();
+                    break;
+
+                case 'showDelForm':
+                    $userSelectModel = new \HealthKerd\Model\modelInit\userAccount\UserSelectModel();
+                    $userAccountData = $userSelectModel->gatherAllUserAccountData();
+                    $view = new \HealthKerd\View\userAccount\userForm\DelFormBuilder();
+                    $view->buildOrder($userAccountData);
+                    break;
+
                 default:
                     echo "<script>window.location = 'index.php';</script>";
             }

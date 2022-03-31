@@ -20,56 +20,50 @@ class DocFormChecker
 
         // vérification des noms et prénoms
         $nameRegexChecker = new \HealthKerd\Services\regexStore\NameRegex();
+        $checksResultsArray['lastname'] = false; // champ obligatoire
+        $checksResultsArray['firstname'] = true; // champ facultatif
 
         if (strlen($cleanedUpPost['lastname']) > 0) {
             $checksResultsArray['lastname'] = $nameRegexChecker->nameRegex($cleanedUpPost['lastname']);
-        } else {
-            $checksResultsArray['lastname'] = false;
         }
 
         if (strlen($cleanedUpPost['firstname']) > 0) {
-            $checksArray['firstname'] = $nameRegexChecker->nameRegex($cleanedUpPost['firstname']);
-        } else {
-            $checksArray['firstname'] = true;
+            $checksResultsArray['firstname'] = $nameRegexChecker->nameRegex($cleanedUpPost['firstname']);
         }
 
 
 
         // vérification du numéro de tel
         $telRegexChecker = new \HealthKerd\Services\regexStore\TelRegex();
+        $checksResultsArray['tel'] = true; // champ facultatif
 
         if (strlen($cleanedUpPost['tel']) > 0) {
             $checksResultsArray['tel'] = $telRegexChecker->telRegex($cleanedUpPost['tel']);
-        } else {
-            $checksResultsArray['tel'] = true;
         }
 
 
 
         // vérification du mail
         $mailRegexChecker = new \HealthKerd\Services\regexStore\MailRegex();
+        $checksResultsArray['mail'] = true; // champ facultatif
 
-        if (strlen($cleanedUpPost['mail'])) {
+        if (strlen($cleanedUpPost['mail']) > 0) {
             $checksResultsArray['mail'] = $mailRegexChecker->mailRegex($cleanedUpPost['mail']);
-        } else {
-            $checksResultsArray['mail'] = true;
         }
 
 
 
         // vérification des URL de site perso et de page doctolib
         $urlRegeChecker = new \HealthKerd\Services\regexStore\UrlRegex();
+        $checksResultsArray['webpage'] = true; // champ facultatif
+        $checksResultsArray['doctolibpage'] = true; // champ facultatif
 
         if (strlen($cleanedUpPost['webpage']) > 0) {
             $checksResultsArray['webpage'] = $urlRegeChecker->urlRegex($cleanedUpPost['webpage']);
-        } else {
-            $checksResultsArray['webpage'] = true;
         }
 
         if (strlen($cleanedUpPost['doctolibpage']) > 0) {
             $checksResultsArray['doctolibpage'] = $urlRegeChecker->urlRegex($cleanedUpPost['doctolibpage']);
-        } else {
-            $checksResultsArray['doctolibpage'] = true;
         }
 
         return $checksResultsArray;

@@ -62,18 +62,22 @@ class ControllerDispatch extends GetAndPostCleaner
                 $controllerObj = new \HealthKerd\Controller\login\LoginGetController();
                 $controllerObj->displayLoginPage($this->cleanedUpGet);
                 break;
+
             case 'loginPost': // Envoyer les logins pour se connecter
                 $controllerObj = new \HealthKerd\Controller\login\LoginPostController();
                 $controllerObj->actionReceiver($this->cleanedUpPost);
                 break;
+
             case 'userAccount': // Afficher la page de création de compte
                 $controllerObj = new \HealthKerd\Controller\userAccount\UserAccountGetController();
                 $controllerObj->actionReceiver($this->cleanedUpGet);
                 break;
+
             case 'userAccountPost': // Création du compte dans la DB
                 $controllerObj = new \HealthKerd\Controller\userAccount\UserAccountPostController();
                 $controllerObj->actionReceiver($this->cleanedUpPost);
                 break;
+
             default: // Renvoi vers la page de login si rien n'est précisé
                 $controllerObj = new \HealthKerd\Controller\login\LoginGetController();
                 $controllerObj->displayLoginPage($this->cleanedUpGet);
@@ -92,14 +96,27 @@ class ControllerDispatch extends GetAndPostCleaner
                 $controllerObj = new \HealthKerd\Controller\login\LoginGetController();
                 $controllerObj->actionReceiver($this->cleanedUpGet);
                 break;
+
+            case 'userAccount':
+                $controllerObj = new \HealthKerd\Controller\userAccount\UserAccountGetController();
+                $controllerObj->actionReceiver($this->cleanedUpGet);
+                break;
+
+            case 'userAccountPost':
+                $controllerObj = new \HealthKerd\Controller\userAccount\UserAccountPostController();
+                $controllerObj->actionReceiver($this->cleanedUpGet, $this->cleanedUpPost);
+                break;
+
             case 'home':
                 $controllerObj = new \HealthKerd\Controller\home\HomeGetController();
                 $controllerObj->displayHomePage();
                 break;
+
             case 'medic': // controleur général de la partie 'medic'
                 $controllerObj = new \HealthKerd\Controller\medic\MedicMainController();
                 $controllerObj->subContReceiver($this->cleanedUpGet, $this->cleanedUpPost);
                 break;
+
             default:
                 $controllerObj = new \HealthKerd\Controller\home\HomeGetController();
                 $controllerObj->displayHomePage();

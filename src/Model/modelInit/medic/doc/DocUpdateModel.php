@@ -30,6 +30,7 @@ class DocUpdateModel extends \HealthKerd\Model\common\ModelInChief
         $docStmt = '';
         $this->mapper->displayAllDocsListMapper();
         $docStmt = $this->mapper->maps['UpdateDocList']->docEditStmt();
+
         $this->query = $this->pdo->prepare($docStmt);
         $this->query->bindParam(':title', $cleanedUpPost['title']);
         $this->query->bindParam(':lastName', $cleanedUpPost['lastname']);
