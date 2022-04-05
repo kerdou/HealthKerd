@@ -76,7 +76,9 @@ var DocFormBehaviour = /** @class */ (function (_super) {
     /** Bloque tous les caractéres sauf les chiffres et quelques touches utiles dans le champ de téléphone
      */
     DocFormBehaviour.prototype.formButtonsEventListeners = function () {
-        this.formResetButton.addEventListener('click', this.resetForm.bind(this));
+        if (this.formResetButton != null) {
+            this.formResetButton.addEventListener('click', this.resetForm.bind(this));
+        }
         this.formSubmitButton.addEventListener('click', this.submitForm.bind(this));
     };
     /** Reset du form et des classes des champs inputs

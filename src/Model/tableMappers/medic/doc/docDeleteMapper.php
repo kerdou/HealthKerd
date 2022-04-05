@@ -18,12 +18,4 @@ class DocDeleteMapper
     {
         $this->maps['DeleteDocList'] = new \HealthKerd\Model\sqlStmtStore\docList\DeleteDocList();
     }
-
-    /** Suppression automatique d'un cabinet médical et de spécialités médicales suite à la suppression d'un docteur
-     */
-    public function deleteOfficeAndSpeMedicMapper(): void
-    {
-        $this->maps['DeleteDocDocofficeRelation'] = new \HealthKerd\Model\sqlStmtStore\docDocofficeRelation\DeleteDocDocofficeRelation();
-        $this->maps['DeleteDocSpemedicRelation'] = new \HealthKerd\Model\sqlStmtStore\docSpemedicRelation\DeleteDocSpemedicRelation();
-    }
 }

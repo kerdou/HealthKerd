@@ -43,8 +43,7 @@ class DocPostController
         }
     }
 
-    /**
-     *
+    /** Ajout d'un docteur
      */
     private function addDoc(): void
     {
@@ -72,8 +71,7 @@ class DocPostController
         }
     }
 
-    /**
-     *
+    /** Modification d'un docteur
      */
     private function editDoc(): void
     {
@@ -93,13 +91,11 @@ class DocPostController
         }
     }
 
-    /**
-     *
+    /** Suppression d'un docteur
      */
     private function removeDoc(): void
     {
         $docDeleteModel = new \HealthKerd\Model\modelInit\medic\doc\DocDeleteModel();
-        $docDeleteModel->deleteOfficeAndSpeMedic($this->cleanedUpGet['docID']);
         $pdoErrorMessage = $docDeleteModel->deleteDoc($this->cleanedUpGet['docID']);
         echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp';</script>";
     }

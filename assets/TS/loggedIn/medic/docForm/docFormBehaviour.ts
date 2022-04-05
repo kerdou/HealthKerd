@@ -70,7 +70,9 @@ export default class DocFormBehaviour extends DocFormChecks
     /** Bloque tous les caractéres sauf les chiffres et quelques touches utiles dans le champ de téléphone
      */
     private formButtonsEventListeners(): void {
-        this.formResetButton.addEventListener('click', this.resetForm.bind(this));
+        if (this.formResetButton != null) {
+            this.formResetButton.addEventListener('click', this.resetForm.bind(this));
+        }
         this.formSubmitButton.addEventListener('click', this.submitForm.bind(this));
     }
 

@@ -6,9 +6,9 @@ import LoggedInMainController from './loggedIn/loggedInMainController.js';
 if (document.getElementsByClassName('unlogged_pages').length != 0) {
     unloggedDispatcher();
 } else {
-        const mobileSidebarObj = new MobileSidebar();
-        const scrollUpButtonObj = new ScrollUpButton();
-        const textAreaInfoCompObj = new TextAreaInfoComp();
+    const mobileSidebarObj = new MobileSidebar();
+    const scrollUpButtonObj = new ScrollUpButton();
+    const textAreaInfoCompObj = new TextAreaInfoComp();
 
     loggedInDispatcher();
 }
