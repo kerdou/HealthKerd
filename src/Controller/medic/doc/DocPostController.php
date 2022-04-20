@@ -21,6 +21,11 @@ class DocPostController
         $this->cleanedUpGet = $cleanedUpGet;
         $this->cleanedUpPost = $cleanedUpPost;
 
+        // Se déclenche uniquement si le tel n'est pas au format 01.02.03.04.05
+        if (strlen($this->cleanedUpPost['tel']) < 14) {
+            $this->telNbrReorganizer();
+        }
+
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
                 case 'addDoc': // ajout d'un docteur
@@ -45,6 +50,16 @@ class DocPostController
         } else { // si GET['action'] n'est pas défini, on repart à la liste de tous les docteurs
             echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp';</script>";
         }
+    }
+
+    /** Réorganise l'agencement des numéros de tel pour avoir le format 01.02.03.04.05
+     */
+    private function telNbrReorganizer()
+    {
+        $teltemp = str_replace('.', '', $this->cleanedUpPost['tel']);
+        $teltemp = str_split($teltemp, 2);
+        $teltemp = implode('.', $teltemp);
+        $this->cleanedUpPost['tel'] = $teltemp;
     }
 
     /** Ajout d'un docteur
