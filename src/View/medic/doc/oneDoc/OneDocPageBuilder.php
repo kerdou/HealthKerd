@@ -106,7 +106,7 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         foreach ($this->docDataArray['speMedicList'] as $value) {
             //var_dump($value);
             $badgeTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/badges/docSpeMedic/docSpeMedic.html');
-            $badgeTemplate = str_replace('{speMedicName}', $value['name'], $badgeTemplate);
+            $badgeTemplate = str_replace('{speMedicName}', $value['nameForDoc'], $badgeTemplate);
             $speMedicBadgesHTML .= $badgeTemplate;
         }
 

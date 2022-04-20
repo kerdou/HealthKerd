@@ -14,7 +14,7 @@ class EventAttendedDocBuilder
         $createdBadgesHTML = '';
 
         foreach ($attendedDocData['speMedicList'] as $key => $value) {
-            $tempBadgeHTML = str_replace('{speMedicName}', $value['name'], $speMedicBadgeTemplateHTML);
+            $tempBadgeHTML = str_replace('{speMedicName}', $value['nameForDoc'], $speMedicBadgeTemplateHTML);
             $createdBadgesHTML .= $tempBadgeHTML;
         }
 

@@ -20,7 +20,7 @@ class SelectDocSpemedicRelation
         $stmtStart =
             'SELECT
                 doc_spemedic_relation.*,
-                spe_medic_full_list.name
+                spe_medic_full_list.nameForDoc
             FROM
                 doc_list
             INNER JOIN doc_spemedic_relation ON doc_list.docID = doc_spemedic_relation.docID
@@ -28,7 +28,7 @@ class SelectDocSpemedicRelation
             WHERE';
 
         $stmtEnd =
-            ' ORDER BY spe_medic_full_list.name;';
+            ' ORDER BY spe_medic_full_list.nameForDoc;';
 
         return $stmtStart . $whereString . $stmtEnd;
     }
@@ -43,12 +43,12 @@ class SelectDocSpemedicRelation
         $stmt =
             "SELECT
                 doc_spemedic_relation.*,
-                spe_medic_full_list.name
+                spe_medic_full_list.nameForDoc
             FROM
                 doc_spemedic_relation
             INNER JOIN spe_medic_full_list ON doc_spemedic_relation.speMedicID = spe_medic_full_list.speMedicID
             WHERE docID = :docID
-            ORDER BY spe_medic_full_list.name;";
+            ORDER BY spe_medic_full_list.nameForDoc;";
 
         return $stmt;
     }

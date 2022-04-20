@@ -17,7 +17,7 @@ class DocListFunctionsPool
             foreach ($this->speMedicList as $speKey => $speValue) {
                 if ($docValue['docID'] == $speValue['docID']) {
                     $tempArray['speMedicID'] = $speValue['speMedicID'];
-                    $tempArray['name'] = $speValue['name'];
+                    $tempArray['nameForDoc'] = $speValue['nameForDoc'];
                     array_push($this->docArray['uniqueDocList'][$docKey]['speMedicList'], $tempArray);
                 }
             }

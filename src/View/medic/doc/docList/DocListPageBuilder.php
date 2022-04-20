@@ -103,7 +103,7 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
         $speMedicBadgesHTML = '';
 
         foreach ($speMedicList as $value) {
-            $speMedicBadgesTempHTML = str_replace('{speMedicName}', $value['name'], $unclickableSpeMedicBadgeTemplate);
+            $speMedicBadgesTempHTML = str_replace('{speMedicName}', $value['nameForDoc'], $unclickableSpeMedicBadgeTemplate);
             $speMedicBadgesHTML .= $speMedicBadgesTempHTML;
         }
 

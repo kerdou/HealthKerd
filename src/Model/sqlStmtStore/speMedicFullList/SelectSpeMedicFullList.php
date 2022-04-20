@@ -21,7 +21,7 @@ class SelectSpeMedicFullList
             'SELECT DISTINCT
                 doc_list.docID,
                 spe_medic_full_list.speMedicID,
-                spe_medic_full_list.name
+                spe_medic_full_list.nameForDoc
             FROM
                 medic_event_list
             INNER JOIN doc_list ON medic_event_list.docID = doc_list.docID
@@ -51,7 +51,7 @@ class SelectSpeMedicFullList
             'SELECT DISTINCT
                 medic_event_list.replacedDocID AS docID,
                 spe_medic_full_list.speMedicID,
-                spe_medic_full_list.name
+                spe_medic_full_list.nameForDoc
             FROM
                 medic_event_list
             INNER JOIN doc_list ON medic_event_list.replacedDocID = doc_list.docID
@@ -81,7 +81,7 @@ class SelectSpeMedicFullList
             'SELECT DISTINCT
                 medic_event_list.laboOrdoDocID as docID,
                 spe_medic_full_list.speMedicID,
-                spe_medic_full_list.name
+                spe_medic_full_list.nameForDoc
             FROM
                 medic_event_list
             INNER JOIN doc_list ON medic_event_list.laboOrdoDocID = doc_list.docID
@@ -111,7 +111,7 @@ class SelectSpeMedicFullList
             'SELECT DISTINCT
                 medic_event_list.laboOrdoReplacedDocDiagID AS docID,
                 spe_medic_full_list.speMedicID,
-                spe_medic_full_list.name
+                spe_medic_full_list.nameForDoc
             FROM
                 medic_event_list
             INNER JOIN doc_list ON medic_event_list.laboOrdoReplacedDocDiagID = doc_list.docID
