@@ -146,4 +146,68 @@ class DocSelectModel extends \HealthKerd\Model\common\PdoBufferManager
 
         return $result = $result['docID'];
     }
+
+    /** Récupération de toutes les données nécessaires pour l'affichage
+     * du formulaire de spe medic et doc office d'un doc
+     * * Renvoyé en JSON puisque demandé via AJAX
+     */
+    public function getAJAXDataForSpeMedDocOfficeForm()
+    {
+        $this->mapper->getAJAXDataForSpeMedDocOfficeFormMapper();
+        $dataStore = [];
+
+        $dataStore['everySpeMedicForDoc']['pdoStmt'] = $this->mapper->maps['SelectSpeMedicFullList']->selectEverySpeMedicForDocStmt();
+        $dataStore['everyDocOfficesOfUser']['pdoStmt'] = $this->mapper->maps['SelectDocOfficeList']->selectEveryDocOfficesOfUserStmt();
+        $dataStore['everySpeMedicOfAllDocOfficesOfUser']['pdoStmt'] = $this->mapper->maps['SelectDocofficeSpemedicRelation']->selectEverySpeMedicOfAllDocOfficesOfUser();
+        $dataStore['speMedicOfDoc']['pdoStmt'] = $this->mapper->maps['SelectDocSpemedicRelation']->selectSpeMedicIDsOfOneDocStmt($_SESSION['checkedDocID']);
+        $dataStore['docOfficesOfDoc']['pdoStmt'] = $this->mapper->maps['SelectDocOfficeList']->selectDocOfficesOfDocStmt($_SESSION['checkedDocID']);
+
+        foreach ($dataStore as $key => $value) {
+            $this->pdoStmtAndDestInsertionInCue($value['pdoStmt'], $key . '/pdoResult');
+        }
+
+        $dataToWrite = array();
+        $dataToWrite = $this->pdoQueryExec();
+        $this->pdoResultWriter($dataToWrite, $dataStore);
+
+        $dataStore['docID'] = $_SESSION['checkedDocID'];
+        $dataStore['officeCardTemplate'] = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/speMedicDocOfficeForm/elements/officeCardTemplate.html');
+        $dataStore['speMedicBadgeForOfficeCardTemplate'] = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/speMedicDocOfficeForm/elements/speMedicBadgeForOfficeCardTemplate.html');
+        $dataStore['removableSpeMedicBadgeTemplate'] = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/speMedicDocOfficeForm/elements/removableSpeMedicBadgeTemplate.html');
+
+        header('content-type:application/json');
+        echo json_encode($dataStore, JSON_PRETTY_PRINT);
+    }
+
+    /** Placement des données à l'endroit voulu dans $dataStore
+     * @param array $dataToWrite    Données provenants du Pdo Buffer à écrire dans $dataStore
+     */
+    private function pdoResultWriter(array $dataToWrite, array &$dataStore): void
+    {
+        foreach ($dataToWrite['dest'] as $destKey => $destValue) {
+            switch (count($destValue)) {
+                case 0:
+                    $dataStore['unexpectedDest'] = array();
+                    array_push($dataStore['unexpectedDest'], $dataToWrite['pdoMixedResult'][$destKey]);
+                    break;
+
+                case 1:
+                    $dataStore[$destValue[0]] = $dataToWrite['pdoMixedResult'][$destKey];
+                    break;
+
+                case 2:
+                    $dataStore[$destValue[0]][$destValue[1]] = $dataToWrite['pdoMixedResult'][$destKey];
+                    break;
+
+                case 3:
+                    $dataStore[$destValue[0]][$destValue[1]][$destValue[2]] = $dataToWrite['pdoMixedResult'][$destKey];
+                    break;
+
+                default:
+                    $dataStore['unexpectedDest'] = array();
+                    array_push($dataStore['unexpectedDest'], $dataToWrite['pdoMixedResult'][$destKey]);
+                    break;
+            }
+        }
+    }
 }

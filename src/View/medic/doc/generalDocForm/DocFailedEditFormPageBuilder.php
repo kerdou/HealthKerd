@@ -1,16 +1,17 @@
 <?php
 
-namespace HealthKerd\View\medic\doc\docForm;
+namespace HealthKerd\View\medic\doc\generalDocForm;
 
-/** Construction puis affichage du formulaire d'ajout de docteur après un echec
+/** Construction puis affichage du formulaire de modification de docteur
  */
-class DocFailedAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
+class DocFailedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
     protected string $pageContent = '';
     private array $docData = array();
-    private array $checksArray = array();
     private string $formTemplate = '';
+    private array $checksArray = array();
+    private string $docID;
     private array $checkStatusArray = array();
 
     public function __construct()
@@ -30,7 +31,7 @@ class DocFailedAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
         $this->pageSettingsList = array(
             'headContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/head.html'),
-            'pageTitle' => 'Création d\'un professionnel de santé',
+            'pageTitle' => 'Modification d\'un professionnel de santé',
             'headerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/header.html'),
             'mainContainer' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/mainContainer.html'),
             'sidebarMenuUlContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/sidebarMenuUlContent.html'),
@@ -58,12 +59,13 @@ class DocFailedAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
 
     /** Configuration de tous les élèments du formulaire
      */
-    public function buildOrder(array $docData, array $checksArray): void
+    public function buildOrder(array $docData, array $checksArray, string $docID): void
     {
         $this->docData = $docData;
         $this->checksArray = $checksArray;
+        $this->docID = $docID;
 
-        $this->formTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/docForm.html');
+        $this->formTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/generalDocForm.html');
         $this->formConfLauncher();
 
         $this->contentElementsSettingsList();
@@ -91,8 +93,8 @@ class DocFailedAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
      */
     private function formActionAndTitleSetup(): void
     {
-        $this->formTemplate = str_replace('{formAction}', 'index.php?controller=medic&subCtrlr=docPost&action=addDoc', $this->formTemplate);
-        $this->formTemplate = str_replace('{formTitle}', 'Création d\'un professionnel de santé', $this->formTemplate);
+        $this->formTemplate = str_replace('{formAction}', "index.php?controller=medic&subCtrlr=docPost&action=editGeneralDoc&docID=" . $this->docID . "", $this->formTemplate);
+        $this->formTemplate = str_replace('{formTitle}', 'Modification d\'un professionnel de santé', $this->formTemplate);
     }
 
     /** Remplacement du contenu de civilité pour appliquer la classe "checked" au Button Group de civilité
@@ -197,26 +199,26 @@ class DocFailedAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function formButtonsSetup(): void
     {
         // Bouton de submit
-        $submitButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/submitButton.html');
+        $submitButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/submitButton.html');
         $submitButtonTemplate = str_replace('{formSubmitButtonValue}', '', $submitButtonTemplate);
         $submitButtonTemplate = str_replace('{formSubmitButtonText}', 'Modifier', $submitButtonTemplate);
 
         // Bouton de reset
-        $resetButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/resetButton.html');
+        $resetButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/resetButton.html');
 
         // Bouton de suppression
-        $deleteButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/deleteButton.html');
-        $deleteButtonTemplate = str_replace('{formDeleteButtonValue}', '', $deleteButtonTemplate);
+        $deleteButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/deleteButton.html');
+        $deleteButtonTemplate = str_replace('{formDeleteButtonValue}', "index.php?controller=medic&subCtrlr=doc&action=showDocDeleteForm&docID=" . $this->docData['docID'] . "", $deleteButtonTemplate);
 
         // Bouton d'annulation
-        $cancelButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/cancelButton.html');
-        $cancelButtonTemplate = str_replace('{cancelButtonHref}', 'index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp', $cancelButtonTemplate);
+        $cancelButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/cancelButton.html');
+        $cancelButtonTemplate = str_replace('{cancelButtonHref}', "index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $this->docData['docID'] . "", $cancelButtonTemplate);
 
         // Création et configuration du button box du forum
-        $buttonBoxTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/formButtonBox.html');
+        $buttonBoxTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/formButtonBox.html');
         $buttonBoxTemplate = str_replace('{submitButton}', $submitButtonTemplate, $buttonBoxTemplate);
         $buttonBoxTemplate = str_replace('{resetButton}', $resetButtonTemplate, $buttonBoxTemplate);
-        $buttonBoxTemplate = str_replace('{deleteButton}', '', $buttonBoxTemplate);
+        $buttonBoxTemplate = str_replace('{deleteButton}', $deleteButtonTemplate, $buttonBoxTemplate);
         $buttonBoxTemplate = str_replace('{cancelButton}', $cancelButtonTemplate, $buttonBoxTemplate);
 
         // Intégration du button box dans le form
@@ -229,7 +231,8 @@ class DocFailedAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
         $this->contentSettingsList = array(
             'mainContent' => $this->formTemplate,
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -239,5 +242,6 @@ class DocFailedAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
         $this->pageContent = str_replace('{mainContent}', $this->contentSettingsList['mainContent'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

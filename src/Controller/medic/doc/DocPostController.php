@@ -27,8 +27,12 @@ class DocPostController
                     $this->addDoc();
                     break;
 
-                case 'editDoc': // modification d'un docteur
-                    $this->editDoc();
+                case 'editGeneralDoc': // modifications générales d'un docteur
+                    $this->editGeneralDoc();
+                    break;
+
+                case 'editSpeMedDocOfficeForDoc': // modification des spé médicales et doc office d'un doc
+                    $this->editSpeMedDocOfficeForDoc();
                     break;
 
                 case 'removeDoc': // suppr d'un docteur
@@ -54,7 +58,7 @@ class DocPostController
 
         // si $checksArray contient des erreurs (des false), on réaffich le formulaire en indiquant les champs à modifier
         if (in_array(false, $checksArray)) {
-            $docView = new \HealthKerd\View\medic\doc\docForm\DocFailedAddFormPageBuilder();
+            $docView = new \HealthKerd\View\medic\doc\generalDocForm\DocFailedAddFormPageBuilder();
             $docView->buildOrder($this->cleanedUpPost, $checksArray);
         } else {
             $insertModel = new \HealthKerd\Model\modelInit\medic\doc\DocInsertModel();
@@ -63,17 +67,14 @@ class DocPostController
             $selectModel = new \HealthKerd\Model\modelInit\medic\doc\DocSelectModel();
             $newDocID = $selectModel->getNewDocIDModel();
 
-            if (strlen($pdoErrorMessage) == 0) { // si la création du docteur se passe bien, on lui ajoute ses cabinets médicaux et ses spé médicales
-                $insertModel->addOfficeAndSpeMedicModel($newDocID);
-            }
-
-            echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $newDocID . "';</script>";
+            $_SESSION['checkedDocID'] = $newDocID;
+            echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=showDocEditSpeMedDocOfficeForm&docID=" . $newDocID . "';</script>";
         }
     }
 
-    /** Modification d'un docteur
+    /** Modifications générales d'un docteur
      */
-    private function editDoc(): void
+    private function editGeneralDoc(): void
     {
         // vérification des données contenues dans le POST
         $checksArray = array();
@@ -82,13 +83,36 @@ class DocPostController
 
         // si $checksArray contient des erreurs (des false), on réaffiche le formulaire en indiquant les champs à modifier
         if (in_array(false, $checksArray)) {
-            $docView = new \HealthKerd\View\medic\doc\docForm\DocFailedEditFormPageBuilder();
+            $docView = new \HealthKerd\View\medic\doc\generalDocForm\DocFailedEditFormPageBuilder();
             $docView->buildOrder($this->cleanedUpPost, $checksArray, $this->cleanedUpGet['docID']);
         } else {
             $docUpdateModel = new \HealthKerd\Model\modelInit\medic\doc\DocUpdateModel();
             $pdoErrorMessage = $docUpdateModel->editDocModel($this->cleanedUpPost, $this->cleanedUpGet['docID']);
             echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $this->cleanedUpGet['docID'] . "';</script>";
         }
+    }
+
+    /** Modification des spé médicales et doc office d'un doc
+     */
+    private function editSpeMedDocOfficeForDoc(): void
+    {
+        $speMedicIDArray = [];
+        $docOfficeIDArray = [];
+
+        // récupération des ID de spemedic et de doc office
+        foreach ($this->cleanedUpPost as $key => $value) {
+            if (str_contains($key, 'speMedicID_')) {
+                array_push($speMedicIDArray, $value);
+            }
+
+            if (str_contains($key, 'docOfficeID_')) {
+                array_push($docOfficeIDArray, $value);
+            }
+        }
+
+        $docUpdateModel = new \HealthKerd\Model\modelInit\medic\doc\DocUpdateModel();
+        $docUpdateModel->editSpeMedForDocModel($speMedicIDArray);
+        $docUpdateModel->editDocOfficeForDocModel($docOfficeIDArray);
     }
 
     /** Suppression d'un docteur

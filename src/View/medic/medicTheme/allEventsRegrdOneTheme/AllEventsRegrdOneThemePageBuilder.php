@@ -133,7 +133,8 @@ class AllEventsRegrdOneThemePageBuilder extends \HealthKerd\View\common\ViewInCh
         $this->contentSettingsList = array(
             'mainContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/medicTheme/allEventsRegardingOneTheme/allEventsRegardingOneTheme.html'),
             'eventsContent' => $this->eventsContent,
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -144,5 +145,6 @@ class AllEventsRegrdOneThemePageBuilder extends \HealthKerd\View\common\ViewInCh
         $this->pageContent = str_replace('{mainContent}', $this->contentSettingsList['mainContent'], $this->pageContent);
         $this->pageContent = str_replace('{eventsContent}', $this->contentSettingsList['eventsContent'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

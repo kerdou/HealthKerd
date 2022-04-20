@@ -94,7 +94,8 @@ class SpeMedicListPageBuilder extends \HealthKerd\View\common\ViewInChief
             'mainContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/speMedic/speMedicList/speMedicList.html'),
             'speMedicQty' => sizeof($this->speMedicList),
             'speMedicCards' => $this->speMedicCardListHTML,
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -106,5 +107,6 @@ class SpeMedicListPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageContent = str_replace('{speMedicQty}', $this->contentSettingsList['speMedicQty'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicCards}', $this->contentSettingsList['speMedicCards'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

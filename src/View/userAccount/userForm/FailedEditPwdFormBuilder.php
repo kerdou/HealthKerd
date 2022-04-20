@@ -179,7 +179,8 @@ class FailedEditPwdFormBuilder extends \HealthKerd\View\common\ViewInChief
             'mainFields' => '',
             'pwdSection' => $this->pwdFieldContent,
             'formButtonBox' => $this->buttonBoxContent,
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -195,5 +196,6 @@ class FailedEditPwdFormBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageContent = str_replace('{pwdSection}', $this->contentSettingsList['pwdSection'], $this->pageContent);
         $this->pageContent = str_replace('{formButtonBox}', $this->contentSettingsList['formButtonBox'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

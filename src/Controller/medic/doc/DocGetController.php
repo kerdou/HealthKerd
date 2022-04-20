@@ -47,9 +47,23 @@ class DocGetController extends DocGetControllerFunctionsPool
                     $this->showDocAddForm();
                     break;
 
-                case 'showDocEditForm': // affichage du formulaire de modif de doc
+                case 'showDocEditGeneralForm': // affichage du formulaire général de modif de doc
                     $docID = $cleanedUpGet['docID'];
-                    $this->showDocEditForm($docID);
+                    $this->showDocEditGeneralForm($docID);
+                    break;
+
+                case 'showDocEditSpeMedDocOfficeForm': // affichage du formulaire de modif de spé medic et doc office
+                    $_SESSION['checkedDocID'] = $cleanedUpGet['docID'];
+                    $this->showDocEditSpeMedDocOfficeForm();
+                    break;
+
+                case 'getAJAXDataForSpeMedDocOfficeForm': // récupération des données pour le form de modif de spé medic et doc office
+                    // fait suite au case 'showDocEditSpeMedDocOfficeForm'
+                    if (isset($_SESSION['checkedDocID'])) {
+                        $this->getAJAXDataForSpeMedDocOfficeForm();
+                    } else {
+                        $this->displayAllDocList();
+                    }
                     break;
 
                 case 'showDocDeleteForm': // affichage du formulaire de suppr de doc
@@ -148,19 +162,35 @@ class DocGetController extends DocGetControllerFunctionsPool
     */
     private function showDocAddForm(): void
     {
-        $docView = new \HealthKerd\View\medic\doc\docForm\DocAddFormPageBuilder();
+        $docView = new \HealthKerd\View\medic\doc\generalDocForm\DocAddFormPageBuilder();
         $docView->buildOrder();
     }
 
     /** Affichage du formulaire de modif de doc
      * @param string $docID
     */
-    private function showDocEditForm(string $docID): void
+    private function showDocEditGeneralForm(string $docID): void
     {
         $docData = $this->docSelectModel->getAllDataForOneDocFromDocListModel($docID);
 
-        $docView = new \HealthKerd\View\medic\doc\docForm\DocEditFormPageBuilder();
+        $docView = new \HealthKerd\View\medic\doc\generalDocForm\DocEditFormPageBuilder();
         $docView->buildOrder($docData);
+    }
+
+    /** Affichage du formulaire de spé médicales et de doc office assignés au doc
+     */
+    private function showDocEditSpeMedDocOfficeForm(): void
+    {
+        $docView = new \HealthKerd\View\medic\doc\speMedicDocOfficeForm\SpeMedicDocOfficeFormPageBuilder();
+        $docView->buildOrder();
+    }
+
+    /** Récupération des données pour le form de modif de spé medic et doc office
+     * * Fait suite au case 'showDocEditSpeMedDocOfficeForm'
+     */
+    private function getAJAXDataForSpeMedDocOfficeForm(): void
+    {
+        $this->docSelectModel->getAJAXDataForSpeMedDocOfficeForm();
     }
 
     /** Affichage du formulaire de suppr de doc
@@ -170,7 +200,7 @@ class DocGetController extends DocGetControllerFunctionsPool
     {
         $docData = $this->docSelectModel->getAllDataForOneDocFromDocListModel($docID);
 
-        $docView = new \HealthKerd\View\medic\doc\docForm\DocDeleteFormPageBuilder();
+        $docView = new \HealthKerd\View\medic\doc\generalDocForm\DocDeleteFormPageBuilder();
         $docView->buildOrder($docData);
     }
 }

@@ -132,7 +132,8 @@ class AllEventsRegardingOneCatPageBuilder extends \HealthKerd\View\common\ViewIn
         $this->contentSettingsList = array(
             'mainContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/eventCats/allEventsRegardingOneCat/allEventsRegardingOneCat.html'),
             'eventsContent' => $this->eventsContent,
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -143,5 +144,6 @@ class AllEventsRegardingOneCatPageBuilder extends \HealthKerd\View\common\ViewIn
         $this->pageContent = str_replace('{mainContent}', $this->contentSettingsList['mainContent'], $this->pageContent);
         $this->pageContent = str_replace('{eventsContent}', $this->contentSettingsList['eventsContent'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

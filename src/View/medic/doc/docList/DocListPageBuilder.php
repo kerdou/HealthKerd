@@ -138,7 +138,8 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
             'addDocButton' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/docList/addDocButton.html'),
             'speMedicBadgeListQty' => sizeof($this->speMedicBadgeList),
             'speMedicBadgeList' => $this->speMedicBadgeListHTML,
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -153,5 +154,6 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageContent = str_replace('{speMedicBadgeListQty}', $this->contentSettingsList['speMedicBadgeListQty'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicBadgeList}', $this->contentSettingsList['speMedicBadgeList'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

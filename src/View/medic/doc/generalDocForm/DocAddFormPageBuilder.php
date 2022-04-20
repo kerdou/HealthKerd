@@ -1,6 +1,6 @@
 <?php
 
-namespace HealthKerd\View\medic\doc\docForm;
+namespace HealthKerd\View\medic\doc\generalDocForm;
 
 /** Construction puis affichage du formulaire de création de docteur
  */
@@ -58,7 +58,7 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
      */
     public function buildOrder(): void
     {
-        $this->formTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/docForm.html');
+        $this->formTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/generalDocForm.html');
         $this->formConfLauncher();
 
         $this->contentElementsSettingsList();
@@ -167,23 +167,23 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function formButtonsSetup(): void
     {
         // Bouton de submit
-        $submitButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/submitButton.html');
+        $submitButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/submitButton.html');
         $submitButtonTemplate = str_replace('{formSubmitButtonValue}', '', $submitButtonTemplate);
         $submitButtonTemplate = str_replace('{formSubmitButtonText}', 'Créer', $submitButtonTemplate);
 
         // Bouton de reset
-        $resetButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/resetButton.html');
+        $resetButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/resetButton.html');
 
         // Bouton de suppression
-        $deleteButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/deleteButton.html');
+        $deleteButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/deleteButton.html');
         $deleteButtonTemplate = str_replace('{formDeleteButtonValue}', '', $deleteButtonTemplate);
 
         // Bouton d'annulation
-        $cancelButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/cancelButton.html');
+        $cancelButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/cancelButton.html');
         $cancelButtonTemplate = str_replace('{cancelButtonHref}', 'index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp', $cancelButtonTemplate);
 
         // Création et configuration du button box du forum
-        $buttonBoxTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/formButtonBox.html');
+        $buttonBoxTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/formButtonBox.html');
         $buttonBoxTemplate = str_replace('{submitButton}', $submitButtonTemplate, $buttonBoxTemplate);
         $buttonBoxTemplate = str_replace('{resetButton}', $resetButtonTemplate, $buttonBoxTemplate);
         $buttonBoxTemplate = str_replace('{deleteButton}', '', $buttonBoxTemplate);
@@ -199,7 +199,8 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
         $this->contentSettingsList = array(
             'mainContent' => $this->formTemplate,
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -209,5 +210,6 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
         $this->pageContent = str_replace('{mainContent}', $this->contentSettingsList['mainContent'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

@@ -25,7 +25,7 @@ class DocUpdateModel extends \HealthKerd\Model\common\ModelInChief
      * @param string $docID             ID du docteur
      * @return string                   Message d'erreur s'il y en a eu
      */
-    public function editDocModel(array $cleanedUpPost, string $docID)
+    public function editDocModel(array $cleanedUpPost, string $docID): string
     {
         $docStmt = '';
         $this->mapper->displayAllDocsListMapper();
@@ -47,5 +47,62 @@ class DocUpdateModel extends \HealthKerd\Model\common\ModelInChief
         $pdoErrorMessage = $this->pdoPreparedInsertUpdateDeleteExecute();
 
         return $pdoErrorMessage;
+    }
+
+    /** Suppression puis mise à jour des spé médicales du doc
+     * ----
+     * Requetes préparées
+     */
+    public function editSpeMedForDocModel(array $speMedicIDArray)
+    {
+        $this->pdo->beginTransaction();
+
+        // doc_spemedic_relation: supprimer toutes les lignes ayant le docID
+        $docSpemedicRelationDeleteStmt = 'DELETE FROM doc_spemedic_relation WHERE docID = :docID;';
+        $this->query = $this->pdo->prepare($docSpemedicRelationDeleteStmt);
+        $this->query->bindParam('docID', $_SESSION['checkedDocID']);
+        $this->pdoPreparedInsertUpdateDeleteExecute();
+
+        // doc_spemedic_relation: ajouter toutes les nouvelles speMedicID rattachées au docID
+        if (sizeof($speMedicIDArray) > 0) {
+            $docSpemedicRelationInsertStmt = 'INSERT INTO doc_spemedic_relation VALUES (:docID, :speMedicID)';
+            $this->query = $this->pdo->prepare($docSpemedicRelationInsertStmt);
+            foreach ($speMedicIDArray as $key => $speMedicID) {
+                $this->query->bindParam('docID', $_SESSION['checkedDocID']);
+                $this->query->bindParam('speMedicID', $speMedicID);
+                $this->pdoPreparedInsertUpdateDeleteExecute();
+            }
+        }
+
+        $this->pdo->commit(); // execution de la requete
+    }
+
+    /** Suppression puis mise à jour des doc offices du doc
+     * ----
+     * Requetes préparées
+     */
+    public function editDocOfficeForDocModel(array $docOfficeIDArray)
+    {
+        $this->pdo->beginTransaction();
+
+        // doc_docoffice_relation: supprimer toutes les lignes ayant le docID
+        $docDocofficeRelationDeleteStmt = 'DELETE FROM doc_docoffice_relation WHERE docID = :docID;';
+        $this->query = $this->pdo->prepare($docDocofficeRelationDeleteStmt);
+        $this->query->bindParam('docID', $_SESSION['checkedDocID']);
+        $this->pdoPreparedInsertUpdateDeleteExecute();
+
+        // doc_docoffice_relation: ajouter tous les nouveaux docOfficeID
+        if (sizeof($docOfficeIDArray) > 0) {
+            $docDocofficeRelationDeleteStmt = 'INSERT INTO doc_docoffice_relation VALUES (:docID, :docOfficeID);';
+            $this->query = $this->pdo->prepare($docDocofficeRelationDeleteStmt);
+            $this->query->bindParam('docID', $_SESSION['checkedDocID']);
+            foreach ($docOfficeIDArray as $key => $docOfficeID) {
+                $this->query->bindParam('docID', $_SESSION['checkedDocID']);
+                $this->query->bindParam('docOfficeID', $docOfficeID);
+                $this->pdoPreparedInsertUpdateDeleteExecute();
+            }
+        }
+
+        $this->pdo->commit(); // execution de la requete
     }
 }

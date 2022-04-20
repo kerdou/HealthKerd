@@ -16,6 +16,7 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
     private string $commentPortionHTML = '';
     private string $medicEventsReportHTML = '';
     private string $docOfficeCardsHTML = '';
+    private string $docModifModalHTML = '';
 
     public function __construct()
     {
@@ -73,6 +74,7 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->commentPortionHTML = $this->commentPortionBuilder();
         $this->medicEventsReportHTML = $this->medicEventsReportBuilder();
         $this->docOfficeCardsHTML =  $this->docOfficeCardsBuilder();
+        $this->docModifModalHTML = $this->docModifModalBuilder();
 
         $this->contentElementsSettingsList();
         $this->contentElementsStringReplace();
@@ -264,6 +266,21 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $docOfficeCardsHTML;
     }
 
+    /**
+     *
+     */
+    private function docModifModalBuilder(): string
+    {
+        if ($this->docDataArray['isLocked'] == 0) {
+            $docModifModalHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/modals/docModifModal.html');
+        } else {
+            $docModifModalHTML = '';
+        }
+
+        return $docModifModalHTML;
+    }
+
+
     /** Liste des contenus spécifiques à cette page
      */
     private function contentElementsSettingsList(): void
@@ -277,8 +294,9 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
             'commentPortion' => $this->commentPortionHTML,
             'medicEventsReport' => $this->medicEventsReportHTML,
             'docOfficeCards' => $this->docOfficeCardsHTML,
-            'docID' => $this->docDataArray['docID'],
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => $this->docModifModalHTML,
+            'docID' => $this->docDataArray['docID']
         );
     }
 
@@ -294,7 +312,8 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageContent = str_replace('{commentPortion}', $this->contentSettingsList['commentPortion'], $this->pageContent);
         $this->pageContent = str_replace('{medicEventsReport}', $this->contentSettingsList['medicEventsReport'], $this->pageContent);
         $this->pageContent = str_replace('{docOfficeCards}', $this->contentSettingsList['docOfficeCards'], $this->pageContent);
-        $this->pageContent = str_replace('{docID}', $this->contentSettingsList['docID'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docID}', $this->contentSettingsList['docID'], $this->pageContent);
     }
 }

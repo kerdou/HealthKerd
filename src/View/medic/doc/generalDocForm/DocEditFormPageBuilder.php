@@ -1,17 +1,15 @@
 <?php
 
-namespace HealthKerd\View\medic\doc\docForm;
+namespace HealthKerd\View\medic\doc\generalDocForm;
 
 /** Construction puis affichage du formulaire de modification de docteur
  */
-class DocFailedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
+class DocEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
 {
     private array $pageSettingsList = array();
     protected string $pageContent = '';
     private array $docData = array();
     private string $formTemplate = '';
-    private array $checksArray = array();
-    private string $docID;
     private array $checkStatusArray = array();
 
     public function __construct()
@@ -59,13 +57,11 @@ class DocFailedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
 
     /** Configuration de tous les élèments du formulaire
      */
-    public function buildOrder(array $docData, array $checksArray, string $docID): void
+    public function buildOrder(array $docData): void
     {
         $this->docData = $docData;
-        $this->checksArray = $checksArray;
-        $this->docID = $docID;
 
-        $this->formTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/docForm.html');
+        $this->formTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/generalDocForm.html');
         $this->formConfLauncher();
 
         $this->contentElementsSettingsList();
@@ -81,7 +77,6 @@ class DocFailedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->formActionAndTitleSetup();
         $this->checkStatusConverter();
         $this->checkStatusSetup();
-        $this->validityStatusConverter();
         $this->namesSetup();
         $this->telAndMailSetup();
         $this->webLinksSetup();
@@ -93,7 +88,7 @@ class DocFailedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
      */
     private function formActionAndTitleSetup(): void
     {
-        $this->formTemplate = str_replace('{formAction}', "index.php?controller=medic&subCtrlr=docPost&action=editDoc&docID=" . $this->docID . "", $this->formTemplate);
+        $this->formTemplate = str_replace('{formAction}', "index.php?controller=medic&subCtrlr=docPost&action=editGeneralDoc&docID=" . $this->docData['docID'] . "", $this->formTemplate);
         $this->formTemplate = str_replace('{formTitle}', 'Modification d\'un professionnel de santé', $this->formTemplate);
     }
 
@@ -128,29 +123,17 @@ class DocFailedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->formTemplate = str_replace('{noneDisabled}', '', $this->formTemplate);
     }
 
-    /** Ajout des classes sur les élèments servant à l'affichage des messages d'erreur
-     */
-    private function validityStatusConverter(): void
-    {
-        $this->validityArray['lastname'] = ($this->checksArray['lastname'] == true) ? 'is-valid' : 'is-invalid';
-        $this->validityArray['firstname'] = ($this->checksArray['firstname'] == true) ? 'is-valid' : 'is-invalid';
-        $this->validityArray['tel'] = ($this->checksArray['tel'] == true) ? 'is-valid' : 'is-invalid';
-        $this->validityArray['mail'] = ($this->checksArray['mail'] == true) ? 'is-valid' : 'is-invalid';
-        $this->validityArray['webpage'] = ($this->checksArray['webpage'] == true) ? 'is-valid' : 'is-invalid';
-        $this->validityArray['doctolibpage'] = ($this->checksArray['doctolibpage'] == true) ? 'is-valid' : 'is-invalid';
-    }
-
     /** Configuration des champs de prénom et de nom
      */
     private function namesSetup(): void
     {
         // Nom de famille
-        $this->formTemplate = str_replace('{lastnameValidity}', $this->validityArray['lastname'], $this->formTemplate);
+        $this->formTemplate = str_replace('{lastnameValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{lastnameValue}', $this->docData['lastName'], $this->formTemplate);
         $this->formTemplate = str_replace('{lastNameReadOnly}', '', $this->formTemplate);
 
         // Prénom
-        $this->formTemplate = str_replace('{firstnameValidity}', $this->validityArray['firstname'], $this->formTemplate);
+        $this->formTemplate = str_replace('{firstnameValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{firstnameValue}', $this->docData['firstName'], $this->formTemplate);
         $this->formTemplate = str_replace('{fistNameReadOnly}', '', $this->formTemplate);
     }
@@ -160,12 +143,12 @@ class DocFailedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function telAndMailSetup(): void
     {
         // Tel
-        $this->formTemplate = str_replace('{telValidity}', $this->validityArray['tel'], $this->formTemplate);
+        $this->formTemplate = str_replace('{telValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{telValue}', $this->docData['tel'], $this->formTemplate);
         $this->formTemplate = str_replace('{telReadOnly}', '', $this->formTemplate);
 
         // Mail
-        $this->formTemplate = str_replace('{mailValidity}', $this->validityArray['mail'], $this->formTemplate);
+        $this->formTemplate = str_replace('{mailValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{mailValue}', $this->docData['mail'], $this->formTemplate);
         $this->formTemplate = str_replace('{mailReadOnly}', '', $this->formTemplate);
     }
@@ -175,12 +158,12 @@ class DocFailedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function webLinksSetup(): void
     {
         // Site web perso
-        $this->formTemplate = str_replace('{webpageValidity}', $this->validityArray['webpage'], $this->formTemplate);
+        $this->formTemplate = str_replace('{webpageValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{webpageValue}', $this->docData['webPage'], $this->formTemplate);
         $this->formTemplate = str_replace('{webpageReadOnly}', '', $this->formTemplate);
 
         // Page Docotlib
-        $this->formTemplate = str_replace('{doctolibpageValidity}', $this->validityArray['doctolibpage'], $this->formTemplate);
+        $this->formTemplate = str_replace('{doctolibpageValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{doctolibpageValue}', $this->docData['doctolibPage'], $this->formTemplate);
         $this->formTemplate = str_replace('{doctolibpageReadOnly}', '', $this->formTemplate);
     }
@@ -199,23 +182,23 @@ class DocFailedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function formButtonsSetup(): void
     {
         // Bouton de submit
-        $submitButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/submitButton.html');
+        $submitButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/submitButton.html');
         $submitButtonTemplate = str_replace('{formSubmitButtonValue}', '', $submitButtonTemplate);
         $submitButtonTemplate = str_replace('{formSubmitButtonText}', 'Modifier', $submitButtonTemplate);
 
         // Bouton de reset
-        $resetButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/resetButton.html');
+        $resetButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/resetButton.html');
 
         // Bouton de suppression
-        $deleteButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/deleteButton.html');
+        $deleteButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/deleteButton.html');
         $deleteButtonTemplate = str_replace('{formDeleteButtonValue}', "index.php?controller=medic&subCtrlr=doc&action=showDocDeleteForm&docID=" . $this->docData['docID'] . "", $deleteButtonTemplate);
 
         // Bouton d'annulation
-        $cancelButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/cancelButton.html');
+        $cancelButtonTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/cancelButton.html');
         $cancelButtonTemplate = str_replace('{cancelButtonHref}', "index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $this->docData['docID'] . "", $cancelButtonTemplate);
 
         // Création et configuration du button box du forum
-        $buttonBoxTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/forms/formButtons/formButtonBox.html');
+        $buttonBoxTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/generalDocForm/formButtons/formButtonBox.html');
         $buttonBoxTemplate = str_replace('{submitButton}', $submitButtonTemplate, $buttonBoxTemplate);
         $buttonBoxTemplate = str_replace('{resetButton}', $resetButtonTemplate, $buttonBoxTemplate);
         $buttonBoxTemplate = str_replace('{deleteButton}', $deleteButtonTemplate, $buttonBoxTemplate);
@@ -231,7 +214,8 @@ class DocFailedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
         $this->contentSettingsList = array(
             'mainContent' => $this->formTemplate,
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -241,5 +225,6 @@ class DocFailedEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
         $this->pageContent = str_replace('{mainContent}', $this->contentSettingsList['mainContent'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 export default class DocFormBehaviour extends DocFormChecks
 {
-    private docForm = document.getElementById('doc_form_page') as HTMLFormElement;
+    private docForm = document.getElementById('general_doc_form_page') as HTMLFormElement;
 
     protected lastnameInput = document.getElementById('lastname') as HTMLInputElement;
     protected firstnameInput = document.getElementById('firstname') as HTMLInputElement;

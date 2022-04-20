@@ -44,32 +44,4 @@ class DocInsertModel extends \HealthKerd\Model\common\ModelInChief
         $pdoErrorMessage = $this->pdoPreparedInsertUpdateDeleteExecute();
         return $pdoErrorMessage;
     }
-
-    /** Ajout automatique d'un cabinet médical et de spécialités médicales suite à la création d'un docteur
-     * TODO: Modifier pour ne pas assigner une spé médicale et un cabinet par défaut
-     * ----
-     * * Requête préparée
-     * @param string $newDocID      ID du docteur nouvellement créé
-     */
-    public function addOfficeAndSpeMedicModel(string $newDocID)
-    {
-        $this->pdo->beginTransaction(); // permet de faire plusieurs requetes préparées en une passe
-        $this->mapper->addOfficeAndSpeMedicMapper();
-
-        // gestion de la requete de docOffice
-        $docOfficeStmt = '';
-        $docOfficeStmt = $this->mapper->maps['InsertDocDocofficeRelation']->addDocDocofficeRelationStmt();
-        $docOfficeQuery = $this->pdo->prepare($docOfficeStmt);
-        $docOfficeQuery->bindParam(':docID', $newDocID);
-        $docOfficeQuery->execute();
-
-        // gestion de la requete de speMedic
-        $speMedicStmt = '';
-        $speMedicStmt = $this->mapper->maps['InsertDocSpemedicRelation']->addDocSpemedicRelationStmt();
-        $speMedicQuery = $this->pdo->prepare($speMedicStmt);
-        $speMedicQuery->bindParam(':docID', $newDocID);
-        $speMedicQuery->execute();
-
-        $this->pdo->commit(); // execution de la requete
-    }
 }

@@ -74,4 +74,23 @@ class SelectDocSpemedicRelation
 
         return $stmtStart . $whereString . $stmtEnd;
     }
+
+    /** Récupére les ID des spe medics attribuées à un docteur
+     * @param string $docID     ID du doc concerné
+     * @return string           Requête SQL complête
+     */
+    public function selectSpeMedicIDsOfOneDocStmt(string $docID): string
+    {
+        $stmtStart =
+            'SELECT
+                doc_spemedic_relation.speMedicID
+            FROM
+                doc_spemedic_relation
+            INNER JOIN spe_medic_full_list ON doc_spemedic_relation.speMedicID = spe_medic_full_list.speMedicID
+            WHERE doc_spemedic_relation.docID =  ';
+
+        $stmtEnd = ' ORDER BY spe_medic_full_list.name;';
+
+        return $stmtStart . $docID . $stmtEnd;
+    }
 }

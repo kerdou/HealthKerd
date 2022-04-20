@@ -94,7 +94,8 @@ class HomePageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->contentSettingsList = array(
             'mainContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/home/home.html'),
             'futureEventsContent' => $this->futureEventsContentHTML,
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -105,5 +106,6 @@ class HomePageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageContent = str_replace('{mainContent}', $this->contentSettingsList['mainContent'], $this->pageContent);
         $this->pageContent = str_replace('{futureEventsContent}', $this->contentSettingsList['futureEventsContent'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

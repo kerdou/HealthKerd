@@ -95,7 +95,8 @@ class DocOfficeListPageBuilder extends \HealthKerd\View\common\ViewInChief
             'mainContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/docOffice/docOfficeList/docOfficeList.html'),
             'docOfficeQty' => sizeof($this->docOfficeList),
             'docOfficeCards' => $this->docOfficeCardsListHTML,
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -107,5 +108,6 @@ class DocOfficeListPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageContent = str_replace('{docOfficeQty}', $this->contentSettingsList['docOfficeQty'], $this->pageContent);
         $this->pageContent = str_replace('{docOfficeCards}', $this->contentSettingsList['docOfficeCards'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

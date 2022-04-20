@@ -169,7 +169,8 @@ class UserAccountPageBuilder extends \HealthKerd\View\common\ViewInChief
             'email' => $this->userData['email'],
             'isAdminDiv' => $this->transformList['isAdminDiv'],
             'modifButton' => $this->transformList['modifButton'],
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -188,5 +189,6 @@ class UserAccountPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageContent = str_replace('{isAdminDiv}', $this->contentSettingsList['isAdminDiv'], $this->pageContent);
         $this->pageContent = str_replace('{modifButton}', $this->contentSettingsList['modifButton'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

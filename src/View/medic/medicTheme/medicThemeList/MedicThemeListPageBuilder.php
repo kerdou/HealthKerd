@@ -94,7 +94,8 @@ class MedicThemeListPageBuilder extends \HealthKerd\View\common\ViewInChief
             'mainContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/medicTheme/medicThemeList/medicThemeList.html'),
             'medicThemeQty' => sizeof($this->medicThemeList),
             'medicThemeCards' => $this->medicThemeCardListHTML,
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -106,5 +107,6 @@ class MedicThemeListPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageContent = str_replace('{medicThemeQty}', $this->contentSettingsList['medicThemeQty'], $this->pageContent);
         $this->pageContent = str_replace('{medicThemeCards}', $this->contentSettingsList['medicThemeCards'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

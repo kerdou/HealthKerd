@@ -1,7 +1,7 @@
-import NameRegex from '../../../services/regexStore/nameRegex.js';
-import MailRegex from '../../../services/regexStore/mailRegex.js';
-import TelRegex from '../../../services/regexStore/telRegex.js';
-import UrlRegex from '../../../services/regexStore/urlRegex.js';
+import NameRegex from '../../../../services/regexStore/nameRegex.js';
+import MailRegex from '../../../../services/regexStore/mailRegex.js';
+import TelRegex from '../../../../services/regexStore/telRegex.js';
+import UrlRegex from '../../../../services/regexStore/urlRegex.js';
 
 export default class DocFormChecks
 {

@@ -132,7 +132,8 @@ class AllEventsRegrdOneDocOfficePageBuilder extends \HealthKerd\View\common\View
         $this->contentSettingsList = array(
             'mainContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/docOffice/allEventsRegardingOneDocOffice/allEventsRegardingOneDocOffice.html'),
             'eventsContent' => $this->eventsContent,
-            'speMedicModal' => ''
+            'speMedicModal' => '',
+            'docModifModal' => ''
         );
     }
 
@@ -143,5 +144,6 @@ class AllEventsRegrdOneDocOfficePageBuilder extends \HealthKerd\View\common\View
         $this->pageContent = str_replace('{mainContent}', $this->contentSettingsList['mainContent'], $this->pageContent);
         $this->pageContent = str_replace('{eventsContent}', $this->contentSettingsList['eventsContent'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
+        $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
     }
 }

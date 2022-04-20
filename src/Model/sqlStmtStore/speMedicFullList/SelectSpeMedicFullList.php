@@ -68,26 +68,6 @@ class SelectSpeMedicFullList
                 spe_medic_full_list.name
             ;';
 
-        /*
-            SELECT DISTINCT
-                medic_event_list.replacedDocID AS docID,
-                spe_medic_full_list.speMedicID,
-                spe_medic_full_list.name
-            FROM
-                medic_event_list
-            INNER JOIN doc_list ON medic_event_list.replacedDocID = doc_list.docID
-            INNER JOIN doc_spemedic_relation ON doc_list.docID = doc_spemedic_relation.docID
-            INNER JOIN spe_medic_full_list ON doc_spemedic_relation.speMedicID = spe_medic_full_list.speMedicID
-            WHERE
-                medic_event_list.userID = 1
-            HAVING
-                medic_event_list.replacedDocID != 0
-            ORDER BY
-                medic_event_list.replacedDocID,
-                spe_medic_full_list.name
-            ;
-        */
-
         return $stmtStart . $whereString . $stmtEnd;
     }
 
@@ -117,26 +97,6 @@ class SelectSpeMedicFullList
                 medic_event_list.laboOrdoDocID,
                 spe_medic_full_list.name
             ;';
-
-        /*
-            SELECT DISTINCT
-                medic_event_list.laboOrdoDocID AS docID,
-                spe_medic_full_list.speMedicID,
-                spe_medic_full_list.name
-            FROM
-                medic_event_list
-            INNER JOIN doc_list ON medic_event_list.laboOrdoDocID = doc_list.docID
-            INNER JOIN doc_spemedic_relation ON doc_list.docID = doc_spemedic_relation.docID
-            INNER JOIN spe_medic_full_list ON doc_spemedic_relation.speMedicID = spe_medic_full_list.speMedicID
-            WHERE
-                medic_event_list.userID = 1
-            HAVING
-                medic_event_list.laboOrdoDocID != 0
-            ORDER BY
-                medic_event_list.laboOrdoDocID,
-                spe_medic_full_list.name
-            ;
-        */
 
         return $stmtStart . $whereString . $stmtEnd;
     }
@@ -168,25 +128,6 @@ class SelectSpeMedicFullList
                 spe_medic_full_list.name
             ;';
 
-        /*
-            SELECT DISTINCT
-                medic_event_list.laboOrdoReplacedDocDiagID AS docID,
-                spe_medic_full_list.speMedicID,
-                spe_medic_full_list.name
-            FROM
-                medic_event_list
-            INNER JOIN doc_list ON medic_event_list.laboOrdoReplacedDocDiagID = doc_list.docID
-            INNER JOIN doc_spemedic_relation ON doc_list.docID = doc_spemedic_relation.docID
-            INNER JOIN spe_medic_full_list ON doc_spemedic_relation.speMedicID = spe_medic_full_list.speMedicID
-            WHERE
-                medic_event_list.userID = 1
-            HAVING
-                medic_event_list.laboOrdoReplacedDocDiagID != 0
-            ORDER BY
-                medic_event_list.laboOrdoReplacedDocDiagID,
-                spe_medic_full_list.name
-        */
-
         return $stmtStart . $whereString . $stmtEnd;
     }
 
@@ -211,5 +152,20 @@ class SelectSpeMedicFullList
             ' ORDER BY spe_medic_full_list.name;';
 
         return $stmtStart . $whereString . $stmtEnd;
+    }
+
+    /** Génére la déclaration SQL listant toutes les spécialités médicales avec les noms pour les praticiens
+     * @return string       Déclaration SQL complète
+     */
+    public function selectEverySpeMedicForDocStmt(): string
+    {
+        $stmt =
+            'SELECT
+                spe_medic_full_list.speMedicID,
+                spe_medic_full_list.nameForDoc
+            FROM spe_medic_full_list
+            ORDER BY spe_medic_full_list.nameForDoc;';
+
+        return $stmt;
     }
 }
