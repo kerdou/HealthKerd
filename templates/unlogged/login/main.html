@@ -4,16 +4,24 @@
             <!-- Tabs Titles -->
             <div class="fadeIn first">
                 <h2>HealthKerd</h2>
+                <h4 id="error_message"></h4>
             </div>
             <!-- Login Form -->
-            <form id="loginForm" method="post">
+            <form id="loginForm" action="index.php?controller=loginPost&action=logMeIn" method="post">
+
                 <input type="text" id="login" class="fadeIn second" name="userLogin" placeholder="Identifiant">
                 <input type="password" id="password" class="fadeIn third" name="userPwd" placeholder="Mot de passe">
-                <button type="submit" class="fadeIn fourth" id="loginSubmit" formaction="index.php?controller=loginPost"
-                    name="action" value="logMeIn">Connexion</button>
-                <button type="submit" class="fadeIn fifth" id="createSubmit"
-                    formaction="index.php?controller=userAccount&action=creationForm">Création de compte</button>
+
+                <input type="button" id="login_button" class="fadeIn fourth" value="Connexion">
+
+                <div id="demo_info" class="fadeIn fifth">
+                    <h4>Compte de démonstration</h4>
+                    <output>Identifiant: demo</output>
+                    <output>Mot de passe: Démonstr4tion!</output>
+                </div>
+
             </form>
+
         </div>
     </div>
 </div>

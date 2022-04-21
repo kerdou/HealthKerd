@@ -65,7 +65,7 @@ class ControllerDispatch extends GetAndPostCleaner
 
             case 'loginPost': // Envoyer les logins pour se connecter
                 $controllerObj = new \HealthKerd\Controller\login\LoginPostController();
-                $controllerObj->actionReceiver($this->cleanedUpPost);
+                $controllerObj->actionReceiver($this->cleanedUpGet, $this->cleanedUpPost);
                 break;
 
             case 'userAccount': // Afficher la page de création de compte
@@ -75,7 +75,7 @@ class ControllerDispatch extends GetAndPostCleaner
 
             case 'userAccountPost': // Création du compte dans la DB
                 $controllerObj = new \HealthKerd\Controller\userAccount\UserAccountPostController();
-                $controllerObj->actionReceiver($this->cleanedUpPost);
+                $controllerObj->actionReceiver($this->cleanedUpGet, $this->cleanedUpPost);
                 break;
 
             default: // Renvoi vers la page de login si rien n'est précisé

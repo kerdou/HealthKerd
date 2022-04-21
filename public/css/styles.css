@@ -136,145 +136,9 @@ a:hover {
 
 /* BASIC */
 #login_page {
+  /* Form Fade-in-down Animation on page load */
   /* STRUCTURE */
-  /* TABS */
-  /* FORM TYPOGRAPHY*/
-  /* ANIMATIONS */
-  /* Simple CSS3 Fade-in-down Animation */
-  /* Simple CSS3 Fade-in Animation */
-  /* Simple CSS3 Fade-in Animation */
-  /* OTHERS */
   /*# sourceMappingURL=styles.css.map */
-}
-#login_page a {
-  color: #92badd;
-  display: inline-block;
-  text-decoration: none;
-  font-weight: 400;
-}
-#login_page h2 {
-  text-align: center;
-  /*font-size: 32px;*/
-  font-weight: 600;
-  /*text-transform: uppercase;*/
-  display: inline-block;
-  margin: 40px 8px 10px 8px;
-  color: #cccccc;
-}
-#login_page .wrapper {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 100%;
-  padding: 20px;
-}
-#login_page #formContent {
-  border-radius: 10px 10px 10px 10px;
-  background: #fff;
-  padding: 30px;
-  width: 90%;
-  max-width: 450px;
-  position: relative;
-  padding: 0px;
-  -webkit-box-shadow: 0 30px 60px 0 rgba(0, 0, 0, 0.3);
-  box-shadow: 0 30px 60px 0 rgba(0, 0, 0, 0.3);
-  text-align: center;
-}
-#login_page #formFooter {
-  background-color: #f6f6f6;
-  border-top: 1px solid #dce8f1;
-  padding: 25px;
-  text-align: center;
-  border-radius: 0 0 10px 10px;
-}
-#login_page h2.inactive {
-  color: #cccccc;
-}
-#login_page h2.active {
-  color: #0d0d0d;
-  border-bottom: 2px solid #5fbae9;
-}
-#login_page button[type=submit],
-#login_page button[type=button],
-#login_page input[type=button],
-#login_page input[type=submit],
-#login_page input[type=reset] {
-  background-color: #56baed;
-  border: none;
-  color: white;
-  padding: 15px 80px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  text-transform: uppercase;
-  font-size: 13px;
-  min-width: 235px;
-  -webkit-box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
-  box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
-  border-radius: 5px 5px 5px 5px;
-  /*margin: 5px 20px 40px 20px;*/
-  margin: 5px 20px 5px 20px;
-  -webkit-transition: all 0.3s ease-in-out;
-  transition: all 0.3s ease-in-out;
-}
-#login_page #createSubmit {
-  margin-bottom: 20px;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  padding-left: 0px;
-  padding-right: 0px;
-}
-#login_page button[type=submit]:hover,
-#login_page button[type=button]:hover,
-#login_page input[type=button]:hover,
-#login_page input[type=submit]:hover,
-#login_page input[type=reset]:hover {
-  background-color: #39ace7;
-}
-#login_page button[type=submit]:active,
-#login_page button[type=button]:active,
-#login_page input[type=button]:active,
-#login_page input[type=submit]:active,
-#login_page input[type=reset]:active {
-  -webkit-transform: scale(0.95);
-  transform: scale(0.95);
-}
-#login_page input[type=text],
-#login_page input[type=password] {
-  background-color: #f6f6f6;
-  border: none;
-  color: #0d0d0d;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 5px;
-  width: 85%;
-  border: 2px solid #f6f6f6;
-  -webkit-transition: all 0.5s ease-in-out;
-  transition: all 0.5s ease-in-out;
-  border-radius: 5px 5px 5px 5px;
-}
-#login_page input[type=text]:focus,
-#login_page input[type=password]:focus {
-  background-color: #fff;
-  border-bottom: 2px solid #5fbae9;
-}
-#login_page input[type=text]:placeholder,
-#login_page input[type=password]:placeholder {
-  color: #cccccc;
 }
 #login_page .fadeInDown {
   -webkit-animation-name: fadeInDown;
@@ -311,6 +175,26 @@ a:hover {
     transform: none;
   }
 }
+#login_page .wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+  padding: 20px;
+  /* Forms elements Fade-In on load */
+  /* Form content elements management */
+}
 @-webkit-keyframes fadeIn {
   from {
     opacity: 0;
@@ -327,7 +211,7 @@ a:hover {
     opacity: 1;
   }
 }
-#login_page .fadeIn {
+#login_page .wrapper .fadeIn {
   opacity: 0;
   -webkit-animation: fadeIn ease-in 1;
   animation: fadeIn ease-in 1;
@@ -336,46 +220,144 @@ a:hover {
   -webkit-animation-duration: 1s;
   animation-duration: 1s;
 }
-#login_page .fadeIn.first {
+#login_page .wrapper .fadeIn.first {
   -webkit-animation-delay: 0.4s;
   animation-delay: 0.4s;
 }
-#login_page .fadeIn.second {
+#login_page .wrapper .fadeIn.second {
   -webkit-animation-delay: 0.6s;
   animation-delay: 0.6s;
 }
-#login_page .fadeIn.third {
+#login_page .wrapper .fadeIn.third {
   -webkit-animation-delay: 0.8s;
   animation-delay: 0.8s;
 }
-#login_page .fadeIn.fourth {
+#login_page .wrapper .fadeIn.fourth {
   -webkit-animation-delay: 1s;
   animation-delay: 1s;
 }
-#login_page .fadeIn.fifth {
+#login_page .wrapper .fadeIn.fifth {
   -webkit-animation-delay: 1.2s;
   animation-delay: 1.2s;
 }
-#login_page .underlineHover:after {
-  display: block;
-  left: 0;
-  bottom: -10px;
-  width: 0;
-  height: 2px;
+#login_page .wrapper #formContent {
+  border-radius: 10px 10px 10px 10px;
+  background: #fff;
+  padding: 30px;
+  width: 90%;
+  max-width: 450px;
+  position: relative;
+  padding: 0px;
+  -webkit-box-shadow: 0 30px 60px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 30px 60px 0 rgba(0, 0, 0, 0.3);
+  text-align: center;
+  /* FORM TYPOGRAPHY*/
+  /* OTHERS */
+}
+#login_page .wrapper #formContent h2 {
+  text-align: center;
+  font-weight: 600;
+  display: inline-block;
+  margin: 40px 8px 10px 8px;
+  color: #cccccc;
+}
+#login_page .wrapper #formContent #error_message {
+  display: none;
+  color: red;
+}
+#login_page .wrapper #formContent button[type=submit],
+#login_page .wrapper #formContent button[type=button],
+#login_page .wrapper #formContent input[type=button],
+#login_page .wrapper #formContent input[type=submit],
+#login_page .wrapper #formContent input[type=reset] {
   background-color: #56baed;
-  content: "";
-  -webkit-transition: width 0.2s;
-  transition: width 0.2s;
+  border: none;
+  color: white;
+  padding: 15px 80px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 13px;
+  min-width: 235px;
+  -webkit-box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
+  box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
+  border-radius: 5px 5px 5px 5px;
+  margin: 5px 20px 5px 20px;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
-#login_page .underlineHover:hover {
+#login_page .wrapper #formContent button[type=submit]:hover,
+#login_page .wrapper #formContent button[type=button]:hover,
+#login_page .wrapper #formContent input[type=button]:hover,
+#login_page .wrapper #formContent input[type=submit]:hover,
+#login_page .wrapper #formContent input[type=reset]:hover {
+  background-color: #39ace7;
+}
+#login_page .wrapper #formContent button[type=submit]:active,
+#login_page .wrapper #formContent button[type=button]:active,
+#login_page .wrapper #formContent input[type=button]:active,
+#login_page .wrapper #formContent input[type=submit]:active,
+#login_page .wrapper #formContent input[type=reset]:active {
+  -webkit-transform: scale(0.95);
+  transform: scale(0.95);
+}
+#login_page .wrapper #formContent input[type=text],
+#login_page .wrapper #formContent input[type=password] {
+  background-color: #f6f6f6;
+  border: none;
   color: #0d0d0d;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 5px;
+  width: 85%;
+  border: 2px solid #f6f6f6;
+  -webkit-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+  border-radius: 5px 5px 5px 5px;
 }
-#login_page .underlineHover:hover:after {
-  width: 100%;
+#login_page .wrapper #formContent input[type=text]:focus,
+#login_page .wrapper #formContent input[type=password]:focus {
+  background-color: #fff;
+  border-bottom: 2px solid #5fbae9;
 }
-#login_page *:focus {
+#login_page .wrapper #formContent input[type=text]:placeholder,
+#login_page .wrapper #formContent input[type=password]:placeholder {
+  color: #cccccc;
+}
+#login_page .wrapper #formContent input.inputNotOk {
+  border: 2px solid red;
+}
+#login_page .wrapper #formContent #demo_info {
+  position: relative;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 85%;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border: 2px solid #f6f6f6;
+  border-radius: 5px 5px 5px 5px;
+  padding: 5px;
+  background-color: #f6f6f6;
+}
+#login_page .wrapper #formContent #demo_info h4,
+#login_page .wrapper #formContent #demo_info output {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  margin: 3px auto;
+}
+#login_page .wrapper #formContent *:focus {
   outline: none;
-}
-#login_page #icon {
-  width: 60%;
 }/*# sourceMappingURL=styles.css.map */

@@ -187,8 +187,8 @@ var SpeMedicDocOfficeForm = /** @class */ (function () {
             this.everySpeMedicForDoc.forEach(function (everySpe, index) {
                 if (_this.actualSpeMedicOfDocArray.includes(everySpe.speMedicID)) {
                     var tempBadge = _this.removableSpeMedicBadgeTemplate;
-                    tempBadge = tempBadge.replace('{speMedicID}', everySpe.speMedicID);
-                    tempBadge = tempBadge.replace('{speMedicID}', everySpe.speMedicID);
+                    tempBadge = tempBadge.replace('{speMedicID}', everySpe.speMedicID); // utiliser replaceAll() obligerait à passer en lib ES2021
+                    tempBadge = tempBadge.replace('{speMedicID}', everySpe.speMedicID); // utiliser replaceAll() obligerait à passer en lib ES2021
                     tempBadge = tempBadge.replace('{speName}', everySpe.nameForDoc);
                     _this.badgeStoreDiv.insertAdjacentHTML("beforeend", tempBadge);
                     var badge = document.getElementById(everySpe.speMedicID + '_spe');

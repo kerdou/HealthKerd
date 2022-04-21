@@ -141,8 +141,8 @@ export default class SpeMedicDocOfficeForm
             this.everySpeMedicForDoc.forEach((everySpe: {[name: string]: string;}, index: number) => {
                 if (this.actualSpeMedicOfDocArray.includes(everySpe.speMedicID)) {
                     let tempBadge = this.removableSpeMedicBadgeTemplate;
-                    tempBadge = tempBadge.replace('{speMedicID}', everySpe.speMedicID);
-                    tempBadge = tempBadge.replace('{speMedicID}', everySpe.speMedicID);
+                    tempBadge = tempBadge.replace('{speMedicID}', everySpe.speMedicID); // utiliser replaceAll() obligerait à passer en lib ES2021
+                    tempBadge = tempBadge.replace('{speMedicID}', everySpe.speMedicID); // utiliser replaceAll() obligerait à passer en lib ES2021
                     tempBadge = tempBadge.replace('{speName}', everySpe.nameForDoc);
                     this.badgeStoreDiv.insertAdjacentHTML("beforeend", tempBadge);
 

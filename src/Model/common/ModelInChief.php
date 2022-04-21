@@ -89,11 +89,10 @@ abstract class ModelInChief
      * @return array                Données renvoyées par la DB en cas de succés
      * @throws string               Message d'erreur
     */
-    protected function pdoPreparedSelectExecute(string $fetchMode): array
+    protected function pdoPreparedSelectExecute(string $fetchMode)
     {
         try {
             $this->query->execute();
-            $result = array();
 
             switch ($fetchMode) {
                 case 'single':

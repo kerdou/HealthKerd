@@ -11,6 +11,21 @@ class SelectUsersList
     {
     }
 
+    /** Comptage du nombre de comptes users correspondants au userLogin donné au login
+     * Requête préparée
+     * @return string       Requête SQL complête
+     */
+    public function accountCountingStmt(): string
+    {
+        $stmt =
+            "SELECT COUNT(userLogin)
+            FROM users_list WHERE
+            userLogin = :userLogin";
+
+        return $stmt;
+    }
+
+
     /** Récupération des identifiants dans la base selon le userLogin envoyé par le user
      * Requête préparée
      * @return string       Requête SQL complête
