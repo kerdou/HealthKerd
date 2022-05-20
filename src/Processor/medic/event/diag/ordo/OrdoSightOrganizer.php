@@ -9,6 +9,10 @@ class OrdoSightOrganizer
 {
     private array $ordoSightList = array();
 
+    public function __destruct()
+    {
+    }
+
     /** Ordre de modification des ordonnances optiques
      * @param array $ordoSightList      Liste des ordonnances optiques
      * @return array                    Données modifiées

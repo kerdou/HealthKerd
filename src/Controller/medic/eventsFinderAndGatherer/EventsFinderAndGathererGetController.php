@@ -94,7 +94,7 @@ class EventsFinderAndGathererGetController
      * @param array $medicEventsIdResult    Liste des ID d'events simplifiée pour être utilisée pour la génération des WHERE
      * @return array                        Données des events agencées pour faciliter la construction de la View
     */
-    public function dataGatherAndProcess(array $medicEventsIdResult): array
+    private function dataGatherAndProcess(array $medicEventsIdResult): array
     {
         $medicEventsIdList = $this->eventIdExtraction($medicEventsIdResult);
         $medicEvtOriginalDataStore = $this->medicEventDataGatherer->eventDataGatherer($medicEventsIdList);
@@ -107,7 +107,7 @@ class EventsFinderAndGathererGetController
      * @param array $medicEventsIdResult    Liste des ID d'events au format renvoyé par la DB
      * @return array                        Liste des ID d'events simplifiée pour être utilisée pour la génération des WHERE
      */
-    public function eventIdExtraction(array $medicEventsIdResult): array
+    private function eventIdExtraction(array $medicEventsIdResult): array
     {
         $medicEventsIdList = array();
         foreach ($medicEventsIdResult as $value) {

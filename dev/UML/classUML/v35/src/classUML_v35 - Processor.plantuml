@@ -1,0 +1,195 @@
+@startuml
+title <b>Processor</b>
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+
+package Processor {
+    package Processor_/_medic {
+        class MedicEventArrayBuildOrder {
+            - $originalDataStore : array
+            - $dataWorkbench : array
+            - $objectStore : array
+            - $processedDataArray : array
+            --
+            + __destruct()
+            + eventDataReceiver()
+            - docSpeMedicOrganizer()
+            - docListOrganizer()
+            - eventBasicsManager()
+            - ordoManager()
+            - diagManager()
+            - careSessionsManager()
+            - vaxSessionsManager()
+            - eventsFinalDataMerge()
+        }
+
+        package Processor_/_medic_/_doc {
+            class DocListFunctionsPool {
+                + __destruct()
+                # docSpeMedicAdder()
+            }
+
+            class DocListOrganizerForDocListing extends DocListFunctionsPool {
+                # $docArray : array
+                # $speMedicList : array
+                --
+                + __destruct()
+                + docListOrganizer()
+            }
+
+            class DocListOrganizerForEvent extends DocListFunctionsPool {
+                # $docArray : array
+                # $speMedicList : array
+                --
+                + __destruct()
+                + docListOrganizer()
+            }
+        }
+
+        package Processor_/_medic_/_event {
+            class EventDataOrganizer {
+                - $eventArray : array
+                - $medicEventThemesRelation : array
+                - $medicEventSpemedicRelation : array
+                - $docList : array
+                --
+                + __destruct()
+                + eventGeneralBuildOrder()
+                - contentOrganizer()
+                - eventThemesAddition()
+                - eventSpeMedicAddition()
+                - docManagement()
+                - docDataAdder()
+            }
+
+            class EventFinalContentMerger {
+                - $eventArray : array
+                - $diagList : array
+                - $careSessions : array
+                - $vaxSessions : array
+                --
+                + __destruct()
+                + eventContentMerger()
+                - diagContentMerger()
+                - careSessionsContentMerger()
+                - vaxSessionsContentMerger()
+            }
+
+            package Processor_/_medic_/_event_/_care {
+                class CareSessionsOrganizer {
+                    - $careSessionsList : array
+                    - $careSessionElements : array
+                    --
+                    + __destruct()
+                    + careSessionsGeneralBuildOrder()
+                    - careSessionsContentOrganizer()
+                    - careElementsAddition()
+                }
+
+            }
+
+            package Processor_/_medic_/_event_/_diag {
+                class DiagListOrganizer {
+                    - $diagList : array
+                    - $diagSymptoms : array
+                    - $diagCheckpoints : array
+                    - $diagConclusions : array
+                    - $ordoGlobalArray : array
+                    --
+                    + __destruct()
+                    + diagListArrayGeneralBuildOrder()
+                    - diagListOrganizer()
+                    - symptomsAddition()
+                    - checkpointsAddition()
+                    - conclusionsAddition()
+                    - ordoAddition()
+                }
+
+                package Processor_/_medic_/_event_/_diag_/_ordo {
+                    class OrdoGatherAndSorting {
+                        + __destruct()
+                        + ordoArrayGeneralBuildOrder()
+                    }
+
+                    class OrdoLaboOrganizer {
+                        - $ordoLaboList : array
+                        - $prescOrdoLabo : array
+                        - $prescLaboElements : array
+                        - $ordoLaboSlots : array
+                        --
+                        + __destruct()
+                        + ordoLaboGeneralBuildOrder()
+                        - ordoLaboContentOrganizer()
+                        - prescOrganizer()
+                        - elementsAdder()
+                        - prescAdder()
+                        - slotsAdder()
+                    }
+
+                    class OrdoPharmaOrganizer {
+                        - $ordoPharmaList : array
+                        - $prescOrdoPharma : array
+                        --
+                        + __destruct()
+                        + ordoPharmaGeneralBuildOrder()
+                        - ordoPharmaContentOrganizer()
+                        - prescAdder()
+                    }
+
+                    class OrdoSightOrganizer {
+                        - $ordoSightList : array
+                        --
+                        + __destruct()
+                        + ordoSightGeneralBuildOrder()
+                        - ordoSightContentOrganizer()
+                        - glassOrganizer()
+                        - lensOrganizer()
+                        - glassAndLensOrdoSentenceBuilder()
+                        - perEyeSentenceBuilder()
+                        - roundNumberExtender()
+                    }
+
+                    class OrdoVaxOrganizer {
+                        - $ordoVaxList : array
+                        - $prescOrdoVax : array
+                        - $ordoVaxSlots : array
+                        --
+                        + __destruct()
+                        + ordoVaxGeneralBuildOrder()
+                        - ordoVaxContentOrganizer()
+                        - prescAdder()
+                        - slotsAdder()
+                    }
+                }
+            }
+
+            package Processor_/_medic_/_event_/_vax {
+                class VaxSessionsOrganizer {
+                    - $vaxSessionsList : array
+                    - $vaxSessionsSideEffects : array
+                    - $vaxSessionsOrdoSlots : array
+                    --
+                    + __destruct()
+                    + vaxSessionsGeneralBuildOrder()
+                    - vaxSessionsContentOrganizer()
+                    - vaxSideEffectsAddition()
+                }
+            }
+        }
+
+        package Processor_/_medic_/_speMedic {
+            class DocSpeMedicOrganizer {
+                + __destruct()
+                + docSpeMedicOrganizer()
+            }
+        }
+    }
+}
+
+
+
+
+@enduml

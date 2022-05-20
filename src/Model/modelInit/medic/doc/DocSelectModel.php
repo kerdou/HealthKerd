@@ -170,6 +170,13 @@ class DocSelectModel extends \HealthKerd\Model\common\PdoBufferManager
         $dataToWrite = $this->pdoQueryExec();
         $this->pdoResultWriter($dataToWrite, $dataStore);
 
+        // Suppression des statements des requetes SQL
+        $dataStore['everySpeMedicForDoc']['pdoStmt'] = '';
+        $dataStore['everyDocOfficesOfUser']['pdoStmt'] = '';
+        $dataStore['everySpeMedicOfAllDocOfficesOfUser']['pdoStmt'] = '';
+        $dataStore['speMedicOfDoc']['pdoStmt'] = '';
+        $dataStore['docOfficesOfDoc']['pdoStmt'] = '';
+
         $dataStore['docID'] = $_SESSION['checkedDocID'];
         $dataStore['officeCardTemplate'] = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/speMedicDocOfficeForm/elements/officeCardTemplate.html');
         $dataStore['speMedicBadgeForOfficeCardTemplate'] = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/speMedicDocOfficeForm/elements/speMedicBadgeForOfficeCardTemplate.html');

@@ -30,7 +30,7 @@ class MedicEventArrayBuildOrder
             $this->docListOrganizer();
 
             // gestion de la couche de base des events
-            $this->eventBascisManager();
+            $this->eventBasicsManager();
 
             // gestion des ordonnances et des diagnostics
             $this->ordoManager();
@@ -85,7 +85,7 @@ class MedicEventArrayBuildOrder
 
     /** Organisation de l'event et uniquement lui; pas de ses contenus.
     */
-    private function eventBascisManager(): void
+    private function eventBasicsManager(): void
     {
         $this->objectStore['EventDataOrganizer'] = new \HealthKerd\Processor\medic\event\EventDataOrganizer();
         $this->dataWorkbench['eventArray'] = array(); // liste des events

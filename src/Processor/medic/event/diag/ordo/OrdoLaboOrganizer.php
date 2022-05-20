@@ -11,6 +11,10 @@ class OrdoLaboOrganizer
     private array $prescLaboElements = array();
     private array $ordoLaboSlots = array();
 
+    public function __destruct()
+    {
+    }
+
     /** Ordre de modification des ordonnances de prélèvements en laboratoire médical
      * @param array $ordoLaboList       Liste des ordonnances de prélèvements en laboratoire médical
      * @param array $prescOrdoLabo      Liste des prescriptions

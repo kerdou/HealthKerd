@@ -12,6 +12,9 @@ class DiagListOrganizer
     private array $diagConclusions = array();
     private array $ordoGlobalArray = array();
 
+    public function __destruct()
+    {
+    }
 
     /** Suite des actions servant à rassembler et recombiner les données des diagnostics
      * Comprend également la gestion des ordonnances suivantes:

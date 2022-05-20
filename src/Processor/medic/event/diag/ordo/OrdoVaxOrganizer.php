@@ -10,6 +10,10 @@ class OrdoVaxOrganizer
     private array $prescOrdoVax = array();
     private array $ordoVaxSlots = array();
 
+    public function __destruct()
+    {
+    }
+
     /** Ordre de modification des ordonnances vaccinales
      * @param array $ordoVaxList    Liste des ordonnances vaccinales
      * @param array $prescOrdoVax   Liste des prescriptions

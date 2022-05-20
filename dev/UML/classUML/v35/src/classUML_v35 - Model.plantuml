@@ -1,0 +1,671 @@
+@startuml
+title <b>Model</b>
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+
+package Model {
+    package common {
+        abstract class ModelInChief {
+            # $pdo : object
+            # $query : object
+            --
+            + __construct()
+            # pdoInit()
+            + stmtWhereBuilder()
+            # pdoPreparedSelectExecute()
+            # pdoRawSelectExecute()
+            # pdoEventSelectMultiQuery()
+            # pdoPreparedInsertUpdateDeleteExecute()
+        }
+
+        abstract class PdoBufferManager extends ModelInChief
+        {
+            # $pdoBufferArray : array
+            --
+            + __construct()
+            + __destruct()
+            # pdoBufferArrayReinit()
+            # pdoStmtAndDestInsertionInCue()
+            # pdoStmtAndDestProcessing()
+            # pdoQueryExec()
+        }
+    }
+
+    package modelInit {
+        package modelInit_/_home {
+            class HomeSelectModel extends ModelInChief
+            {
+            }
+        }
+
+
+        package modelInit_/_login {
+            class LoginSelectModel extends ModelInChief
+            {
+                + __construct()
+                + __destruct()
+                + checkUserLogs()
+            }
+        }
+
+
+        package modelInit_/_medic {
+            package modelInit_/_medic_/_allEvents {
+
+            }
+
+
+            package modelInit_/_medic_/_doc {
+                class DocDeleteModel extends ModelInChief {
+                    - $mapper : object
+                    --
+                    + __construct()
+                    + __destruct()
+                    + deleteDoc()
+                }
+
+                class DocInsertModel extends ModelInChief {
+                    - $mapper : object
+                    --
+                    + __construct()
+                    + __destruct()
+                    + addDocModel()
+                }
+
+                class DocSelectModel extends ModelInChief {
+                    - $mapper : object
+                    --
+                    + __construct()
+                    + __destruct()
+                    + getDataForOneDocPageModel()
+                    + getAllDataForOneDocFromDocListModel()
+                    + displayAllDocsListModel()
+                    + getNewDocIDModel()
+                    + getAJAXDataForSpeMedDocOfficeForm()
+                    - pdoResultWriter()
+                }
+
+                class DocUpdateModel extends ModelInChief {
+                    - $mapper : object
+                    --
+                    + __construct()
+                    + __destruct()
+                    + editDocModel()
+                    + editSpeMedForDocModel()
+                    + editDocOfficeForDocModel()
+                }
+            }
+
+
+            package modelInit_/_medic_/_docOffice {
+                class DocOfficeSelectModel extends ModelInChief {
+                    + __construct()
+                    + __destruct()
+                    + gatherAllDocOfficesModel()
+                }
+            }
+
+
+            package modelInit_/_medic_/_event {
+                class EventSelectModel extends PdoBufferManager {
+                    + __construct()
+                    + __destruct()
+                }
+            }
+
+
+            package modelInit_/_medic_/_eventCat {
+                class EventCatSelectModel extends ModelInChief {
+                    + __construct()
+                    + __destruct()
+                    + gatherAllEventsCats()
+                }
+            }
+
+
+            package modelInit_/_medic_/_eventsFinderAndGatherer {
+                class EventsSelectDataGatherModel extends PdoBufferManager {
+                    # $dataStore : array
+                    --
+                    + __construct()
+                    + __destruct()
+                    + eventDataGatherer()
+                    - pdoResultWriter()
+                }
+            }
+
+
+            package modelInit_/_medic_/_medicTheme {
+                class MedicThemeModel extends ModelInChief {
+                    + __construct()
+                    + __destruct()
+                    + selectMedicThemeByUserId()
+                }
+            }
+
+
+            package modelInit_/_medic_/_speMedic {
+                class SpeMedicSelectModel extends ModelInChief {
+                    + __construct()
+                    + __destruct()
+                    + selectSpeMedicUsedByUser()
+                }
+            }
+        }
+
+
+        package modelInit_/_userAccount {
+            class UserSelectModel extends PdoBufferManager {
+                - $mapper : object
+                --
+                + __construct()
+                + __destruct()
+                + gatherAllUserAccountData()
+            }
+        }
+    }
+
+    package sqlStmtStore {
+        package sqlStmtStore_/_careSessionElements {
+            class SelectCareSessionElements {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_careSessionsList {
+            class SelectCareSessionsList {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_diagCheckPoints {
+            class SelectDiagCheckPoints {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_diagConclusions {
+            class SelectDiagConclusions {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_diagList {
+            class SelectDiagList {
+            + __destruct()
+            + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_diagMedicThemeRelations {
+            class SelectDiagMedicThemeRelations {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_diagSymptoms {
+            class SelectDiagSymptoms {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_docDocofficeRelation {
+            class DeleteDocDocofficeRelation {
+                + __destruct()
+                + deletePrepDocDocofficeRelationStmt()
+            }
+
+            class InsertDocDocofficeRelation {
+                + __destruct()
+            }
+
+            class SelectDocDocofficeRelation {
+                + __destruct()
+                + gatherAllDocOfficesBasicsStmt()
+            }
+        }
+
+        package sqlStmtStore_/_docList {
+            class DeleteDocList {
+                + __destruct()
+                + deleteDocStmt()
+            }
+
+            class InsertDocList {
+                + __destruct()
+                + addDocStmt()
+            }
+
+            class SelectDocList {
+                + __destruct()
+                + stmtSelectForEvent()
+                + stmtSelectDistinctAttendedDocForEvent()
+                + stmtSelectDistinctReplacedDocForEvent()
+                + stmtSelectDistinctLaboOrdoDocForEvent()
+                + stmtSelectDistinctLaboOrdoReplacedDocForEvent()
+                + stmtAllDocsBasicsInfos()
+                + selectPrepAllDataFromOneDocStmt()
+                + getNewDocIDStmt()
+            }
+
+            class UpdateDocList {
+                + __destruct()
+                + docEditStmt()
+            }
+        }
+
+        package sqlStmtStore_/_docOfficeList {
+            class SelectDocOfficeList {
+                + __destruct()
+                + gatherAllDocOffices()
+                + selectEveryDocOfficesOfUserStmt()
+                + selectDocOfficesOfDocStmt()
+            }
+        }
+
+        package sqlStmtStore_/_docofficeSpemedicRelation {
+            class SelectDocofficeSpemedicRelation {
+                + __destruct()
+                + selectEverySpeMedicOfAllDocOfficesOfUser()
+            }
+        }
+
+        package sqlStmtStore_/_docSpemedicRelation {
+            class DeleteDocSpemedicRelation {
+                + __destruct()
+                + deletePrepDocSpeMedicRelationStmt()
+            }
+
+            class InsertDocSpemedicRelation {
+                + __destruct()
+            }
+
+            class SelectDocSpemedicRelation {
+                + __destruct()
+                + stmtDocSpeMedicRelation()
+                + selectPreparedDocSpemedicRelationStmt()
+                + stmtSpeMedicUsedByUser()
+                + selectSpeMedicIDsOfOneDocStmt()
+            }
+        }
+
+        package sqlStmtStore_/_medicEventAffectsRelation {
+            class SelectMedicEventAffectsRelation {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_medicEventCategory {
+            class SelectMedicEventCategory {
+                + __destruct()
+                + gatherAllEventsCatsStmt()
+            }
+        }
+
+        package sqlStmtStore_/_medicEventList {
+            class SelectMedicEventList {
+                + __destruct()
+                + stmtSelectForEvent()
+                + comingEventsIdsStmt()
+                + eventsIdsByUserIdStmt()
+                + eventsIdsbyCatIdStmt()
+                + eventsIdsFromMedicThemeIdStmt()
+                + eventsIdsFromSpeMedicIdStmt()
+                + eventsIdsByDocOfficeIdStmt()
+                + eventsIdsFromOneDocIdStmt()
+                + eventsFromOneDocIdStmt()
+                + onlyOneEventStmt()
+            }
+        }
+
+        package sqlStmtStore_/_medicEventSpemedicRelation {
+            class SelectMedicEventSpemedicRelation {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_medicEventThemesRelation {
+            class SelectMedicEventThemesRelation {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_medicThemeList {
+            class SelectMedicThemesList {
+                + __destruct()
+                + selectMedicThemeByUserIdStmt()
+            }
+        }
+
+        package sqlStmtStore_/_ordoLaboList {
+            class SelectOrdoLaboList {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_ordoLaboSlots {
+            class SelectOrdoLaboSlots {
+                + __destruct()
+                + stmtSelectForDiagsOnEvent()
+            }
+        }
+
+        package sqlStmtStore_/_ordoPharmaList {
+            class SelectOrdoPharmaList {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_ordoSightList {
+            class SelectOrdoSightList {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_ordoVaxList {
+            class SelectOrdoVaxList {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_ordoVaxSlots {
+            class SelectOrdoVaxSlots {
+                + __destruct()
+                + stmtSelectForDiagsOnEvent()
+                + stmtSelectForVaxSessionOnEvent()
+            }
+        }
+
+        package sqlStmtStore_/_prescLaboElements {
+            class SelectPrescLaboElements {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_prescLaboList {
+            class SelectPrescLaboList {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_prescPharmaList {
+            class SelectPrescPharmaList {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_prescVaxList {
+            class SelectPrescVaxList {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+
+        package sqlStmtStore_/_speMedicFullList {
+            class SelectSpeMedicFullList {
+                + __destruct()
+                + stmtSelectDistinctForAttendedDocsOnEvent()
+                + stmtSelectDistinctForReplacedDocsOnEvent()
+                + stmtSelectDistinctForLaboOrdoDocsOnEvent()
+                + stmtSelectDistinctForReplacedLaboOrdoDocsOnEvent()
+                + selectSpeMedicUsedByUserStmt()
+                + selectEverySpeMedicForDocStmt()
+            }
+        }
+
+        package sqlStmtStore_/_usersList {
+            class SelectUsersList {
+                + __destruct()
+                + accountCountingStmt()
+                + checkUserLogsStmt()
+                + gatherAllUserAccountData()
+            }
+
+            class UpdateUsersList {
+                + __destruct()
+                + updateUserDataStmt()
+                + updateUserPwdStmt()
+            }
+        }
+
+        package sqlStmtStore_/_vaxSessionsList {
+            class SelectVaxSessionsList {
+                + __destruct()
+                + stmtSelectForDiagsOnEvent()
+            }
+        }
+
+        package sqlStmtStore_/_vaxSessionsSideEffects {
+            class SelectVaxSessionsSideEffects {
+                + __destruct()
+                + stmtSelectForEvent()
+            }
+        }
+    }
+
+    package tableMappers {
+        package tableMappers_/_login {
+            class LoginSelectMapper {
+                + $loginSelectMaps : array
+                --
+                + __destruct()
+                + checkUserLogsMapping()
+            }
+        }
+
+        package tableMappers_/_medic {
+            package tableMappers_/_medic_/_doc {
+                class DocDeleteMapper {
+                    + $maps : array
+                    --
+                    + __destruct()
+                    + deleteDocMapper()
+                }
+
+                class DocInsertMapper {
+                    + $maps : array
+                    --
+                    + __destruct()
+                    + addDocMapper()
+                }
+
+                class DocSelectMapper {
+                    + $maps : array
+                    --
+                    + __destruct()
+                    + displayAllDocsListMapper()
+                    + getDataForOneDocPageMapper()
+                    + getAllDataForOneDocFromDocListMapper()
+                    + getNewDocIDMapper()
+                    + getAJAXDataForSpeMedDocOfficeFormMapper()
+                }
+
+                class DocUpdateMapper {
+                    + $maps : array
+                    --
+                    + __destruct()
+                    + displayAllDocsListMapper()
+                }
+            }
+
+            package tableMappers_/_medic_/_docOffice {
+                class DocOfficeSelectMapper {
+                    + $maps : array
+                    --
+                    + __destruct()
+                    + gatherAllDocOfficesMapper()
+                }
+            }
+
+            package tableMappers_/_medic_/_event {
+                class EventSelectMapper {
+                    + $eventSelectMaps : array
+                    --
+                    + __destruct()
+                }
+            }
+
+            package tableMappers_/_medic_/_eventCat {
+                class EventCatSelectMapper {
+                    + $maps : array
+                    --
+                    + __destruct()
+                    + gatherAllEventsCatsMapping()
+                }
+            }
+
+            package tableMappers_/_medic_/_eventsFinderAndGatherer {
+                class EventIdFinderSelectMapper {
+                    + $maps : array
+                    --
+                    + __destruct()
+                    + medicEventListMapping()
+                }
+
+                class EventsDataGatherSelectMapper {
+                    + $mapList : array
+                    --
+                    + __construct()
+                    + __destruct()
+                }
+            }
+
+            package tableMappers_/_medic_/_medicTheme {
+                class MedicThemeSelectMapper {
+                    + $maps : array
+                    --
+                    + __destruct()
+                    + selectMedicThemeByUserIdMapper()
+                }
+            }
+
+            package tableMappers_/_medic_/_speMedic {
+                class SpeMedicSelectMapper {
+                    + $maps : array
+                    --
+                    + __destruct()
+                    + selectSpeMedicUsedByUserMapper()
+                }
+            }
+        }
+
+        package tableMappers_/_userAccount {
+            class UserAccountSelectMapper {
+                + $maps : array
+                --
+                + __destruct()
+                + gatherAllUserAccountDataMapper()
+            }
+
+            class UserAccountUpdateMapper {
+                + $maps : array
+                --
+                + __destruct()
+                + updateUserAccountDataMapper()
+                + updateUserPwdMapper()
+            }
+        }
+    }
+
+
+}
+
+/' GLOBAL LAYOUT '/
+common -[hidden]-> modelInit
+modelInit -[hidden]------> sqlStmtStore
+sqlStmtStore -[hidden]--------->  tableMappers
+
+    /' modelInit '/
+        /' doc '/
+        DocSelectModel -[hidden]-> DocInsertModel
+        DocInsertModel -[hidden]-> DocUpdateModel
+        DocUpdateModel -[hidden]-> DocDeleteModel
+
+        UserSelectModel -[hidden]-> HomeSelectModel
+        HomeSelectModel -[hidden]-> LoginSelectModel
+
+
+    /' sqlStmtStore '/
+    SelectUsersList -[hidden]-> UpdateUsersList
+
+    SelectCareSessionsList -[hidden]-> SelectCareSessionElements
+
+    SelectDiagList -[hidden]-> SelectDiagSymptoms
+    SelectDiagSymptoms -[hidden]-> SelectDiagCheckPoints
+    SelectDiagCheckPoints -[hidden]-> SelectDiagConclusions
+    SelectDiagConclusions -[hidden]-> SelectDiagMedicThemeRelations
+
+    SelectDocList -[hidden]-> InsertDocList
+    InsertDocList -[hidden]-> UpdateDocList
+    UpdateDocList -[hidden]-> DeleteDocList
+
+    DeleteDocList -[hidden]-> SelectDocSpemedicRelation
+    SelectDocSpemedicRelation -[hidden]-> InsertDocSpemedicRelation
+    InsertDocSpemedicRelation -[hidden]-> DeleteDocSpemedicRelation
+
+    SelectDocOfficeList -[hidden]-> SelectDocofficeSpemedicRelation
+
+    SelectDocofficeSpemedicRelation -[hidden]-> SelectDocDocofficeRelation
+    SelectDocDocofficeRelation -[hidden]-> InsertDocDocofficeRelation
+    InsertDocDocofficeRelation -[hidden]-> DeleteDocDocofficeRelation
+
+    SelectDocList -[hidden]-> InsertDocList
+    InsertDocList -[hidden]-> UpdateDocList
+    UpdateDocList -[hidden]-> DeleteDocList
+
+    SelectMedicEventList -[hidden]-> SelectMedicEventCategory
+    SelectMedicEventCategory -[hidden]-> SelectMedicEventAffectsRelation
+    SelectMedicEventAffectsRelation -[hidden]-> SelectMedicEventSpemedicRelation
+    SelectMedicEventSpemedicRelation -[hidden]-> SelectMedicEventThemesRelation
+
+    SelectOrdoLaboList -[hidden]-> SelectOrdoLaboSlots
+    SelectOrdoLaboSlots -[hidden]-> SelectPrescLaboList
+    SelectPrescLaboList -[hidden]-> SelectPrescLaboElements
+
+    SelectOrdoVaxList -[hidden]-> SelectOrdoVaxSlots
+    SelectOrdoVaxSlots -[hidden]-> SelectPrescVaxList
+    SelectPrescVaxList -[hidden]-> SelectVaxSessionsSideEffects
+    SelectVaxSessionsSideEffects -[hidden]-> SelectVaxSessionsList
+
+    SelectOrdoPharmaList -[hidden]-> SelectPrescPharmaList
+
+
+
+    /' table mappers '/
+        LoginSelectMapper -[hidden]-> UserAccountSelectMapper
+
+        /' user account '/
+        UserAccountSelectMapper -[hidden]-> UserAccountUpdateMapper
+
+        /'medic '/
+        EventIdFinderSelectMapper -[hidden]-> EventsDataGatherSelectMapper
+
+        EventSelectMapper -[hidden]-> EventCatSelectMapper
+        EventCatSelectMapper -[hidden]-> MedicThemeSelectMapper
+        MedicThemeSelectMapper -[hidden]-> SpeMedicSelectMapper
+        SpeMedicSelectMapper -[hidden]-> DocOfficeSelectMapper
+
+        DocSelectMapper -[hidden]-> DocInsertMapper
+        DocInsertMapper -[hidden]-> DocUpdateMapper
+        DocUpdateMapper -[hidden]-> DocDeleteMapper
+
+@enduml

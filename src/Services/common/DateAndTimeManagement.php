@@ -20,10 +20,14 @@ class DateAndTimeManagement
         $_ENV['DATEANDTIME']['nowDate']['nowTimeObj'] = date_create('now', $_ENV['DATEANDTIME']['timezoneObj']);
         $_ENV['DATEANDTIME']['nowDate']['nowTimestamp'] = date_timestamp_get($_ENV['DATEANDTIME']['nowDate']['nowTimeObj']);
 
-        $_ENV['DATEANDTIME']['todayData']['earlyTimeObj'] = date_time_set($_ENV['DATEANDTIME']['nowDate']['nowTimeObj'], 0, 0, 0, 0);
+        // Créé pour ne pas impacter $_ENV['DATEANDTIME']['nowDate']['nowTimeObj']
+        $_ENV['DATEANDTIME']['modifiedTimeDate']['nowTimeObj'] = date_create('now', $_ENV['DATEANDTIME']['timezoneObj']);
+        $_ENV['DATEANDTIME']['modifiedTimeDate']['nowTimestamp'] = date_timestamp_get($_ENV['DATEANDTIME']['nowDate']['nowTimeObj']);
+
+        $_ENV['DATEANDTIME']['todayData']['earlyTimeObj'] = date_time_set($_ENV['DATEANDTIME']['modifiedTimeDate']['nowTimeObj'], 0, 0, 0, 0);
         $_ENV['DATEANDTIME']['todayData']['earlyTimestamp'] = date_timestamp_get($_ENV['DATEANDTIME']['todayData']['earlyTimeObj']);
 
-        $_ENV['DATEANDTIME']['todayData']['lateTimeObj'] = date_time_set($_ENV['DATEANDTIME']['nowDate']['nowTimeObj'], 23, 59, 59, 999999);
+        $_ENV['DATEANDTIME']['todayData']['lateTimeObj'] = date_time_set($_ENV['DATEANDTIME']['modifiedTimeDate']['nowTimeObj'], 23, 59, 59, 999999);
         $_ENV['DATEANDTIME']['todayData']['lateTimestamp'] = date_timestamp_get($_ENV['DATEANDTIME']['todayData']['lateTimeObj']);
     }
 

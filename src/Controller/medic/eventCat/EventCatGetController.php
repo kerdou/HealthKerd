@@ -45,7 +45,7 @@ class EventCatGetController
 
     /** Affichage de tous les events ayant une catégorie particulière
     */
-    public function dispAllEventsRegardingOneCat(): void
+    private function dispAllEventsRegardingOneCat(): void
     {
         $eventFinderAndGathererController = new \HealthKerd\Controller\medic\eventsFinderAndGatherer\EventsFinderAndGathererGetController();
         $processedData = $eventFinderAndGathererController->actionReceiver('eventsIdsbyCatId', $this->cleanedUpGet);

@@ -7,7 +7,6 @@ module.exports = [
         watch: true,
         watchOptions: {
             ignored: [
-                './assets',
                 './dev',
                 './node_modules/',
                 './src/',
@@ -16,7 +15,7 @@ module.exports = [
                 './vendor'
             ]
         },
-        entry: './assets/JS output/index.js',
+        entry: './dev/JS & TS/JS output/index.js',
         output: {
             filename: 'script.js',
             path: path.resolve(__dirname, './public/js'),
@@ -27,7 +26,7 @@ module.exports = [
         name: 'prod',
         mode: "production",
         watch: false,
-        entry: './assets/JS output/index.js',
+        entry: './dev/JS & TS/JS output/index.js',
         output: {
             filename: 'script.js',
             path: path.resolve(__dirname, './public/js'),

@@ -22,7 +22,7 @@ abstract class ViewInChief
      */
     protected function globalLayoutAssembly()
     {
-        $this->pageContent = file_get_contents($_ENV['APPROOTPATH'] . 'public/HTML/globalLayout.html');
+        $this->pageContent = file_get_contents($_ENV['APPROOTPATH'] . 'public/html/globalLayout.html');
     }
 
     /** Affichage le contenu de la page

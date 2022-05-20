@@ -6,8 +6,12 @@ namespace HealthKerd\Processor\medic\event\care;
 */
 class CareSessionsOrganizer
 {
-    private array|null $careSessionsList = array();
-    private array|null $careSessionElements = array();
+    private array $careSessionsList = array();
+    private array $careSessionElements = array();
+
+    public function __destruct()
+    {
+    }
 
     /** Ordre de modification des sessions de soin
      * @param array $careSessionsList       Liste des sessions de soin

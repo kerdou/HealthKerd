@@ -1,0 +1,252 @@
+@startuml
+title <b>Controller</b>
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+
+package Controller {
+    abstract class GetAndPostCleaner {
+        # inputCleaner()
+    }
+
+    class ControllerDispatch extends GetAndPostCleaner {
+        - $cleanedUpGet : array
+        - $cleanedUpPost : array
+        - $selectedController : string
+        --
+        + __construct()
+        + __destruct()
+        - generalSetter()
+        - sessionChecker()
+        - unloggedDispatcher()
+        - loggedInDispatcher()
+    }
+
+
+    package home {
+        class HomeGetController {
+            - $eventFinderAndGathererController : object
+            - $homeView : object
+            --
+            + __destruct()
+            + displayHomePage()
+        }
+    }
+
+
+    package login {
+        abstract class LoginCommonController {
+            + __destruct()
+            + displayLoginPage()
+        }
+
+        class LoginGetController extends LoginCommonController {
+            + __destruct()
+            + actionReceiver()
+        }
+
+        class LoginPostController extends LoginCommonController {
+            - $loginModel : object
+            --
+            + __construct()
+            + __destruct()
+            + actionReceiver()
+            - acceptedLogin()
+        }
+    }
+
+
+    package medic {
+        class MedicMainController {
+            + __destruct()
+            + subContReceiver()
+        }
+
+
+        package medic_/_allEvents {
+            class AllEventsGetController {
+                - $eventFinderAndGathererController : object
+                - $allEventsView : object
+                --
+                + __construct()
+                + __destruct()
+                + displayAllEvents()
+            }
+        }
+
+
+        package medic_/_doc {
+            class DocFormChecker {
+                + __destruct()
+                + docFormChecks()
+            }
+
+            class DocGetController extends DocGetControllerFunctionsPool {
+                # $cleanedUpGet : array
+                # $docList : array
+                # $docSelectModel : object
+                # $docView : object
+                --
+                + __construct()
+                + __destruct()
+                + actionReceiver()
+                - displayAllDocList()
+                - displayOneDoc()
+                - showEventsWithOneDoc()
+                - showDocAddForm()
+                - showDocEditGeneralForm()
+                - showDocEditSpeMedDocOfficeForm()
+                - getAJAXDataForSpeMedDocOfficeForm()
+                - showDocDeleteForm()
+            }
+
+            abstract class DocGetControllerFunctionsPool {
+                + __destruct()
+                # eventsSummaryCreation()
+            }
+
+            class DocPostController {
+                - $cleanedUpGet : array
+                - $cleanedUpPost : array
+                --
+                + __destruct()
+                + actionReceiver()
+                - telNbrReorganizer()
+                - addDoc()
+                - editGeneralDoc()
+                - editSpeMedDocOfficeForDoc()
+                - removeDoc()
+            }
+        }
+
+        package medic_/_docOffice {
+            class DocOfficeGetController {
+                - $cleanedUpGet : array
+                --
+                + __destruct()
+                + actionReceiver()
+                - displayAllDocOfficesList()
+                - displayEventsWithOneDocOffice()
+            }
+
+            class DocOfficePostController {
+                + __construct()
+                + __destruct()
+                + actionReceiver
+            }
+        }
+
+
+        package medic_/_eventCat {
+            class EventCatGetController {
+                - $cleanedUpGet : array
+                --
+                + __destruct()
+                + actionReceiver()
+                - dispAllEventsRegardingOneCat()
+            }
+
+            class EventCatPostController {
+                + __destruct()
+                + actionReceiver()
+            }
+        }
+
+        package medic_/_eventsFinderAndGatherer {
+            class EventsFinderAndGathererGetController {
+                - $cleanedUpGet : array
+                - $cleanedUpPost : array
+                - $medicEventIdFinder : object
+                - $medicEventDataGatherer : object
+                - $medicEventArrayBuildOrder : object
+                --
+                + __construct()
+                + __destruct()
+                + actionReceiver()
+                - dataGatherAndProcess()
+                - eventIdExtraction()
+            }
+        }
+
+        package medic_/_medicTheme {
+            class MedicThemeGetController {
+                - $cleanedUpGet : array
+                --
+                + __destruct()
+                + actionReceiver()
+                - displayAllMedicThemes()
+                - displayAllEventsRegardingOneTheme()
+            }
+
+            class MedicThemePostController {
+                + __destruct()
+                + actionReceiver()
+            }
+        }
+
+
+        package medic_/_speMedic {
+            class SpeMedicGetController {
+                -  $cleanedUpGet : array
+                --
+                + __destruct()
+                + actionReceiver()
+                - displayAllSpeMedics()
+                - dispAllEventsRegardingOneSpeMedic()
+            }
+        }
+    }
+
+
+    package userAccount {
+        class PwdFormChecker {
+            + __destruct()
+            + pwdFormChecks()
+            - rulesChecker()
+        }
+
+        class UserAccountGetController {
+            + __destruct()
+            + actionReceiver()
+        }
+
+        class UserAccountPostController {
+            - $cleanedUpGet : array
+            - $cleanedUpPost : array
+            --
+            + __destruct()
+            + actionReceiver()
+            - accountModif()
+            - zerosAdder()
+            - pwdModif()
+        }
+
+        class UserFormChecker {
+            + __destruct()
+            + userFormChecks()
+            - dateExistenceCheck()
+        }
+    }
+}
+
+/' userAccount '/
+UserAccountGetController -[hidden]-> UserAccountPostController
+UserAccountPostController -[hidden]-> UserFormChecker
+UserFormChecker -[hidden]-> PwdFormChecker
+
+/' medicTheme '/
+MedicThemeGetController -[hidden]-> MedicThemePostController
+
+/' eventCat '/
+EventCatGetController -[hidden]-> EventCatPostController
+
+/' doc '/
+DocGetController -[hidden]-> DocPostController
+DocPostController -[hidden]-> DocFormChecker
+
+/' docOffice '/
+DocOfficeGetController -[hidden]-> DocOfficePostController
+
+@enduml

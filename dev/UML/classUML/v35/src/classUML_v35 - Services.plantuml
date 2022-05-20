@@ -1,0 +1,86 @@
+@startuml
+title <b>Services</b>
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+
+package Services {
+    package Services_/_common {
+        class DateAndTimeManagement {
+            + __destruct()
+            + envDateSetter()
+            + dateAndTimeConverter
+        }
+
+        class TimestampDispatcher {
+            + nowTimestampDispatcher()
+        }
+
+        class TimestampSorting {
+            + __destruct()
+            + incrTimestampSortLauncher()
+            - incrTimestampSorting()
+            + decrTimestampSortLauncher()
+            - decrTimestampSorting()
+        }
+
+
+    }
+
+    package Services_/_medic {
+        package Services_/_medic_/_doc {
+            class DocTitleAndNameSentence {
+                - $docID : string
+                - $title : string
+                - $firstName : string
+                - $lastName : string
+                - $fullNameSentence : string
+                --
+                + __destruct()
+                + dataReceiver()
+                - docTitleConversion()
+                - docFullNameSentenceCreator()
+            }
+        }
+    }
+
+    package Services_/_regexStore {
+        class DateRegex {
+            + __destruct()
+            + frenchDateRegex()
+        }
+
+        class MailRegex {
+            + __destruct()
+            + mailRegex()
+        }
+
+        class NameRegex {
+            + __destruct()
+            + nameRegex()
+        }
+
+        class PwdRegex {
+            + __destruct()
+            + pwdRegex()
+            - resultCounter()
+        }
+
+        class TelRegex {
+            + __destruct()
+            + telRegex()
+        }
+
+        class UrlRegex {
+            + __destruct()
+            + urlRegex
+        }
+    }
+}
+
+
+
+
+@enduml

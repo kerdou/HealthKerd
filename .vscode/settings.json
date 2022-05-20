@@ -21,7 +21,7 @@
     }
   ],
   "liveSassCompile.settings.includeItems": [
-      "/assets/Sass/**"
+      "/dev/Sass/**"
   ],
   "liveSassCompile.settings.excludeList": [
       "**/node_modules/**",

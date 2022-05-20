@@ -1,0 +1,221 @@
+@startuml
+title <b>TS</b>
+
+skinparam ClassFontSize 11
+skinparam ClassFontName Verdana
+
+
+
+package TS {
+    package loggedIn {
+        class LoggedInMainController {
+            + constructor()
+            - medicSectionController()
+            - userAccountSectionController()
+        }
+
+        package common {
+            class MobileSidebar {
+                - windowWidth : number
+                - mobileSidebarElement : HTMLElement
+                --
+                + constructor()
+                - windowResize()
+            }
+
+            class ScrollUpButton {
+                + constructor()
+                - scrollUpButtonDisplayBehaviour()
+                - scrollToTop()
+            }
+
+            class TextAreaInfoComp {
+                + constructor()
+                - textAreaRidonliListenersAddition()
+                - textAreaScrollDown()
+            }
+        }
+
+        package medic {
+            class MedicController {
+                + constructor()
+            }
+
+            package doc {
+                package generalDocForm {
+                    class DocFormChecks {
+                        # lastNameCheck()
+                        # firstNameCheck()
+                        # telCheck()
+                        # mailCheck()
+                        # webPageCheck()
+                        # doctolibPageCheck()
+                    }
+
+                    class DocFormBehaviour extends DocFormChecks {
+                        - docForm : HTMLFormElement
+                        # lastnameInput : HTMLInputElement
+                        # firstnameInput : HTMLInputElement
+                        # telInput : HTMLInputElement
+                        # mailInput : HTMLInputElement
+                        # webpageInput : HTMLInputElement
+                        # doctolibpageInput : HTMLInputElement
+                        - formResetButton : HTMLButtonElement
+                        - formSubmitButton : HTMLButtonElement
+                        --
+                        + constructor()
+                        - fieldInputsFocusOutEventListeners()
+                        - focusOutRecheck()
+                        - telInputKeyDownEventListener()
+                        - telKeyCheck()
+                        - formButtonsEventListeners()
+                        - resetForm()
+                        - submitForm()
+                        - formChecks()
+                    }
+
+                }
+
+                package oneDocPage {
+                    class DocModifModal {
+                        - modalButton : HTMLAnchorElement
+                        - modalElement : HTMLDivElement
+                        - modalObj : Modal
+                        --
+                        + constructor()
+                        - modalShowUp()
+                    }
+                }
+
+                package speMedicDocOfficeForm {
+                    class AllInOneAJAX {
+                        + receive()
+                        + send()
+                    }
+
+                }
+            }
+
+        }
+
+        package userAccount {
+            class UserAccountController {
+                + constructor()
+            }
+
+            package userForm {
+                class PwdFormBehaviour extends PwdFormChecks {
+                    - pwdForm : HTMLFormElement
+                    # pwdInput : HTMLInputElement
+                    # confPwdInput : HTMLInputElement
+                    # samePwdInput : HTMLInputElement
+                    - formResetButton : HTMLButtonElement
+                    - formSubmitButton : HTMLButtonElement
+                    --
+                    + constructor()
+                    - fieldInputsEventListeners()
+                    - formButtonsEventListeners()
+                    - resetForm()
+                    - submitForm()
+                    - formChecks()
+                }
+
+                class PwdFormChecks {
+                    # pwdCheck()
+                    - rulesChecker()
+                    + samePwdCheck()
+                }
+
+                class UserFormBehaviour extends UserFormChecks {
+                    - userForm : HTMLFormElement
+                    # lastnameInput : HTMLInputElement
+                    # firstnameInput : HTMLInputElement
+                    # birthDateInput : HTMLInputElement
+                    # loginInput : HTMLInputElement
+                    # mailInput : HTMLInputElement
+                    - formResetButton : HTMLButtonElement
+                    - formSubmitButton : HTMLButtonElement
+                    --
+                    + constructor()
+                    - fieldInputsEventListeners()
+                    - formButtonsEventListeners()
+                    - resetForm()
+                    - submitForm()
+                    - formChecks()
+                }
+
+                class UserFormChecks {
+                    # lastNameCheck()
+                    # firstNameCheck()
+                    # birthDateCheck()
+                    # loginCheck()
+                    # mailCheck()
+                }
+            }
+        }
+
+    }
+
+    package services {
+        package regexStore {
+            class DateRegex {
+                + frenchDateRegex()
+            }
+
+            class MailRegex {
+                + mailRegex()
+            }
+
+            class NameRegex {
+                + nameRegex()
+            }
+
+            class PwdRegex {
+                + pwdRegex()
+            }
+
+            class TelRegex {
+                + telRegex()
+            }
+
+            class UrlRegex {
+                + urlRegex()
+            }
+        }
+
+    }
+
+    package unlogged {
+        package login {
+            class LoginPage {
+                - loginForm : HTMLFormElement
+                - errorMessage : HTMLHeadingElement
+                - loginField : HTMLInputElement
+                - passwordField : HTMLInputElement
+                - loginButton : HTMLInputElement
+                - loginFieldStatus : boolean
+                - passwordFieldStatus : boolean
+                --
+                + constructor()
+                - getCheck()
+                - loginFieldBehaviour()
+                - passwordFieldBehaviour()
+                - loginButtonBehaviour()
+            }
+        }
+    }
+}
+
+DateRegex -[hidden]-> MailRegex
+MailRegex -[hidden]-> NameRegex
+NameRegex -[hidden]-> PwdRegex
+PwdRegex -[hidden]-> TelRegex
+TelRegex -[hidden]-> UrlRegex
+
+AllInOneAJAX -[hidden]-> DocModifModal
+
+MobileSidebar -[hidden]-> ScrollUpButton
+ScrollUpButton -[hidden]-> TextAreaInfoComp
+
+
+@enduml

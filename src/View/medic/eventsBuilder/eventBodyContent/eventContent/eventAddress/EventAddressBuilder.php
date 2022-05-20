@@ -21,7 +21,7 @@ class EventAddressBuilder
      * @param array $addrData   Donnée de l'adresse
      * @return string           HTML des paragraphes de l'adresse complête
     */
-    protected function eventFullAddrAccordContent(array $addrData): string
+    private function eventFullAddrAccordContent(array $addrData): string
     {
         $addressHTML = '';
 

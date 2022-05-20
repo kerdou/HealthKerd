@@ -6,6 +6,10 @@ namespace HealthKerd\Processor\medic\event\diag\ordo;
  */
 class OrdoGatherAndSorting
 {
+    public function __destruct()
+    {
+    }
+
     /**
      * @param array $ordoLabo       Liste des ordonnances de prélèvement médical déjà complétées
      * @param array $ordoPharma     Liste des ordonnances pharmacologiques déjà complétées

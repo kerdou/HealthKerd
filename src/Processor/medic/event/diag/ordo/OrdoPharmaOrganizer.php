@@ -7,6 +7,10 @@ class OrdoPharmaOrganizer
     private array $ordoPharmaList = array();
     private array $prescOrdoPharma = array();
 
+    public function __destruct()
+    {
+    }
+
     /** Ordre des actions pour le remodelage et l'ajout des données des ordonnances pharmacologiques
      * @param array $ordoPharmaList     Liste des ordonnances pharmacologiques
      * @param array $prescOrdoPharma    Liste des prescriptions pour les ordonnances pharmacologiques

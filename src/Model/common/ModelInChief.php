@@ -15,21 +15,21 @@ abstract class ModelInChief
     public function __construct()
     {
         require_once "dbSettings.php"; // fichier de configuration de la connexion à la DB
-        $hostmode = 'local';
+        $hostmode = 'dev';
 
         // utilise les identifiants de cnx au serveur SQL suivant le mode choisi
         switch ($hostmode) {
-            case 'local':
-                $host = LOCHOST;
-                $base = LOCBASE;
-                $user = LOCUSER;
-                $password = LOCPASSWORD;
+            case 'dev':
+                $host = DEVHOST;
+                $base = DEVBASE;
+                $user = DEVUSER;
+                $password = DEVPWD;
                 break;
-            case 'remote':
-                $host = REMHOST;
-                $base = REMBASE;
-                $user = REMUSER;
-                $password = REMPASSWORD;
+            case 'prod':
+                $host = PRODHOST;
+                $base = PRODBASE;
+                $user = PRODUSER;
+                $password = PRODPWD;
         }
 
         $this->pdoInit($host, $base, $user, $password);
@@ -46,10 +46,8 @@ abstract class ModelInChief
     {
         try {
             $this->pdo = new \PDO(
-                "mysql:host=" .
-                $host . ";" .
-                "dbname=" .
-                $base,
+                "mysql:host=" . $host . ";" .
+                "dbname=" . $base,
                 $user,
                 $password
             );
@@ -57,6 +55,8 @@ abstract class ModelInChief
             echo 'Error : ' . $e->getMessage();
             throw $e; // permet d'arrêter le script et d'ajouter l'erreur dans les logs Apache (merci Reno!)
         }
+
+        $this->pdo->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, true); // WAMPServer sur Windows renvoie tous les int en string, cette ligne permet de répliquer ce comportement sur un serveur Linux pour éviter des bugs de typage strict sur speMedicDocOfficeForm.ts. Un .includes() qui ne reconnait pas une valeur à cause d'un souci de typage par exemple.
         $this->pdo->exec("SET CHARACTER SET utf8");
     }
 

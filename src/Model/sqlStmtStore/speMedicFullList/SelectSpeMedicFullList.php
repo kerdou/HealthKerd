@@ -35,7 +35,7 @@ class SelectSpeMedicFullList
                 doc_list.docID != 0
             ORDER BY
                 doc_list.docID,
-                spe_medic_full_list.name
+                spe_medic_full_list.nameForDoc
             ;';
 
         return $stmtStart . $whereString . $stmtEnd;
@@ -65,7 +65,7 @@ class SelectSpeMedicFullList
                 medic_event_list.replacedDocID != 0
             ORDER BY
                 medic_event_list.replacedDocID,
-                spe_medic_full_list.name
+                spe_medic_full_list.nameForDoc
             ;';
 
         return $stmtStart . $whereString . $stmtEnd;
@@ -95,7 +95,7 @@ class SelectSpeMedicFullList
                 medic_event_list.laboOrdoDocID != 0
             ORDER BY
                 medic_event_list.laboOrdoDocID,
-                spe_medic_full_list.name
+                spe_medic_full_list.nameForDoc
             ;';
 
         return $stmtStart . $whereString . $stmtEnd;
@@ -125,7 +125,7 @@ class SelectSpeMedicFullList
                 medic_event_list.laboOrdoReplacedDocDiagID != 0
             ORDER BY
                 medic_event_list.laboOrdoReplacedDocDiagID,
-                spe_medic_full_list.name
+                spe_medic_full_list.nameForDoc
             ;';
 
         return $stmtStart . $whereString . $stmtEnd;

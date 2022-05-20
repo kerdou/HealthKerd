@@ -266,8 +266,9 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         return $docOfficeCardsHTML;
     }
 
-    /**
-     *
+    /** Contenu de la boîte modale permettant de choisir entre les pages suivantes
+     * * Paramêtres généraux du doc
+     * * Selection des spé médics et doc offices du doc
      */
     private function docModifModalBuilder(): string
     {

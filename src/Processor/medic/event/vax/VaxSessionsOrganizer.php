@@ -10,6 +10,10 @@ class VaxSessionsOrganizer
     private array $vaxSessionsSideEffects = array();
     private array $vaxSessionsOrdoSlots = array();
 
+    public function __destruct()
+    {
+    }
+
     /** Ordre de modification des sessions de vaccination
      * TODO: Ajouter la gestion des slots de vaccination
      * @param array $vaxSessionsList            Liste des sessions de vaccination

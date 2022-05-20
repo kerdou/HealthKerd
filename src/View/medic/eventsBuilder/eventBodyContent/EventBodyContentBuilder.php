@@ -24,7 +24,7 @@ class EventBodyContentBuilder
 
         // accordéon de diagnostic + ordonnances + prescriptions
         if (sizeof($eventData['content']['diag']) > 0) {
-            $diagAccordionBuilder = new \HealthKerd\View\medic\eventsBuilder\eventBodyContent\eventContent\diag\diagBuilder();
+            $diagAccordionBuilder = new \HealthKerd\View\medic\eventsBuilder\eventBodyContent\eventContent\diag\DiagBuilder();
             $diagAccordionContent = $diagAccordionBuilder->buildOrder($eventData['content']['diag']);
         } else {
             $diagAccordionContent = '';
