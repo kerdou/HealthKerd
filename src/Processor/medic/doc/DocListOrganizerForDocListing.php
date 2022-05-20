@@ -32,6 +32,7 @@ class DocListOrganizerForDocListing extends DocListFunctionsPool
             $tempArray['title'] = $value['title'];
             $tempArray['firstName'] = $value['firstName'];
             $tempArray['lastName'] = $value['lastName'];
+            $tempArray['isLocked'] = $value['isLocked'];
             $tempArray['fullNameSentence'] = '';
             $tempArray['speMedicList'] = array();
 
@@ -40,7 +41,8 @@ class DocListOrganizerForDocListing extends DocListFunctionsPool
                 $tempArray['docID'],
                 $tempArray['title'],
                 $tempArray['firstName'],
-                $tempArray['lastName']
+                $tempArray['lastName'],
+                $tempArray['isLocked']
             );
 
             array_push($this->docArray['uniqueDocList'], $tempArray);

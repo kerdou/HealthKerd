@@ -69,6 +69,7 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->docDataArray = $docDataArray;
 
         $this->modifButtonHTML = $this->modifButtonBuilder();
+        $this->lockedAccountKeyHTML = $this->lockedAccountKeyCreation();
         $this->speMedicBadgesHTML = $this->speMedicBadgesBuilder();
         $this->contactContentHTML = $this->contactContentBuilder();
         $this->commentPortionHTML = $this->commentPortionBuilder();
@@ -94,6 +95,19 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
         }
 
         return $modifButtonHTML;
+    }
+
+    /** Inclusion de l'icone de clef indiquant que le doc n'est pas modifiable
+     */
+    private function lockedAccountKeyCreation(): string
+    {
+        if ($this->docDataArray['isLocked'] == 1) {
+            $lockedAccountKeyHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/userAccount/userPage/lockedAccountKey.html');
+        } else {
+            $lockedAccountKeyHTML = '';
+        }
+
+        return $lockedAccountKeyHTML;
     }
 
     /** Construction des badges de spécialités médicales du docteur
@@ -288,6 +302,7 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
         $this->contentSettingsList = array(
             'mainContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/oneDoc/oneDoc.html'),
+            'lockedAccountKey' => $this->lockedAccountKeyHTML,
             'modifButton' => $this->modifButtonHTML,
             'docFullNameSentence' => $this->docDataArray['fullNameSentence'],
             'speMedicBadges' => $this->speMedicBadgesHTML,
@@ -307,6 +322,7 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
         $this->pageContent = str_replace('{mainContent}', $this->contentSettingsList['mainContent'], $this->pageContent);
         $this->pageContent = str_replace('{docFullNameSentence}', $this->contentSettingsList['docFullNameSentence'], $this->pageContent);
+        $this->pageContent = str_replace('{lockedAccountKey}', $this->contentSettingsList['lockedAccountKey'], $this->pageContent);
         $this->pageContent = str_replace('{modifButton}', $this->contentSettingsList['modifButton'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicBadges}', $this->contentSettingsList['speMedicBadges'], $this->pageContent);
         $this->pageContent = str_replace('{contactContent}', $this->contentSettingsList['contactContent'], $this->pageContent);

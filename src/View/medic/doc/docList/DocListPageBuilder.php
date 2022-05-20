@@ -83,8 +83,11 @@ class DocListPageBuilder extends \HealthKerd\View\common\ViewInChief
             $docCardTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/docList/docCard.html');
             $speMedicBadgesHTML = $this->docCardSpeMedicBadgeBuilder($value['speMedicList']);
 
+            $value['isLocked'] == '1' ? $lockedDocKeyHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/docList/lockedDocKey.html') : $lockedDocKeyHTML = '';
+
             $docCardTemplate = str_replace('{docID}', $value['docID'], $docCardTemplate);
             $docCardTemplate = str_replace('{docFullNameSentence}', $value['fullNameSentence'], $docCardTemplate);
+            $docCardTemplate = str_replace('{lockedDocKey}', $lockedDocKeyHTML, $docCardTemplate);
             $docCardTemplate = str_replace('{speMedicBadges}', $speMedicBadgesHTML, $docCardTemplate);
 
             $docCompletedCardsHTML .= $docCardTemplate;

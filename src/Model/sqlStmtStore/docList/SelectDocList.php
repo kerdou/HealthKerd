@@ -184,7 +184,7 @@ class SelectDocList
     public function stmtAllDocsBasicsInfos(string $whereString): string
     {
         $stmtStart =
-            'SELECT docID, title, firstName, lastName
+            'SELECT docID, title, firstName, lastName, isLocked
             FROM doc_list
             WHERE';
         // ajouter doc_list.userID = 1

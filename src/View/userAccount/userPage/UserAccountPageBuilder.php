@@ -65,7 +65,7 @@ class UserAccountPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageDisplay();
     }
 
-    /**
+    /** Lancement de toutes les transformations de données avant de les ajouter au $this->transformList[]
      * @param array $userData
      */
     private function dataTransfo(array $userData): void
@@ -78,9 +78,10 @@ class UserAccountPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->accountCreationDateTransfo($userData['accountCreationDate']);
         $this->isAdminDivCreation($_SESSION['isAdmin']);
         $this->modifButtonCreation($userData['modifLocked']);
+        $this->lockedAccountKeyCreation($userData['modifLocked']);
     }
 
-    /**
+    /** Transfo concernant le sexe du user
      * @param string $gender
      */
     private function genderTransfo(string $gender): void
@@ -100,7 +101,7 @@ class UserAccountPageBuilder extends \HealthKerd\View\common\ViewInChief
         }
     }
 
-    /**
+    /** Transfo du format d'affichage de la date de naissance du user
      * @param string $birthDate
      */
     private function birthDateTransfo(string $birthDate): void
@@ -112,7 +113,7 @@ class UserAccountPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->transformList['birthDate'] = $dateFormatObj->format($birthDateTimestamp);
     }
 
-    /**
+    /** Calcul de l'age du user
      */
     private function ageCalc(): void
     {
@@ -120,8 +121,8 @@ class UserAccountPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->transformList['age'] = $diffObj->format('%y ans');
     }
 
-    /**
-     * @param string $birthDate
+    /** Transfo du format d'affichage de la date de création du compte
+     * @param string $accountCreationDate
      */
     private function accountCreationDateTransfo(string $accountCreationDate): void
     {
@@ -132,7 +133,7 @@ class UserAccountPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->transformList['accountCreationDate'] = $dateFormatObj->format($accountCreationDateTimestamp);
     }
 
-    /**
+    /** Inclusion de la DIV indiquant que le user est admin
      */
     private function isAdminDivCreation(int $isAdmin): void
     {
@@ -143,7 +144,7 @@ class UserAccountPageBuilder extends \HealthKerd\View\common\ViewInChief
         }
     }
 
-    /**
+    /** Inclusion du bouton de modification du compte
      */
     private function modifButtonCreation(int $modifLocked): void
     {
@@ -151,6 +152,17 @@ class UserAccountPageBuilder extends \HealthKerd\View\common\ViewInChief
             $this->transformList['modifButton'] = '';
         } else {
             $this->transformList['modifButton'] = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/userAccount/userPage/modifButton.html');
+        }
+    }
+
+    /** Inclusion de l'icone de clef indiquant que le compte n'est pas modifiable
+     */
+    private function lockedAccountKeyCreation(int $modifLocked): void
+    {
+        if ($modifLocked == 1) {
+            $this->transformList['lockedAccountKey'] = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/userAccount/userPage/lockedAccountKey.html');
+        } else {
+            $this->transformList['lockedAccountKey'] = '';
         }
     }
 
@@ -169,6 +181,7 @@ class UserAccountPageBuilder extends \HealthKerd\View\common\ViewInChief
             'email' => $this->userData['email'],
             'isAdminDiv' => $this->transformList['isAdminDiv'],
             'modifButton' => $this->transformList['modifButton'],
+            'lockedAccountKey' => $this->transformList['lockedAccountKey'],
             'speMedicModal' => '',
             'docModifModal' => ''
         );
@@ -187,6 +200,7 @@ class UserAccountPageBuilder extends \HealthKerd\View\common\ViewInChief
         $this->pageContent = str_replace('{userLogin}', $this->contentSettingsList['userLogin'], $this->pageContent);
         $this->pageContent = str_replace('{email}', $this->contentSettingsList['email'], $this->pageContent);
         $this->pageContent = str_replace('{isAdminDiv}', $this->contentSettingsList['isAdminDiv'], $this->pageContent);
+        $this->pageContent = str_replace('{lockedAccountKey}', $this->contentSettingsList['lockedAccountKey'], $this->pageContent);
         $this->pageContent = str_replace('{modifButton}', $this->contentSettingsList['modifButton'], $this->pageContent);
         $this->pageContent = str_replace('{speMedicModal}', $this->contentSettingsList['speMedicModal'], $this->pageContent);
         $this->pageContent = str_replace('{docModifModal}', $this->contentSettingsList['docModifModal'], $this->pageContent);
