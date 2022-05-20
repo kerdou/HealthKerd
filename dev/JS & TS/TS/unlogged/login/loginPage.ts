@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 export default class LoginPage
 {
+    private docu = document as Document;
     private loginForm = document.getElementById('loginForm') as HTMLFormElement;
     private errorMessage = document.getElementById('error_message') as HTMLHeadingElement;
     private loginField = document.getElementById('login') as HTMLInputElement;
@@ -15,6 +16,7 @@ export default class LoginPage
         this.loginField.addEventListener('input', _.debounce(this.loginFieldBehaviour.bind(this), 150));
         this.passwordField.addEventListener('input', _.debounce(this.passwordFieldBehaviour.bind(this), 150));
         this.loginButton.addEventListener('click', this.loginButtonBehaviour.bind(this));
+        this.docu.addEventListener('keydown', this.enterPress.bind(this));
 
         let dataFromGet = window.location.search;
         (dataFromGet.length != 0) ? this.getCheck(dataFromGet): '';
@@ -75,7 +77,16 @@ export default class LoginPage
         };
     }
 
-    /** Submit uniquement si les champs de Login et Password sont corrects     *
+    /** Déclenchement d'une tentative de submit avec l'appui de la touche ENTER
+     * @param event
+     */
+    private enterPress(event: KeyboardEvent): void {
+        if (event.key == 'Enter') {
+            this.loginButtonBehaviour();
+        }
+    }
+
+    /** Submit uniquement si les champs de Login et Password sont corrects
      */
     private loginButtonBehaviour(): void {
         if ((this.loginFieldStatus) && (this.passwordFieldStatus)) {
