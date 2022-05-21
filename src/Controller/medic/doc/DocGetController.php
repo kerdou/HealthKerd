@@ -137,8 +137,9 @@ class DocGetController extends DocGetControllerFunctionsPool
 
         $this->docList = $mixedDataResult['doc'];
         $this->docList['fullNameSentence'] = $fullNameSentence; // titre et nom complet du doc
-        $this->docList['speMedicList'] = $mixedDataResult['speMedic']; // spécialités médicales
-        $this->docList['docOfficeList'] = $mixedDataResult['docOffice']; // mliste des cabinets médicaux
+        $this->docList['docSpeMedicList'] = $mixedDataResult['docSpeMedic']; // spécialités médicales du doc
+        $this->docList['docOfficeList'] = $mixedDataResult['docOffice']; // liste des cabinets médicaux
+        $this->docList['docOfficeSpeMedic'] = $mixedDataResult['docOfficeSpeMedic']; // listes des spécialités médicales des doc offices
         $this->docList['medicEvent'] = $mixedDataResult['medicEvent']; // liste des events
 
         $this->eventsSummaryCreation($mixedDataResult['medicEvent']);

@@ -42,18 +42,25 @@ class DocSelectModel extends \HealthKerd\Model\common\PdoBufferManager
         $docResult = $docQuery->fetch(\PDO::FETCH_ASSOC);
 
         // gestion de la requete pour les speMedics
-        $speMedicStmt = $this->mapper->maps['SelectDocSpemedicRelation']->selectPreparedDocSpemedicRelationStmt();
-        $speMedicQuery = $this->pdo->prepare($speMedicStmt);
-        $speMedicQuery->bindParam(':docID', $docID);
-        $speMedicQuery->execute();
-        $speResult = $speMedicQuery->fetchAll(\PDO::FETCH_ASSOC);
+        $docSpeMedicStmt = $this->mapper->maps['SelectDocSpemedicRelation']->selectPreparedDocSpemedicRelationStmt();
+        $docSpeMedicQuery = $this->pdo->prepare($docSpeMedicStmt);
+        $docSpeMedicQuery->bindParam(':docID', $docID);
+        $docSpeMedicQuery->execute();
+        $docSpeMedicResult = $docSpeMedicQuery->fetchAll(\PDO::FETCH_ASSOC);
 
         // gestion de la requete pour le docOffice
-        $docOfficestmt = $this->mapper->maps['SelectDocDocofficeRelation']->gatherAllDocOfficesBasicsStmt();
-        $docOfficeQuery = $this->pdo->prepare($docOfficestmt);
+        $docOfficeStmt = $this->mapper->maps['SelectDocDocofficeRelation']->gatherAllDocOfficesBasicsStmt();
+        $docOfficeQuery = $this->pdo->prepare($docOfficeStmt);
         $docOfficeQuery->bindParam(':docID', $docID);
         $docOfficeQuery->execute();
         $docOfficeResult = $docOfficeQuery->fetchAll(\PDO::FETCH_ASSOC);
+
+        // récupération des spécialités médicales des doc offices
+        $docOfficeSpeMedicStmt = $this->mapper->maps['SelectDocofficeSpemedicRelation']->selectSpeMedicOfOneDocOffices();
+        $docOfficeSpeMedicQuery = $this->pdo->prepare($docOfficeSpeMedicStmt);
+        $docOfficeSpeMedicQuery->bindParam(':docID', $docID);
+        $docOfficeSpeMedicQuery->execute();
+        $docOfficeSpeMedicResult = $docOfficeSpeMedicQuery->fetchAll(\PDO::FETCH_ASSOC);
 
         // gestion de la requete pour les events
         $medicEventStmt = $this->mapper->maps['SelectMedicEventList']->eventsFromOneDocIdStmt();
@@ -67,14 +74,16 @@ class DocSelectModel extends \HealthKerd\Model\common\PdoBufferManager
 
         // fermeture des connexions à la DB
         $docQuery->closeCursor();
-        $speMedicQuery->closeCursor();
+        $docSpeMedicQuery->closeCursor();
         $docOfficeQuery->closeCursor();
+        $docOfficeSpeMedicQuery->closeCursor();
         $medicEventQuery->closeCursor();
 
         return $result = [
             'doc' => $docResult,
-            'speMedic' => $speResult,
+            'docSpeMedic' => $docSpeMedicResult,
             'docOffice' => $docOfficeResult,
+            'docOfficeSpeMedic' => $docOfficeSpeMedicResult,
             'medicEvent' => $medicEventResult
         ];
     }

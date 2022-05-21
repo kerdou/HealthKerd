@@ -9,10 +9,10 @@ var LoginPage = /** @class */ (function () {
         this.loginButton = document.getElementById('login_button');
         this.loginFieldStatus = false;
         this.passwordFieldStatus = false;
+        this.docu.addEventListener('keydown', this.enterPress.bind(this));
         this.loginField.addEventListener('input', _.debounce(this.loginFieldBehaviour.bind(this), 150));
         this.passwordField.addEventListener('input', _.debounce(this.passwordFieldBehaviour.bind(this), 150));
         this.loginButton.addEventListener('click', this.loginButtonBehaviour.bind(this));
-        this.docu.addEventListener('keydown', this.enterPress.bind(this));
         var dataFromGet = window.location.search;
         (dataFromGet.length != 0) ? this.getCheck(dataFromGet) : '';
     }

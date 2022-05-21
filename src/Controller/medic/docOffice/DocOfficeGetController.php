@@ -44,10 +44,10 @@ class DocOfficeGetController
     private function displayAllDocOfficesList(): void
     {
         $docOfficeModel = new \HealthKerd\Model\modelInit\medic\docOffice\DocOfficeSelectModel();
-        $docOfficeList = $docOfficeModel->gatherAllDocOfficesModel();
+        $docOfficeData = $docOfficeModel->gatherAllDocOfficesModel();
 
         $docOfficeView = new \HealthKerd\View\medic\docOffice\docOfficeList\DocOfficeListPageBuilder();
-        $docOfficeView->buildOrder($docOfficeList);
+        $docOfficeView->buildOrder($docOfficeData['docOffice'], $docOfficeData['docOfficeSpeMedic']);
     }
 
     /** Affichage des events liés à un cabinet médical en particulier

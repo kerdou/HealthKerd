@@ -70,7 +70,7 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
 
         $this->modifButtonHTML = $this->modifButtonBuilder();
         $this->lockedAccountKeyHTML = $this->lockedAccountKeyCreation();
-        $this->speMedicBadgesHTML = $this->speMedicBadgesBuilder();
+        $this->speMedicBadgesHTML = $this->docSpeMedicBadgesBuilder();
         $this->contactContentHTML = $this->contactContentBuilder();
         $this->commentPortionHTML = $this->commentPortionBuilder();
         $this->medicEventsReportHTML = $this->medicEventsReportBuilder();
@@ -113,11 +113,11 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
     /** Construction des badges de spécialités médicales du docteur
      * @return string       HTML des badges de spécialités médicales
      */
-    private function speMedicBadgesBuilder(): string
+    private function docSpeMedicBadgesBuilder(): string
     {
         $speMedicBadgesHTML = '';
 
-        foreach ($this->docDataArray['speMedicList'] as $value) {
+        foreach ($this->docDataArray['docSpeMedicList'] as $value) {
             //var_dump($value);
             $badgeTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/badges/docSpeMedic/docSpeMedic.html');
             $badgeTemplate = str_replace('{speMedicName}', $value['nameForDoc'], $badgeTemplate);
@@ -269,15 +269,37 @@ class OneDocPageBuilder extends \HealthKerd\View\common\ViewInChief
             foreach ($this->docDataArray['docOfficeList'] as $value) {
                 $docOfficeTemp = $docOfficeCardsTemplate;
 
+                $speMedicBadgesHTML = $this->docOfficeSpeMedicBadgesBuilder($value['docOfficeID']);
+
                 $docOfficeTemp = str_replace('{docOfficeID}', $value['docOfficeID'], $docOfficeTemp);
                 $docOfficeTemp = str_replace('{name}', $value['name'], $docOfficeTemp);
                 $docOfficeTemp = str_replace('{cityName}', $value['cityName'], $docOfficeTemp);
+                $docOfficeTemp = str_replace('{docOfficeSpeMedicBadges}', $speMedicBadgesHTML, $docOfficeTemp);
 
                 $docOfficeCardsHTML .= $docOfficeTemp;
             }
         }
 
         return $docOfficeCardsHTML;
+    }
+
+    /** Construction des badges de spécialités médicales d'un doc office
+     * @return string       HTML des badges de spécialités médicales
+     */
+    private function docOfficeSpeMedicBadgesBuilder(string $docOfficeID): string
+    {
+        $speMedicBadgesHTML = '';
+
+        foreach ($this->docDataArray['docOfficeSpeMedic'] as $value) {
+            if ($docOfficeID == $value['docOfficeID']) {
+                // les cards Bootstrap ne tolérent qu'un seul <a>, arrivé à 2 elles explosent en vol. Le badge unclickableDocSpeMedic.html est une <div> pour éviter ce problème
+                $badgeTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/badges/docSpeMedic/unclickableDocSpeMedic.html');
+                $badgeTemplate = str_replace('{speMedicName}', $value['name'], $badgeTemplate);
+                $speMedicBadgesHTML .= $badgeTemplate;
+            }
+        }
+
+        return $speMedicBadgesHTML;
     }
 
     /** Contenu de la boîte modale permettant de choisir entre les pages suivantes

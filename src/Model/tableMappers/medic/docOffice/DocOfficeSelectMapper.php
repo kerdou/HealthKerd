@@ -17,5 +17,6 @@ class DocOfficeSelectMapper
     public function gatherAllDocOfficesMapper(): void
     {
         $this->maps['SelectDocOffice'] = new \HealthKerd\Model\sqlStmtStore\docOfficeList\SelectDocOfficeList();
+        $this->maps['SelectDocofficeSpemedicRelation'] = new \HealthKerd\Model\sqlStmtStore\docofficeSpemedicRelation\SelectDocofficeSpemedicRelation();
     }
 }

@@ -27,6 +27,7 @@ class DocSelectMapper
         $this->maps['SelectDocList'] = new \HealthKerd\Model\sqlStmtStore\docList\SelectDocList();
         $this->maps['SelectDocSpemedicRelation'] = new \HealthKerd\Model\sqlStmtStore\docSpemedicRelation\SelectDocSpemedicRelation();
         $this->maps['SelectDocDocofficeRelation'] = new \HealthKerd\Model\sqlStmtStore\docDocofficeRelation\SelectDocDocofficeRelation();
+        $this->maps['SelectDocofficeSpemedicRelation'] = new \HealthKerd\Model\sqlStmtStore\docofficeSpemedicRelation\SelectDocofficeSpemedicRelation();
         $this->maps['SelectMedicEventList'] = new \HealthKerd\Model\sqlStmtStore\medicEventList\SelectMedicEventList();
     }
 
