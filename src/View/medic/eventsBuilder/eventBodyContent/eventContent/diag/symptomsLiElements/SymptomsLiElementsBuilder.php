@@ -16,8 +16,9 @@ class SymptomsLiElementsBuilder
             $symptomTemplateHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/event/eventBodyContent/sections/eventContentAccordions/diagAccordion/liElements/symptoms/symptomTemplate.html');
 
             foreach ($symptomsData as $value) {
-                $symptomTemplateHTML = str_replace('{symptom}', $value['symptom'], $symptomTemplateHTML);
-                $symptomsHTML .= $symptomTemplateHTML;
+                $tempTemplate = $symptomTemplateHTML;
+                $tempTemplate = str_replace('{symptom}', $value['symptom'], $symptomTemplateHTML);
+                $symptomsHTML .= $tempTemplate;
             }
         } else {
             $symptomsHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/event/eventBodyContent/sections/eventContentAccordions/diagAccordion/liElements/symptoms/noSymptomTemplate.html');

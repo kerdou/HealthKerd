@@ -16,6 +16,7 @@ class DiagBuilder
      */
     public function buildOrder(array $diagData): string
     {
+        //var_dump($diagData);
         $diagTemplateHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/event/eventBodyContent/sections/eventContentAccordions/diagAccordion/diagAccordionTemplate.html');
 
         // symptoms

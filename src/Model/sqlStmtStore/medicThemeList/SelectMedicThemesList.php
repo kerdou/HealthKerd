@@ -11,11 +11,43 @@ class SelectMedicThemesList
     {
     }
 
+    /** Génére la déclaration SQL pour les thèmes médicaux créés par un user
+     * @return string               Déclaration SQL complète
+     */
+    public function selectMedicThemeCreatedByUserIdStmt(): string
+    {
+        $stmt =
+            'SELECT
+                medic_theme_list.medicThemeID,
+                medic_theme_list.name
+            FROM
+                medic_theme_list
+            WHERE
+                medic_theme_list.userID = ' . $_SESSION['userID'] .
+            ' ORDER BY medic_theme_list.name;';
+
+        /*
+            SELECT
+                medic_theme_list.medicThemeID,
+                medic_theme_list.name
+            FROM
+                medic_theme_list
+            WHERE
+                medic_theme_list.userID = 3
+            ORDER BY medic_theme_list.name;
+        */
+
+
+
+        return $stmt;
+    }
+
     /** Génére la déclaration SQL pour les thèmes médicaux utilisés par un user
      * @return string               Déclaration SQL complète
      */
-    public function selectMedicThemeByUserIdStmt(): string
+    public function selectMedicThemeUsedByUserIdStmt(): string
     {
+
         $stmt =
             'SELECT DISTINCT
                 medic_theme_list.medicThemeID,

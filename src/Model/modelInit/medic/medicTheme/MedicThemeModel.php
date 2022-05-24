@@ -21,7 +21,7 @@ class MedicThemeModel extends \HealthKerd\Model\common\ModelInChief
         $mapper->selectMedicThemeByUserIdMapper();
 
         $stmt = '';
-        $stmt = $mapper->maps['SelectMedicThemesList']->selectMedicThemeByUserIdStmt();
+        $stmt = $mapper->maps['SelectMedicThemesList']->selectMedicThemeCreatedByUserIdStmt();
 
         $result = $this->pdoRawSelectExecute($stmt, 'multi');
         return $result;

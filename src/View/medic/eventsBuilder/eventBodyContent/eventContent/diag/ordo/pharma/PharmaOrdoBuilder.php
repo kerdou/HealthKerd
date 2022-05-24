@@ -28,7 +28,11 @@ class PharmaOrdoBuilder
             $roleOnAffectBadgeTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/badges/treatRoleOnAffect/treatPharmaRoleOnAffect.html');
             $affectNameBadgeTemplate = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/badges/medicAffect/medicAffect.html');
 
+            $prescTempStore = '';
+
             foreach ($singleOrdo['prescList'] as $presc) {
+                //var_dump($presc);
+
                 $prescTemp = $prescTemplateHTML;
                 $prescTemp = str_replace('{prescContent}', $presc['content'], $prescTemp);
 
@@ -44,8 +48,10 @@ class PharmaOrdoBuilder
                 $affectNameTemp = str_replace('{medicAffectName}', $presc['affectName'], $affectNameTemp);
                 $prescTemp = str_replace('{medicAffectNameBadge}', $affectNameTemp, $prescTemp);
 
-                $ordoHTML = str_replace('{pharmaPrescElements}', $prescTemp, $ordoHTML);
+                $prescTempStore .= $prescTemp;
             }
+
+            $ordoHTML = str_replace('{pharmaPrescElements}', $prescTempStore, $ordoHTML);
         } else {
             $ordoHTML = str_replace('{pharmaPrescElements}', '', $ordoHTML);
         }

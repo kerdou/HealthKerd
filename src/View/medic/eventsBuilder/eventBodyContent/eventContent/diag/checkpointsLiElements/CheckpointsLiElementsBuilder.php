@@ -16,8 +16,9 @@ class CheckpointsLiElementsBuilder
             $checkpointTemplateHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/event/eventBodyContent/sections/eventContentAccordions/diagAccordion/liElements/checkpoints/checkpointTemplate.html');
 
             foreach ($checkpointsData as $value) {
-                $checkpointTemplateHTML = str_replace('{checkpoint}', $value['checkpoint'], $checkpointTemplateHTML);
-                $checkpointsHTML .= $checkpointTemplateHTML;
+                $tempTemplate = $checkpointTemplateHTML;
+                $tempTemplate = str_replace('{checkpoint}', $value['checkpoint'], $checkpointTemplateHTML);
+                $checkpointsHTML .= $tempTemplate;
             }
         } else {
             $checkpointsHTML = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/event/eventBodyContent/sections/eventContentAccordions/diagAccordion/liElements/checkpoints/noCheckpointTemplate.html');
