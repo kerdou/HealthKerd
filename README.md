@@ -9,8 +9,7 @@
 ![WIP](https://img.shields.io/badge/WIP-red)
 ![Phase](https://img.shields.io/badge/phase-alpha-red)
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kerdou/HealthKerd/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kerdou/HealthKerd/pulls)
+[![GitHub Issues](https://img.shields.io/github/issues/kerdou/HealthKerd)](https://img.shields.io/github/issues/kerdou/HealthKerd)
 [![License](https://img.shields.io/badge/license-ODbL-blue.svg)](/LICENSE)
 
 </div>
