@@ -19,7 +19,7 @@
     <br>
 </p>
 
-## 📝 Table of Contents
+## 📝 Table of Contents :monocle_face:
 
 - [About](#about)
 - [Getting Started](#getting_started)
