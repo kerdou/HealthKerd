@@ -16,7 +16,7 @@
     "url": "git+https://github.com/kerdou/HealthKerd.git"
   },
   "author": "kerdou",
-  "license": "ISC",
+  "license": "BSD-3-Clause-Clear",
   "bugs": {
     "url": "https://github.com/kerdou/HealthKerd/issues"
   },
