@@ -1,24 +1,12 @@
 #scrollUpButton {
     position: fixed;
-    /*display: none;
-    */
     bottom: 32px;
     right: 32px;
     z-index: 99;
     padding: 0;
     border: none;
     outline: none;
-    /*cursor: pointer;
-    */
     opacity: 0;
     transition: opacity 0.25s ease-in-out;
-    -webkit-transition: opacity 0.25s ease-in-out;
-    -moz-transition: opacity 0.25s ease-in-out;
-    -ms-transition: opacity 0.25s ease-in-out;
-    -o-transition: opacity 0.25s ease-in-out;
     border-radius: 50%;
-    -webkit-border-radius: 50%;
-    -moz-border-radius: 50%;
-    -ms-border-radius: 50%;
-    -o-border-radius: 50%;
 }
