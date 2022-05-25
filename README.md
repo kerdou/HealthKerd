@@ -2,10 +2,12 @@
   <a href="" rel="noopener">
 </p>
 
-<h1 align="center">HealthKerd</h1>
+**<h1 align="center">HealthKerd</h1>**
 
 <div align="center">
 
+![WIP](https://img.shields.io/badge/WIP-red)
+![Phase](https://img.shields.io/badge/phase-alpha-red)
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
 [![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/issues)
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/pulls)
@@ -15,83 +17,74 @@
 
 ---
 
-<p align="center"> Few lines describing your project.
-    <br>
-</p>
+<p align="center"> HealthKerd is a web application meant to keep track of my medical appointments and treatments.</p>
 
-## 📝 Table of Contents :monocle_face:
+## 📝 Table of Contents
 
 - [About](#about)
-- [Getting Started](#getting_started)
-- [Deployment](#deployment)
 - [Usage](#usage)
 - [Built Using](#built_using)
-- [TODO](../TODO.md)
-- [Contributing](../CONTRIBUTING.md)
-- [Author](#authors)
+- [TODO](#todo)
+- [Author](#author)
 - [Acknowledgments](#acknowledgement)
 
 ## 🧐 About <a name = "about"></a>
 
-If you landed on this page, it means you come from my portfolio.
+If you landed on this page, it probably means you came from my portfolio.
 
-## 🏁 Getting Started <a name = "getting_started"></a>
+Here is a list of things you should know before getting any further.
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+### :dart: What HealthKerd is <a name = "is"></a>
 
-### Prerequisites
+- Very much work in progress
 
-What things you need to install the software and how to install them.
+- A web application meant to keep track of my medical appointments and treatments.
 
-```
-Give examples
-```
+- Relying on a MySQL database made of 64 tables using the InnoDB engine
 
-### Installing
+- Far from ideal from the UI/UX standpoint, because the first objective was about gaining experience regarding backend and database
 
-A step by step series of examples that tell you how to get a development env running.
+- A great opportunity to work on a bigger project without any big framework in order to strenghten my basics. When it comes to learning, I don't believe in shortcuts
 
-Say what the step will be
+- My first personal project
 
-```
-Give the example
-```
+- A sandbox allowing me to make my mistakes and learn from them
 
-And repeat
+- A project that will evolve on the long run
 
-```
-until finished
-```
+- A great addition to my portfolio
 
-End with an example of getting some data out of the system or using it for a little demo.
 
-## 🔧 Running the tests <a name = "tests"></a>
+### :no_entry: What HealthKerd is ~~**NOT**~~<a name = "isnot"></a>
 
-Explain how to run the automated tests for this system.
+- Meant to be used by anybody but me for legal reasons, this is why the database won't be provided
 
-### Break down into end to end tests
+- Relying on frontend or backend frameworks such as React or Symfony, but this will change in the future
 
-Explain what these tests test and why
+## 🎈 Usage <a name = "usage"></a>
 
-```
-Give an example
-```
+### Demonstration account
 
-### And coding style tests
+- The login page provides the user name and password for the demonstration account
+- It gives access to a restricted account which doesn't allow to modify the user's informations
+- Some links won't react to your clicks, they are just placeholders
 
-Explain what these tests test and why
+### Doctors pages
 
-```
-Give an example
-```
+- The doctors who's names are followed by a :key: can't be modified
+- You can create, modify and delete doctors which don't have a :key:
+- You can also edit their medical specialities and their attached medical offices
 
-## 🎈 Usage <a name="usage"></a>
+### Class UML
 
-Add notes about how to use the system.
+- They can be found at **```dev/UML/classULM/```**
+- They come as **```.plantuml```** files
 
-## 🚀 Deployment <a name = "deployment"></a>
+### PHP, TS & Sass files location
 
-That won't happen due to legal restrictions regarding medical data.
+- PHP can be found at **```src/```**
+- TypeScript can eb found at **```dev/JS & TS/TS/```**
+- Sass can be found at **```dev/Sass/```**
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
@@ -109,11 +102,19 @@ That won't happen due to legal restrictions regarding medical data.
 - [Live Sass Compiler](https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass) - Sass watcher and compiler
 - [Webpack](https://webpack.js.org/) - Frontend bundler
 
+## :heavy_check_mark: TODO <a name = "todo"></a>
 
+- Add breadcrumbs on many pages in order to ease navigation
 
-## ✍️ Authors <a name = "authors"></a>
+- Rewrite frontend while including React
 
-- [@kerdou](https://github.com/kerdou) - Idea & Initial work
+- Rewrite backend while including Symfony
+
+- Add new pages and features once those frameworks will be included
+
+## ✍️ Author <a name = "author"></a>
+
+- [@kerdou](https://www.linkedin.com/in/gautier-le-hir-78796515b/) - Idea & Initial work. [Portfolio](https://kerdapp.ddns.net/)
 
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
