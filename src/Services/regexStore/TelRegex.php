@@ -12,11 +12,12 @@ class TelRegex
     {
         $stringToCheck = html_entity_decode($stringToCheck);
 
-        /** ^                                 Doit être placé au début du numéro de tel
-         *   ^([0-9]{2}[. ]?){4}              4 séries de 2 chiffres séparées par un point ou sans séparation
-         *                      ([0-9]{2})$   Suivies de 2 chiffres
+        /** ^([0]{1})                                               Commence par un 0
+         *           ([1-9]{1}[. ]?)                                Suivi d'un chiffre allant de 1 à 9 suivi d'un . ou pas
+         *                          ([0-9]{2}[. ]?){3}              Suivi de 3 pairs de chiffres allant de 0 à 9 suivis chacun d'un . ou pas
+         *                                            ([0-9]{2})$   Se termine par 2 chiffres allant de 0 à 9
          * */
-        $tel = "^([0-9]{2}[. ]?){4}([0-9]{2})$";
+        $tel = "^([0]{1})([1-9]{1}[. ]?)([0-9]{2}[. ]?){3}([0-9]{2})$";
 
         $pregListForTel = "/" . $tel . "/";
         $regexResult = (preg_match($pregListForTel, $stringToCheck) ? true : false);

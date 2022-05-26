@@ -2,11 +2,13 @@ var TelRegex = /** @class */ (function () {
     function TelRegex() {
     }
     TelRegex.prototype.telRegex = function (telValue) {
-        /** ^                       Doit être placé au début du numéro de tel
-         *   (([. ]?[0-9]{2}){5}    Des séries de 2 chiffres séparées par des points ou sans séparation*/
-        var tel = '^([. ]?[0-9]{2}){5}';
-        var telConcat = tel; // Remplace par \ par des \\. Etape nécessaire avant de transformer la string en expression régulière.
-        var telRegex = new RegExp(telConcat); // création du regex
+        /** ^([0]{1})                                               Commence par un 0
+         *           ([1-9]{1}[. ]?)                                Suivi d'un chiffre allant de 1 à 9 suivi d'un . ou pas
+         *                          ([0-9]{2}[. ]?){3}              Suivi de 3 pairs de chiffres allant de 0 à 9 suivis chacun d'un . ou pas
+         *                                            ([0-9]{2})$   Se termine par 2 chiffres allant de 0 à 9
+         * */
+        var tel = "^([0]{1})([1-9]{1}[. ]?)([0-9]{2}[. ]?){3}([0-9]{2})$";
+        var telRegex = new RegExp(tel); // création du regex
         telValue = telValue.trim();
         return telRegex.test(telValue);
     };

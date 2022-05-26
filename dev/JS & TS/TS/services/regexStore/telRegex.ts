@@ -1,14 +1,13 @@
 export default class TelRegex
 {
     public telRegex(telValue: string): boolean {
-      /** ^                                 Doit être placé au début du numéro de tel
-       *   ^([0-9]{2}[. ]?){4}              4 séries de 2 chiffres séparées par un point ou sans séparation
-       *                      ([0-9]{2})$   Suivies de 2 chiffres
-       * */
-       let tel = "^([0-9]{2}[. ]?){4}([0-9]{2})$";
-
-        let telConcat = tel; // Remplace par \ par des \\. Etape nécessaire avant de transformer la string en expression régulière.
-        let telRegex = new RegExp(telConcat); // création du regex
+        /** ^([0]{1})                                               Commence par un 0
+         *           ([1-9]{1}[. ]?)                                Suivi d'un chiffre allant de 1 à 9 suivi d'un . ou pas
+         *                          ([0-9]{2}[. ]?){3}              Suivi de 3 pairs de chiffres allant de 0 à 9 suivis chacun d'un . ou pas
+         *                                            ([0-9]{2})$   Se termine par 2 chiffres allant de 0 à 9
+         * */
+        let tel = "^([0]{1})([1-9]{1}[. ]?)([0-9]{2}[. ]?){3}([0-9]{2})$";
+        let telRegex = new RegExp(tel); // création du regex
 
         telValue = telValue.trim();
         return telRegex.test(telValue);
