@@ -41,7 +41,7 @@ class SpeMedicGetController
     */
     private function displayAllSpeMedics(): void
     {
-        $speMedicModel = new \HealthKerd\Model\modelInit\medic\speMedic\speMedicSelectModel();
+        $speMedicModel = new \HealthKerd\Model\modelInit\medic\speMedic\SpeMedicSelectModel();
         $speMedicList = $speMedicModel->selectSpeMedicUsedByUser();
 
         $speView = new \HealthKerd\View\medic\speMedic\speMedicList\SpeMedicListPageBuilder();
