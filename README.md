@@ -59,42 +59,47 @@ Here is a list of things you should know before getting any further.
 
 ## :star: Highlights <a name = "highlights"></a>
 
-- Database creation
-  - Since that app was created in order to help me keeping track of my medical appointments and treatments, everything is based on a real world study case
-  - It was created through an iterative process that cycled until the database was able to handle every case I encountered or could encounter
-  - This explains why everything is split between so many tables<br /><br />
+### PHP, TS & Sass files location
 
-- Login page
-  - If you try to log in with a wrong user name and/or a wrong password, you will have an adapted error message
-  - If you cumulate too many wrong login attemps during a certain period of time, your IP will be banned for 48 hours due to an overwatch from Fail2Ban<br /><br />
+- PHP can be found at **```src/```**
+- TypeScript can be found at **```dev/JS & TS/TS/```**
+- Sass can be found at **```dev/Sass/```**
 
-- Doctor name
-  - Depending on the doctor's title which could be Dr/Mr/Mrs/Ms or none, the name displayed will change accordingly
-  - Doctor medical speciality and office form
-  - Data on this page comes from an AJAX request
-  - Once the modification is confirmed, the data also get to PHP through AJAX
-  - Clicking on a yellow badge below "Spécialités médicales assignées" will make it vanish and the speciality name will be put back into the "Spécialités médicales disponibles" dropdown menu
-  - Clicking on "Ajouter" will remove the selected medical speciality from the dropdown menu and make it appear as a badge under "Spécialités médicales assignées"
-  - Clicking on a card below "Cabinets médicaux assignés" will remove it. If the removed badge contains a speciality present in "Spécialités médicales assignées", it will reappear in "Cabinets médicaux compatibles"
-  - Clicking on a card below "Cabinets médicaux compatibles" will transfer it under "Cabinets médicaux assignés"<br /><br />
+### Class UML
 
-- Medical events display
-  - It only takes 2 connections to the database in order to display the medical events
-  - The first connection gathers the events ids
-  - The second connection gathers every data from around 40 tables
-  - This event data collection is managed by a homemade buffer that can be found in **```/src/Model/common/PdoBufferManager.php```**
-  - This data collection doesn't use an ORM but still relies on a homemade mapping system in order to reach many tables with adaptabilty in mind during its creation
-  - The mapping system has the advantage to make the Model files smaller and more readable. It is a splitted in **```/src/Model/```**
-  - Since the data is very much splitted between the different tables, it takes a lot of work to recombine it all. That part is done in **```src/Processor/medic/event/```** before being sent to the View.<br /><br />
+- They can be found at **```dev/UML/classULM/```**
+- They come as **```.plantuml```** files
+### Database creation
 
-- Class UML
-  - They can be found at **```dev/UML/classULM/```**
-  - They come as **```.plantuml```** files<br /><br />
+- Since that app was created in order to help me keeping track of my medical appointments and treatments, everything is based on a real world study case
+- It was created through an iterative process that cycled until the database was able to handle every case I encountered or could encounter
+- This explains why everything is split between so many tables
 
-- PHP, TS & Sass files location
-  - PHP can be found at **```src/```**
-  - TypeScript can be found at **```dev/JS & TS/TS/```**
-  - Sass can be found at **```dev/Sass/```**
+### Medical events display
+
+- It only takes 2 connections to the database in order to display the medical events
+- The first connection gathers the events ids
+- The second connection gathers every data from around 40 tables
+- This event data collection is managed by a homemade buffer that can be found in **```/src/Model/common/PdoBufferManager.php```**
+- This data collection doesn't use an ORM but still relies on a homemade mapping system in order to reach many tables with adaptabilty in mind during its creation
+- The mapping system has the advantage to make the Model files smaller and more readable. It is a splitted in **```/src/Model/```**
+- Since the data is very much splitted between the different tables, it takes a lot of work to recombine it all. That part is done in **```src/Processor/medic/event/```** before being sent to the View
+
+### Login page
+
+- If you try to log in with a wrong user name and/or a wrong password, you will have an adapted error message
+- If you cumulate too many wrong login attemps during a certain period of time, your IP will be banned for 48 hours due to an overwatch from Fail2Ban
+
+### Doctor name
+
+- Depending on the doctor's title which could be Dr/Mr/Mrs/Ms or none, the name displayed will change accordingly
+- Doctor medical speciality and office form
+- Data on this page comes from an AJAX request
+- Once the modification is confirmed, the data also get to PHP through AJAX
+- Clicking on a yellow badge below "Spécialités médicales assignées" will make it vanish and the speciality name will be put back into the "Spécialités médicales disponibles" dropdown menu
+- Clicking on "Ajouter" will remove the selected medical speciality from the dropdown menu and make it appear as a badge under "Spécialités médicales assignées"
+- Clicking on a card below "Cabinets médicaux assignés" will remove it. If the removed badge contains a speciality present in "Spécialités médicales assignées", it will reappear in "Cabinets médicaux compatibles"
+- Clicking on a card below "Cabinets médicaux compatibles" will transfer it under "Cabinets médicaux assignés"
 
 ## 🎈 Usage <a name = "usage"></a>
 
