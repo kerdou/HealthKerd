@@ -17,7 +17,7 @@ export default class MobileSidebar
         this.windowWidth = window.innerWidth;
 
         if (this.windowWidth >= 992 && this.mobileSidebarElement.classList.contains('show')) {
-            let boostrapSidebarObj = Offcanvas.getInstance(this.mobileSidebarElement) as Offcanvas;
+            const boostrapSidebarObj = Offcanvas.getInstance(this.mobileSidebarElement) as Offcanvas;
             boostrapSidebarObj.hide();
         }
     }

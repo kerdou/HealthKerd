@@ -93,7 +93,7 @@ export default class DocFormBehaviour extends DocFormChecks
     private submitForm(): void {
         let formValidityResult = {};
         formValidityResult = this.formChecks();
-        let formHasIssues = _.includes(formValidityResult, false);
+        const formHasIssues = _.includes(formValidityResult, false);
 
         // Si aucun test ne renvoie false, on peut submit le form
         if (!formHasIssues) {
@@ -105,7 +105,7 @@ export default class DocFormBehaviour extends DocFormChecks
      * @returns {object} Renvoie du statut de vérification du formulaire
      */
     private formChecks(): object {
-        let formValidity = {
+        const formValidity = {
             lastNameCheck: false,
             firstNameCheck: false,
             telCheck: false,

@@ -8,8 +8,8 @@ export default class DateRegex
      * @return {bool}                     Résultat du test du regex
      */
     public frenchDateRegex(dateValue: string): boolean {
-        let dateExpr = /^\d{1,2}\/\d{1,2}\/\d{4}$/; // Remplace par \ par des \\. Etape nécessaire avant de transformer la string en expression régulière.
-        let dateRegex = new RegExp(dateExpr); // création du regex
+        const dateExpr = /^\d{1,2}\/\d{1,2}\/\d{4}$/; // Remplace par \ par des \\. Etape nécessaire avant de transformer la string en expression régulière.
+        const dateRegex = new RegExp(dateExpr); // création du regex
 
         dateValue = dateValue.trim();
         return dateRegex.test(dateValue);

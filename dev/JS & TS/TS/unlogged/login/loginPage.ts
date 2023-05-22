@@ -18,7 +18,7 @@ export default class LoginPage
         this.passwordField.addEventListener('input', _.debounce(this.passwordFieldBehaviour.bind(this), 150));
         this.loginButton.addEventListener('click', this.loginButtonBehaviour.bind(this));
 
-        let dataFromGet = window.location.search;
+        const dataFromGet = window.location.search;
         (dataFromGet.length != 0) ? this.getCheck(dataFromGet): '';
     }
 
@@ -26,10 +26,10 @@ export default class LoginPage
      */
     private getCheck(dataFromGet: string): void {
         dataFromGet = dataFromGet.replace('?', '');
-        let getArray = dataFromGet.split('&');
+        const getArray = dataFromGet.split('&');
 
-        let givenUser = getArray[0].replace('givenUser=', '');
-        let errorType = getArray[1].replace('=true', '');
+        const givenUser = getArray[0].replace('givenUser=', '');
+        const errorType = getArray[1].replace('=true', '');
 
         this.loginField.value = givenUser;
         this.loginFieldBehaviour();

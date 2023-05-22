@@ -15,14 +15,14 @@ export default class DocFormChecks
         let lastnameValue: string = lastnameInput.value;
         lastnameValue = lastnameValue.trim();
 
-        let lastnameValidity: boolean = false;
+        let lastnameValidity = false;
 
         if (lastnameValue.length < 2) {
             lastnameValidity = false;
             lastnameInput.classList.add('is-invalid');
         } else {
-            let lastnameTestObj = new NameRegex;
-            let lastnameTest = lastnameTestObj.nameRegex(lastnameValue);
+            const lastnameTestObj = new NameRegex;
+            const lastnameTest = lastnameTestObj.nameRegex(lastnameValue);
 
             if (lastnameTest) {
                 lastnameValidity = true;
@@ -52,8 +52,8 @@ export default class DocFormChecks
             firstnameValidity = true;
             firstnameInput.classList.remove('is-invalid');
         } else {
-            let firstnameTestObj = new NameRegex;
-            let firstnameTest = firstnameTestObj.nameRegex(firstnameValue);
+            const firstnameTestObj = new NameRegex;
+            const firstnameTest = firstnameTestObj.nameRegex(firstnameValue);
 
             if (firstnameTest) {
                 firstnameValidity = true;
@@ -77,14 +77,14 @@ export default class DocFormChecks
         let telValue: string = telInput.value; // variable du numéro de tel
         telValue = telValue.trim();
 
-        let telValidity: boolean = false;
+        let telValidity = false;
 
         if (telValue.length == 0) {
             telValidity = true;
             telInput.classList.remove('is-invalid');
         } else {
-            let telTestObj = new TelRegex;
-            let telTest = telTestObj.telRegex(telValue);
+            const telTestObj = new TelRegex;
+            const telTest = telTestObj.telRegex(telValue);
 
             if (telTest) {
                 telValidity = true;
@@ -108,14 +108,14 @@ export default class DocFormChecks
         let mailValue: string = mailInput.value; // variable d'adresse e-mail
         mailValue = mailValue.trim();
 
-        let mailValidity: boolean = false;
+        let mailValidity = false;
 
         if (mailValue.length == 0) {
             mailValidity = true;
             mailInput.classList.remove('is-invalid');
         } else {
-            let mailTestObj = new MailRegex;
-            let mailTest = mailTestObj.mailRegex(mailValue);
+            const mailTestObj = new MailRegex;
+            const mailTest = mailTestObj.mailRegex(mailValue);
 
             if (mailTest) {
                 mailValidity = true;
@@ -139,14 +139,14 @@ export default class DocFormChecks
         let webpageValue: string = webpageInput.value;
         webpageValue = webpageValue.trim();
 
-        let webPageValidity: boolean = false;
+        let webPageValidity = false;
 
         if (webpageValue.length == 0) {
             webPageValidity = true;
             webpageInput.classList.remove('is-invalid');
         } else {
-            let webpageTestObj = new UrlRegex;
-            let webpageTest = webpageTestObj.urlRegex(webpageValue);
+            const webpageTestObj = new UrlRegex;
+            const webpageTest = webpageTestObj.urlRegex(webpageValue);
 
             if (webpageTest) {
                 webPageValidity = true;
@@ -170,14 +170,14 @@ export default class DocFormChecks
         let doctolibPageValue: string = doctolibPageInput.value;
         doctolibPageValue = doctolibPageValue.trim();
 
-        let doctolibPageValidity: boolean = false;
+        let doctolibPageValidity = false;
 
         if (doctolibPageValue.length == 0) {
             doctolibPageValidity = true;
             doctolibPageInput.classList.remove('is-invalid');
         } else {
-            let doctolibpageTestObj = new UrlRegex;
-            let doctolibpageTest = doctolibpageTestObj.urlRegex(doctolibPageValue);
+            const doctolibpageTestObj = new UrlRegex;
+            const doctolibpageTest = doctolibpageTestObj.urlRegex(doctolibPageValue);
 
             if (doctolibpageTest) {
                 doctolibPageValidity = true;

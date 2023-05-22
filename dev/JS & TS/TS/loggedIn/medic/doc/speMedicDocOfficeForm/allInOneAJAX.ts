@@ -2,7 +2,7 @@ export default class AllInOneAJAX
 {
     // réception des données à l'ouverture de la page
     public async receive(): Promise<any> {
-        let xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
 
         return new Promise(resolve => {
             const phpScriptPath = window.location.pathname + "?controller=medic&subCtrlr=doc&action=getAJAXDataForSpeMedDocOfficeForm"; // les params sont placés à la fin de l'URL pour le GET
@@ -20,7 +20,7 @@ export default class AllInOneAJAX
 
     // envoi des données du form au clic sur "Envoyer"
     public async send(params: string): Promise<any> {
-        let xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
 
         return new Promise(resolve => {
             const phpScriptPath = window.location.pathname + "?controller=medic&subCtrlr=docPost&action=editSpeMedDocOfficeForDoc";

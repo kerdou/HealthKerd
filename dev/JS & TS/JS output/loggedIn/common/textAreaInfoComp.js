@@ -2,7 +2,7 @@ var TextAreaInfoComp = /** @class */ (function () {
     function TextAreaInfoComp() {
         this.textAreaRidonliListenersAddition();
     }
-    /** Ajout d'events liseners sur tous les textareas qui ont la classe 'textarea-ridonli'
+    /** Ajout d'events listeners sur tous les textareas qui ont la classe 'textarea-ridonli'
      * pour faire disparaitre "Informations complémentaires" au scroll des textareas
      */
     TextAreaInfoComp.prototype.textAreaRidonliListenersAddition = function () {

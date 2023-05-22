@@ -12,7 +12,7 @@ export default class ScrollUpButton
     /** Fait apparaitre ou disparaitre le scrollUp button si l'écran est scroll à plus ou moins de 20px du haut de page
       */
     private scrollUpButtonDisplayBehaviour(): void {
-        let scrollUpButton = document.getElementById('scrollUpButton') as HTMLButtonElement
+        const scrollUpButton = document.getElementById('scrollUpButton') as HTMLButtonElement;
 
         if (document.body.scrollTop > 20 ||
             document.documentElement.scrollTop > 20
@@ -35,7 +35,7 @@ export default class ScrollUpButton
     /** Remonte l'écran quand la fonction est activée
      */
     private scrollToTop(): void {
-        let scrollUpButton = document.getElementById('scrollUpButton') as HTMLButtonElement;
+        const scrollUpButton = document.getElementById('scrollUpButton') as HTMLButtonElement;
 
         if (scrollUpButton.style.opacity === '1') {
             document.body.scrollTop = 0; // For Safari

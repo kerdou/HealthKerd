@@ -6,8 +6,8 @@ export default class TelRegex
          *                          ([0-9]{2}[. ]?){3}              Suivi de 3 pairs de chiffres allant de 0 à 9 suivis chacun d'un . ou pas
          *                                            ([0-9]{2})$   Se termine par 2 chiffres allant de 0 à 9
          * */
-        let tel = "^([0]{1})([1-9]{1}[. ]?)([0-9]{2}[. ]?){3}([0-9]{2})$";
-        let telRegex = new RegExp(tel); // création du regex
+        const tel = "^([0]{1})([1-9]{1}[. ]?)([0-9]{2}[. ]?){3}([0-9]{2})$";
+        const telRegex = new RegExp(tel); // création du regex
 
         telValue = telValue.trim();
         return telRegex.test(telValue);

@@ -4,11 +4,11 @@ export default class TextAreaInfoComp
         this.textAreaRidonliListenersAddition();
     }
 
-    /** Ajout d'events liseners sur tous les textareas qui ont la classe 'textarea-ridonli'
+    /** Ajout d'events listeners sur tous les textareas qui ont la classe 'textarea-ridonli'
      * pour faire disparaitre "Informations complémentaires" au scroll des textareas
      */
     private textAreaRidonliListenersAddition(): void {
-        let ridonList = Array.from(document.getElementsByClassName('textarea-ridonli'));
+        const ridonList = Array.from(document.getElementsByClassName('textarea-ridonli'));
         ridonList.forEach((element) => {
             element.addEventListener('scroll', this.textAreaScrollDown);
         });

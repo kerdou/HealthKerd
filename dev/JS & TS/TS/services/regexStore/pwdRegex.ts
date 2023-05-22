@@ -9,11 +9,11 @@ export default class PwdRegex
     public pwdRegex(stringToCheck: string) {
         stringToCheck = stringToCheck.trim();
 
-        let pwdExpr = /(?<lower>([a-z]+)?)(?<upper>([A-Z]+)?)(?<nbr>([0-9]+)?)(?<spe>(\W+)?)/; // Remplace par \ par des \\. Etape nécessaire avant de transformer la string en expression régulière.
-        let regex = new RegExp(pwdExpr, 'g');
-        let regexResult = [...stringToCheck.matchAll(regex)];
+        const pwdExpr = /(?<lower>([a-z]+)?)(?<upper>([A-Z]+)?)(?<nbr>([0-9]+)?)(?<spe>(\W+)?)/; // Remplace par \ par des \\. Etape nécessaire avant de transformer la string en expression régulière.
+        const regex = new RegExp(pwdExpr, 'g');
+        const regexResult = [...stringToCheck.matchAll(regex)];
 
-        let pwdSummary = {
+        const pwdSummary = {
             length: stringToCheck.length,
             lower: 0,
             upper: 0,

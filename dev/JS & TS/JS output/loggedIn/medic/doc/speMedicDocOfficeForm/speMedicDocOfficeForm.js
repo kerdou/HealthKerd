@@ -13,7 +13,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -184,7 +184,7 @@ var SpeMedicDocOfficeForm = /** @class */ (function () {
             this.badgeStoreDiv.insertAdjacentHTML("beforeend", '<p>Pas de spécialité médicale sélectionnée</p>');
         }
         else {
-            this.everySpeMedicForDoc.forEach(function (everySpe, index) {
+            this.everySpeMedicForDoc.forEach(function (everySpe) {
                 if (_this.actualSpeMedicOfDocArray.includes(everySpe.speMedicID)) {
                     var tempBadge = _this.removableSpeMedicBadgeTemplate;
                     tempBadge = tempBadge.replace('{speMedicID}', everySpe.speMedicID); // utiliser replaceAll() obligerait à passer en lib ES2021
@@ -199,7 +199,7 @@ var SpeMedicDocOfficeForm = /** @class */ (function () {
         }
         // vidage puis remplissage du SELECT
         this.selectElement.innerHTML = '';
-        this.everySpeMedicForDoc.forEach(function (spe, index) {
+        this.everySpeMedicForDoc.forEach(function (spe) {
             if (_this.actualSpeMedicOfDocArray.includes(spe.speMedicID) == false) {
                 var optionElement = document.createElement("option");
                 optionElement.value = spe.speMedicID;
@@ -249,13 +249,13 @@ var SpeMedicDocOfficeForm = /** @class */ (function () {
         var _this = this;
         this.potentialOfficesIdArray = []; // vidage de potentialOfficesIdArray pour commencer un nouveau cycle
         // ajout de tous les doc offices potentiels dans potentialOfficesIdArray
-        this.everySpeMedicOfAllDocOfficesOfUser.forEach(function (value, index) {
+        this.everySpeMedicOfAllDocOfficesOfUser.forEach(function (value) {
             if (_this.actualSpeMedicOfDocArray.includes(value.speMedicID)) {
                 _this.potentialOfficesIdArray.push(value.docOfficeID);
             }
         });
         // suppression des offices déjà assignés au doc de la liste des offices potentiels
-        this.actualOfficesIdArray.forEach(function (docOfficeID, index) {
+        this.actualOfficesIdArray.forEach(function (docOfficeID) {
             if (_this.potentialOfficesIdArray.includes(docOfficeID)) {
                 _.pull(_this.potentialOfficesIdArray, docOfficeID);
             }

@@ -10,9 +10,9 @@ var MailRegex = /** @class */ (function () {
         /** Le 1er caractére de l'adresse doit être [a-z0-9] ou ne pas exister     */
         var addrStart = '^[a-z0-9]?';
         /** Partie optionnelle:
-         *  commençant par au moins 1 [a-z0-9] possiblement suivi d'un [.!#$%&'*+-/=?^_\`{|}~]
+         *  commençant par au moins 1 [a-z0-9] possiblement suivi d'un [.!#$%&'*+-/=?^_`{|}~]
          * (?:[a-z0-9]+[\.!#\$%&'\*\+\-\/=\?\^_`\{\|\}~]?)*     */
-        var addrOptionnalMidPortion = "(?:[a-z0-9]+[\\.!#\\$%&'\\*\\+\\-\\/=\\?\\^_\`\\{\\|\\}~]?)*";
+        var addrOptionnalMidPortion = "(?:[a-z0-9]+[\\.!#\\$%&'‘’\\*\\+\\-\\/=\\?\\^_`\\{\\|\\}~]?)*";
         /** L'adresse avant l'arobase doit impérativement se terminer par un caractére [a-z0-9]    */
         var addrEnd = '[a-z0-9]+';
         var completeAddr = addrStart + addrOptionnalMidPortion + addrEnd;

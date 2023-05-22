@@ -18,7 +18,7 @@ export default class SpeMedicDocOfficeForm
     private officeCardStoreObj: {[key: string]: string;} = {}; // contient toutes les doc offices cards préassemblées
 
     private allInOneData: any = []; // toutes les données récupérées en AJAX
-    private docID : string = ''; // ID du doc concerné
+    private docID = ''; // ID du doc concerné
     private everySpeMedicForDoc: {[name: string]: string}[] = []; // toutes les spé médicales attribuales au doc
     private everyDocOfficesOfUser: {[name: string]: string}[] = []; // toutes les données de tous les doc offices du user
     private everySpeMedicOfAllDocOfficesOfUser: {[name: string]: string}[] = []; // toutes les spé médic de tous les doc offices du user
@@ -29,9 +29,9 @@ export default class SpeMedicDocOfficeForm
     private potentialOfficesIdArray: string[] = []; // id de tous les doc offices potentiellement assignables au doc
 
     // templates d'élements HTML
-    private removableSpeMedicBadgeTemplate: string = ''; // template de tous les badges de spé medic assignés au doc
-    private officeCardTemplate: string = ''; // template de doc office card
-    private speMedicBadgeForOfficeCardTemplate: string = ''; // template des badge de spé medic destinées au doc office cards
+    private removableSpeMedicBadgeTemplate = ''; // template de tous les badges de spé medic assignés au doc
+    private officeCardTemplate = ''; // template de doc office card
+    private speMedicBadgeForOfficeCardTemplate = ''; // template des badge de spé medic destinées au doc office cards
 
 
     constructor () {
@@ -68,7 +68,7 @@ export default class SpeMedicDocOfficeForm
      * @returns
      */
     private initialSpeMedicIdExtractor(speList: any): string[] {
-        let result: string[] = [];
+        const result: string[] = [];
 
         speList.forEach( (value: {[name: string]: string}, index: number) => {
             result.push(value.speMedicID);
@@ -82,7 +82,7 @@ export default class SpeMedicDocOfficeForm
      * @returns
      */
     private initialDocOfficeIdExtractor(officeList: any): string[] {
-        let result: string[] = [];
+        const result: string[] = [];
 
         officeList.forEach( (value: {[name: string]: string}, index: number) => {
             result.push(value.docOfficeID);
@@ -95,7 +95,7 @@ export default class SpeMedicDocOfficeForm
      */
     private docOfficeCardStoreBuilder(): void {
         this.everyDocOfficesOfUser.forEach( (value: {[name: string]: string;}, index: number) => {
-            let badgesHTML = this.speMedicBadgeForOfficeCardBuilder(value.docOfficeID);
+            const badgesHTML = this.speMedicBadgeForOfficeCardBuilder(value.docOfficeID);
 
             let tempCard = this.officeCardTemplate;
             tempCard = tempCard.replace('{docOfficeID}', value.docOfficeID);
@@ -103,7 +103,7 @@ export default class SpeMedicDocOfficeForm
             tempCard = tempCard.replace('{cityName}', value.cityName);
             tempCard = tempCard.replace('{badgesHTML}', badgesHTML);
 
-            let key = value.docOfficeID + "_office";
+            const key = value.docOfficeID + "_office";
             this.officeCardStoreObj[key] = tempCard; // ajout d'un caractére à la fin de la clé pour qu'elle soit une string et qu'elle garde le bon ordre
         });
     }
@@ -139,7 +139,7 @@ export default class SpeMedicDocOfficeForm
             this.badgeStoreDiv.insertAdjacentHTML("beforeend", '<p>Pas de spécialité médicale sélectionnée</p>');
         } else {
 
-            this.everySpeMedicForDoc.forEach((everySpe: {[name: string]: string;}, index: number) => {
+            this.everySpeMedicForDoc.forEach((everySpe: {[name: string]: string;}) => {
                 if (this.actualSpeMedicOfDocArray.includes(everySpe.speMedicID)) {
                     let tempBadge = this.removableSpeMedicBadgeTemplate;
                     tempBadge = tempBadge.replace('{speMedicID}', everySpe.speMedicID); // utiliser replaceAll() obligerait à passer en lib ES2021
@@ -157,9 +157,9 @@ export default class SpeMedicDocOfficeForm
         // vidage puis remplissage du SELECT
         this.selectElement.innerHTML = '';
 
-        this.everySpeMedicForDoc.forEach((spe: { [name: string]: string; }, index: number) => {
+        this.everySpeMedicForDoc.forEach((spe: { [name: string]: string; }) => {
             if (this.actualSpeMedicOfDocArray.includes(spe.speMedicID) == false) {
-                let optionElement = document.createElement("option");
+                const optionElement = document.createElement("option");
                 optionElement.value = spe.speMedicID;
                 optionElement.text = spe.nameForDoc;
                 this.selectElement.add(optionElement);
@@ -174,10 +174,10 @@ export default class SpeMedicDocOfficeForm
      * @param {MouseEvent} evt - Event du clic de souris sur le badge de spé medic du doc
      */
     private speBadgeRemover(evt: MouseEvent): void {
-        let clickedBadge = evt.currentTarget as HTMLSpanElement;
-        let badge = document.getElementById(clickedBadge.id) as HTMLSpanElement;
+        const clickedBadge = evt.currentTarget as HTMLSpanElement;
+        const badge = document.getElementById(clickedBadge.id) as HTMLSpanElement;
         badge.removeEventListener("click", this.speBadgeRemover);
-        let badgeId = badge.id.replace('_spe', '') as string;
+        const badgeId = badge.id.replace('_spe', '') as string;
         _.pull(this.actualSpeMedicOfDocArray, badgeId);
         this.speMedicBadgeBuilder();
     }
@@ -211,14 +211,14 @@ export default class SpeMedicDocOfficeForm
         this.potentialOfficesIdArray = []; // vidage de potentialOfficesIdArray pour commencer un nouveau cycle
 
         // ajout de tous les doc offices potentiels dans potentialOfficesIdArray
-        this.everySpeMedicOfAllDocOfficesOfUser.forEach( (value: {[name: string]: string;}, index: number) => {
+        this.everySpeMedicOfAllDocOfficesOfUser.forEach( (value: {[name: string]: string;}) => {
             if (this.actualSpeMedicOfDocArray.includes(value.speMedicID)) {
                 this.potentialOfficesIdArray.push(value.docOfficeID);
             }
         });
 
         // suppression des offices déjà assignés au doc de la liste des offices potentiels
-        this.actualOfficesIdArray.forEach( (docOfficeID: string, index: number) => {
+        this.actualOfficesIdArray.forEach( (docOfficeID: string) => {
             if (this.potentialOfficesIdArray.includes(docOfficeID)) {
                 _.pull(this.potentialOfficesIdArray, docOfficeID);
             }
@@ -252,7 +252,7 @@ export default class SpeMedicDocOfficeForm
      */
     private cardsDrawer(type: string, officesIdArray: string[]): void {
         Object.keys(this.officeCardStoreObj).forEach( (longObjKey: string) => {
-            let shortObjKey = longObjKey.replace('_office', '');
+            const shortObjKey = longObjKey.replace('_office', '');
 
             if (officesIdArray.includes(shortObjKey)) {
                 if (type == 'actual') {
@@ -276,9 +276,9 @@ export default class SpeMedicDocOfficeForm
      * @param evt
      */
     private actualCardClick(evt: MouseEvent): void {
-        let clickedCard = evt.currentTarget as HTMLElement;
+        const clickedCard = evt.currentTarget as HTMLElement;
         clickedCard.removeEventListener("click", this.actualCardClick);
-        let cardId = clickedCard.id.replace('_office', '');
+        const cardId = clickedCard.id.replace('_office', '');
         _.pull(this.actualOfficesIdArray, cardId);
         this.officeCardsMngmt();
     }
@@ -287,9 +287,9 @@ export default class SpeMedicDocOfficeForm
      * @param evt
      */
     private potentialCardClick(evt: MouseEvent): void {
-        let clickedCard = evt.currentTarget as HTMLElement;
+        const clickedCard = evt.currentTarget as HTMLElement;
         clickedCard.removeEventListener("click", this.potentialCardClick);
-        let cardId = clickedCard.id.replace('_office', '');
+        const cardId = clickedCard.id.replace('_office', '');
         this.actualOfficesIdArray.push(cardId);
         this.officeCardsMngmt();
     }
@@ -298,14 +298,14 @@ export default class SpeMedicDocOfficeForm
      */
     private formSubmit(): void {
         // récupération des ID des spé medics confirmées puis transformation
-        let confirmedIdsArrayPrep: string[] = [];
+        const confirmedIdsArrayPrep: string[] = [];
         this.actualSpeMedicOfDocArray.forEach( (id, index) => {
             const template = 'speMedicID_' + index + '=' + id;
             confirmedIdsArrayPrep.push(template);
         });
 
         // récupératin des ID des doc offices confirmés puis transformation
-        let confirmedDocOfficeIdsArrayPrep: string[] = [];
+        const confirmedDocOfficeIdsArrayPrep: string[] = [];
         this.actualOfficesIdArray.forEach( (id, index) => {
             const template = 'docOfficeID_' + index + '=' + id;
             confirmedDocOfficeIdsArrayPrep.push(template);
