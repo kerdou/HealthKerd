@@ -124,7 +124,7 @@ a:hover {
 #login_page {
   /* Form Fade-in-down Animation on page load */
   /* STRUCTURE */
-  /*# sourceMappingURL=styles.css.map */
+
 }
 #login_page .fadeInDown {
   -webkit-animation-name: fadeInDown;
@@ -343,4 +343,106 @@ a:hover {
 }
 #login_page .wrapper #formContent *:focus {
   outline: none;
+}
+
+div#cat_list_page > div#cat_list_container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap;
+  gap: 16px;
+}
+@media screen and (min-width: 991px) {
+  div#cat_list_page > div#cat_list_container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+div#doc_list_page > div#doc_list_container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap;
+  gap: 16px;
+}
+@media screen and (min-width: 991px) {
+  div#doc_list_page > div#doc_list_container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+div#one_doc_page > div#doc_offices_list_container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap;
+  gap: 16px;
+}
+@media screen and (min-width: 991px) {
+  div#one_doc_page > div#doc_offices_list_container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+form#spemedic_docoffice_form_page > div#doc_office_section > div.doc_office_list_container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap;
+  gap: 16px;
+}
+@media screen and (min-width: 991px) {
+  form#spemedic_docoffice_form_page > div#doc_office_section > div.doc_office_list_container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+div#doc_office_list_page > div#doc_office_list_container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap;
+  gap: 16px;
+}
+@media screen and (min-width: 991px) {
+  div#doc_office_list_page > div#doc_office_list_container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+div#spe_medic_list_page > div#spe_medic_list_container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap;
+  gap: 16px;
+}
+@media screen and (min-width: 991px) {
+  div#spe_medic_list_page > div#spe_medic_list_container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
 }/*# sourceMappingURL=styles.css.map */

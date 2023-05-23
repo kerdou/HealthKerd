@@ -1,6 +1,30 @@
-@use './layout/_generalLayout.scss';
-@use './layout/_scrollUpButton.scss';
-@use './layout/_sidebars.scss';
+//general layout
+@use './common/generalLayout';
 
-@use './content/_textarea.scss';
-@use './content/_loginForm.scss';
+
+// commons
+@use './common/scrollUpButton';
+@use './common/sidebars';
+@use './common/textarea';
+
+
+// login page
+@use './sections/loginPage/loginForm';
+
+
+
+// medic events category
+@use './sections/medicEvtCat/catListPage';
+
+
+// docs
+@use './sections/doc/docList/docListPage';
+@use './sections/doc/oneDoc/oneDocPage';
+@use './sections/doc/speMedicDocOfficeForm/spemedicDocofficeFormPage';
+
+
+// doc office
+@use './sections/doc_office/docOfficeListPage';
+
+// spe medic
+@use './sections/speMedic/speMedicListPage';
