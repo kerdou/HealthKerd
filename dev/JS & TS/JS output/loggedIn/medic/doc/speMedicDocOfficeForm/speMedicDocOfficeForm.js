@@ -62,7 +62,6 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 import * as allInOneAJAX from './allInOneAJAX.js';
 import _ from 'lodash';
 export default function speMedicDocOfficeForm() {
-    var _this = this;
     var badgeStoreDiv = document.getElementById("badge_store"); // DIV contenant les badges de spécialités médicales
     var selectElement = document.getElementById("select"); // SELECT de choix de spé médicales
     var addButton = document.getElementById('add_button'); // bouton à droite du SELECT
@@ -71,7 +70,7 @@ export default function speMedicDocOfficeForm() {
     var submitButton = document.getElementById("submit_button");
     var cancelButton = document.getElementById("cancel_button");
     var officeCardStoreObj = {}; // contient toutes les doc offices cards préassemblées
-    var allInOneData = []; // toutes les données récupérées en AJAX
+    var allInOneData; // toutes les données récupérées en AJAX
     var docID = ''; // ID du doc concerné
     var everySpeMedicForDoc = []; // toutes les spé médicales attribuales au doc
     var everyDocOfficesOfUser = []; // toutes les données de tous les doc offices du user
@@ -87,38 +86,42 @@ export default function speMedicDocOfficeForm() {
     addButton.addEventListener('click', addSpeMedic);
     submitButton.addEventListener('click', formSubmit);
     cancelButton.addEventListener('click', formCancel);
-    (function () { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, allInOneAJAX.ajaxReceive()];
-                case 1:
-                    allInOneData = _a.sent(); // récupération de toutes les données en AJAX
-                    //console.log(this.allInOneData.response);
-                    //let debug = document.getElementById('debug') as HTMLDivElement;
-                    //debug.innerHTML = this.allInOneData.response;
-                    docID = allInOneData.response.docID;
-                    everySpeMedicForDoc = allInOneData.response.everySpeMedicForDoc.pdoResult;
-                    everyDocOfficesOfUser = allInOneData.response.everyDocOfficesOfUser.pdoResult;
-                    everySpeMedicOfAllDocOfficesOfUser = allInOneData.response.everySpeMedicOfAllDocOfficesOfUser.pdoResult;
-                    actualSpeMedicOfDocArray = initialSpeMedicIdExtractor(allInOneData.response.speMedicOfDoc.pdoResult);
-                    actualOfficesIdArray = initialDocOfficeIdExtractor(allInOneData.response.docOfficesOfDoc.pdoResult);
-                    // récupération des templates HTML
-                    removableSpeMedicBadgeTemplate = allInOneData.response.removableSpeMedicBadgeTemplate;
-                    officeCardTemplate = allInOneData.response.officeCardTemplate;
-                    speMedicBadgeForOfficeCardTemplate = allInOneData.response.speMedicBadgeForOfficeCardTemplate;
-                    docOfficeCardStoreBuilder();
-                    speMedicBadgeBuilder();
-                    return [2 /*return*/];
-            }
+    /** Récupération de toutes les données depuis le backend via un Promise
+     * Le fait de l'appeler avec l'opérateur void évite l'apparition de messages d'erreur
+     */
+    function callInPromisedData() {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, allInOneAJAX.ajaxReceive()];
+                    case 1:
+                        allInOneData = _a.sent(); // récupération de toutes les données en AJAX
+                        docID = allInOneData.response.docID;
+                        everySpeMedicForDoc = allInOneData.response.everySpeMedicForDoc.pdoResult;
+                        everyDocOfficesOfUser = allInOneData.response.everyDocOfficesOfUser.pdoResult;
+                        everySpeMedicOfAllDocOfficesOfUser = allInOneData.response.everySpeMedicOfAllDocOfficesOfUser.pdoResult;
+                        actualSpeMedicOfDocArray = initialSpeMedicIdExtractor(allInOneData.response.speMedicOfDoc.pdoResult);
+                        actualOfficesIdArray = initialDocOfficeIdExtractor(allInOneData.response.docOfficesOfDoc.pdoResult);
+                        // récupération des templates HTML
+                        removableSpeMedicBadgeTemplate = allInOneData.response.removableSpeMedicBadgeTemplate;
+                        officeCardTemplate = allInOneData.response.officeCardTemplate;
+                        speMedicBadgeForOfficeCardTemplate = allInOneData.response.speMedicBadgeForOfficeCardTemplate;
+                        docOfficeCardStoreBuilder();
+                        speMedicBadgeBuilder();
+                        return [2 /*return*/];
+                }
+            });
         });
-    }); })();
+    }
+    ;
+    void callInPromisedData();
     /** Extraction des ID de spe medic déjà assignées au doc
      * @param speList
      * @returns
      */
     function initialSpeMedicIdExtractor(speList) {
         var result = [];
-        speList.forEach(function (value, index) {
+        speList.forEach(function (value) {
             result.push(value.speMedicID);
         });
         return result;
@@ -129,7 +132,7 @@ export default function speMedicDocOfficeForm() {
      */
     function initialDocOfficeIdExtractor(officeList) {
         var result = [];
-        officeList.forEach(function (value, index) {
+        officeList.forEach(function (value) {
             result.push(value.docOfficeID);
         });
         return result;
@@ -137,7 +140,7 @@ export default function speMedicDocOfficeForm() {
     /** Création de tous les carss de doc office pour les stocker dans officeCardStoreObj
      */
     function docOfficeCardStoreBuilder() {
-        everyDocOfficesOfUser.forEach(function (value, index) {
+        everyDocOfficesOfUser.forEach(function (value) {
             var badgesHTML = speMedicBadgeForOfficeCardBuilder(value.docOfficeID);
             var tempCard = officeCardTemplate;
             tempCard = tempCard.replace('{docOfficeID}', value.docOfficeID);
@@ -154,7 +157,7 @@ export default function speMedicDocOfficeForm() {
      */
     function speMedicBadgeForOfficeCardBuilder(docOfficeID) {
         var badgesHTML = '';
-        everySpeMedicOfAllDocOfficesOfUser.forEach(function (value, index) {
+        everySpeMedicOfAllDocOfficesOfUser.forEach(function (value) {
             if (value.docOfficeID == docOfficeID) {
                 var tempBadge = speMedicBadgeForOfficeCardTemplate;
                 tempBadge = tempBadge.replace('{speName}', value.name);
@@ -319,7 +322,6 @@ export default function speMedicDocOfficeForm() {
     /** Récupération des données puis mise en forme avant envoyé en POST via AJAX au clic sur le bouton Envoyer
      */
     function formSubmit() {
-        var _this = this;
         // récupération des ID des spé medics confirmées puis transformation
         var confirmedIdsArrayPrep = [];
         actualSpeMedicOfDocArray.forEach(function (id, index) {
@@ -334,26 +336,30 @@ export default function speMedicDocOfficeForm() {
         });
         var concatenadedArrays = __spreadArray(__spreadArray([], __read(confirmedIdsArrayPrep), false), __read(confirmedDocOfficeIdsArrayPrep), false);
         var params = concatenadedArrays.join('&');
-        (function () { return __awaiter(_this, void 0, void 0, function () {
+        void sendPromise(params);
+    }
+    /** Actions au clic sur le bouton "Confirmer"
+     * Envoie des données via une Promise et redirection vers la page du doc ensuite
+     * @param params
+     */
+    function sendPromise(params) {
+        return __awaiter(this, void 0, void 0, function () {
             var ajax;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, allInOneAJAX.ajaxSend(params)];
                     case 1:
                         ajax = _a.sent();
-                        //const debug = document.getElementById('debug') as HTMLDivElement;
-                        //debug.innerHTML = ajax.response;
-                        if (ajax.status == 200) {
-                            window.location.search = "?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=".concat(docID);
-                        }
+                        window.location.search = "?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=".concat(docID);
                         return [2 /*return*/];
                 }
             });
-        }); })();
+        });
     }
+    ;
     /** Renvoi vers la page du doc au clic sur "Annuler"
      */
     function formCancel() {
-        window.location.search = '?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=' + docID;
+        window.location.search = "?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=".concat(docID);
     }
 }

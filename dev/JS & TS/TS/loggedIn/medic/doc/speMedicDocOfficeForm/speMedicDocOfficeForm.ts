@@ -15,7 +15,37 @@ export default function speMedicDocOfficeForm()
 
     const officeCardStoreObj: {[key: string]: string;} = {}; // contient toutes les doc offices cards préassemblées
 
-    let allInOneData: any = []; // toutes les données récupérées en AJAX
+    interface allInOneDataInterf {
+        status: number,
+        response: {
+            docID: string,
+            docOfficesOfDoc: {
+                pdoStmt: string,
+                pdoResult: {docOfficeID: string}[]
+            },
+            speMedicOfDoc: {
+                pdoStmt: string,
+                pdoResult: {speMedicID: string}[]
+            },
+            everySpeMedicForDoc: {
+                pdoStmt: string,
+                pdoResult: {speMedicID: string, nameForDoc: string}[]
+            },
+            everyDocOfficesOfUser: {
+                pdoStmt: string,
+                pdoResult: {docOfficeID: string, name: string, cityName: string}[]
+            },
+            everySpeMedicOfAllDocOfficesOfUser: {
+                pdoStmt: string,
+                pdoResult: {docOfficeID: string, speMedicID: string, name: string}[]
+            },
+            officeCardTemplate: string,
+            removableSpeMedicBadgeTemplate: string,
+            speMedicBadgeForOfficeCardTemplate: string
+        }
+    }
+
+    let allInOneData: allInOneDataInterf; // toutes les données récupérées en AJAX
     let docID = ''; // ID du doc concerné
     let everySpeMedicForDoc: {[name: string]: string}[] = []; // toutes les spé médicales attribuales au doc
     let everyDocOfficesOfUser: {[name: string]: string}[] = []; // toutes les données de tous les doc offices du user
@@ -37,12 +67,11 @@ export default function speMedicDocOfficeForm()
     submitButton.addEventListener('click', formSubmit);
     cancelButton.addEventListener('click', formCancel);
 
-    (async () => {
+    /** Récupération de toutes les données depuis le backend via un Promise
+     * Le fait de l'appeler avec l'opérateur void évite l'apparition de messages d'erreur
+     */
+    async function callInPromisedData() {
         allInOneData = await allInOneAJAX.ajaxReceive(); // récupération de toutes les données en AJAX
-
-        //console.log(this.allInOneData.response);
-        //let debug = document.getElementById('debug') as HTMLDivElement;
-        //debug.innerHTML = this.allInOneData.response;
 
         docID = allInOneData.response.docID;
         everySpeMedicForDoc = allInOneData.response.everySpeMedicForDoc.pdoResult;
@@ -58,17 +87,19 @@ export default function speMedicDocOfficeForm()
 
         docOfficeCardStoreBuilder();
         speMedicBadgeBuilder();
-    }) ();
+    };
+
+    void callInPromisedData();
 
 
     /** Extraction des ID de spe medic déjà assignées au doc
      * @param speList
      * @returns
      */
-    function initialSpeMedicIdExtractor(speList: any): string[] {
+    function initialSpeMedicIdExtractor(speList: {speMedicID: string}[]): string[] {
         const result: string[] = [];
 
-        speList.forEach( (value: {[name: string]: string}, index: number) => {
+        speList.forEach( (value: {[name: string]: string}) => {
             result.push(value.speMedicID);
         });
 
@@ -79,10 +110,10 @@ export default function speMedicDocOfficeForm()
      * @param officeList
      * @returns
      */
-    function initialDocOfficeIdExtractor(officeList: any): string[] {
+    function initialDocOfficeIdExtractor(officeList: {docOfficeID: string}[]): string[] {
         const result: string[] = [];
 
-        officeList.forEach( (value: {[name: string]: string}, index: number) => {
+        officeList.forEach( (value: {[name: string]: string}) => {
             result.push(value.docOfficeID);
         });
 
@@ -91,8 +122,8 @@ export default function speMedicDocOfficeForm()
 
     /** Création de tous les carss de doc office pour les stocker dans officeCardStoreObj
      */
-    function docOfficeCardStoreBuilder(): void {
-        everyDocOfficesOfUser.forEach( (value: {[name: string]: string;}, index: number) => {
+    function docOfficeCardStoreBuilder() {
+        everyDocOfficesOfUser.forEach( (value: {[name: string]: string;}) => {
             const badgesHTML = speMedicBadgeForOfficeCardBuilder(value.docOfficeID);
 
             let tempCard = officeCardTemplate;
@@ -113,7 +144,7 @@ export default function speMedicDocOfficeForm()
     function speMedicBadgeForOfficeCardBuilder(docOfficeID: string): string {
         let badgesHTML = '';
 
-        everySpeMedicOfAllDocOfficesOfUser.forEach((value: {[name: string]: string;}, index: number) => {
+        everySpeMedicOfAllDocOfficesOfUser.forEach((value: {[name: string]: string;}) => {
             if (value.docOfficeID == docOfficeID) {
                 let tempBadge = speMedicBadgeForOfficeCardTemplate;
                 tempBadge = tempBadge.replace('{speName}', value.name);
@@ -171,7 +202,7 @@ export default function speMedicDocOfficeForm()
     /** Suppression d'un badge de spé médicales de doc quand on a clic dessus
      * @param {MouseEvent} evt - Event du clic de souris sur le badge de spé medic du doc
      */
-    function speBadgeRemover(evt: MouseEvent): void {
+    function speBadgeRemover(evt: MouseEvent) {
         const clickedBadge = evt.currentTarget as HTMLSpanElement;
         const badge = document.getElementById(clickedBadge.id) as HTMLSpanElement;
         badge.removeEventListener("click", speBadgeRemover);
@@ -182,14 +213,14 @@ export default function speMedicDocOfficeForm()
 
     /** Ajout de l'ID de la spé medic à ajouter au actualSpeMedicOfDocArray puis recréation des badges et des Options du Select
      */
-    function addSpeMedic(): void {
+    function addSpeMedic() {
         actualSpeMedicOfDocArray.push(selectElement.value);
         speMedicBadgeBuilder();
     }
 
     /** Vérification du nombre de spe medic badges, arrivé à 5 on désactive le bouton d'ajout de spe medic
      */
-    function buttonsAbilityCheck(): void {
+    function buttonsAbilityCheck() {
         if (actualSpeMedicOfDocArray.length < 5) {
             addButton.disabled = false;
         } else {
@@ -205,7 +236,7 @@ export default function speMedicDocOfficeForm()
 
     /** Gestion de la gestion des arrays dédiés aux cards de doc office et à leur effacement dans le HTML avant de les redessiner
      */
-    function officeCardsMngmt(): void {
+    function officeCardsMngmt() {
         potentialOfficesIdArray = []; // vidage de potentialOfficesIdArray pour commencer un nouveau cycle
 
         // ajout de tous les doc offices potentiels dans potentialOfficesIdArray
@@ -248,7 +279,7 @@ export default function speMedicDocOfficeForm()
      * @param type - Indique si l'on gére un affichage dans actual_office_store ou dans potential_office_store
      * @param officesIdArray - Liste des ID des doc offices
      */
-    function cardsDrawer(type: string, officesIdArray: string[]): void {
+    function cardsDrawer(type: string, officesIdArray: string[]) {
         Object.keys(officeCardStoreObj).forEach( (longObjKey: string) => {
             const shortObjKey = longObjKey.replace('_office', '');
 
@@ -273,7 +304,7 @@ export default function speMedicDocOfficeForm()
     /** Si le user clic sur une card assignée, son ID est supprimé de actualOfficesIdArray et on relance l'affichage des cards
      * @param evt
      */
-    function actualCardClick(evt: MouseEvent): void {
+    function actualCardClick(evt: MouseEvent) {
         const clickedCard = evt.currentTarget as HTMLElement;
         clickedCard.removeEventListener("click", actualCardClick);
         const cardId = clickedCard.id.replace('_office', '');
@@ -284,7 +315,7 @@ export default function speMedicDocOfficeForm()
     /** Si le user clic sur une card potentielle, son ID est ajoutée à actualOfficesIdArray et on relance l'affichage des cards
      * @param evt
      */
-    function potentialCardClick(evt: MouseEvent): void {
+    function potentialCardClick(evt: MouseEvent) {
         const clickedCard = evt.currentTarget as HTMLElement;
         clickedCard.removeEventListener("click", potentialCardClick);
         const cardId = clickedCard.id.replace('_office', '');
@@ -294,7 +325,7 @@ export default function speMedicDocOfficeForm()
 
     /** Récupération des données puis mise en forme avant envoyé en POST via AJAX au clic sur le bouton Envoyer
      */
-    function formSubmit(): void {
+    function formSubmit() {
         // récupération des ID des spé medics confirmées puis transformation
         const confirmedIdsArrayPrep: string[] = [];
         actualSpeMedicOfDocArray.forEach( (id, index) => {
@@ -315,21 +346,21 @@ export default function speMedicDocOfficeForm()
         ];
         const params = concatenadedArrays.join('&');
 
-        (async () => {
-            const ajax = await allInOneAJAX.ajaxSend(params);
-
-            //const debug = document.getElementById('debug') as HTMLDivElement;
-            //debug.innerHTML = ajax.response;
-
-            if (ajax.status == 200) {
-                window.location.search = `?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=${docID}`;
-            }
-        })();
+        void sendPromise(params);
     }
+
+    /** Actions au clic sur le bouton "Confirmer"
+     * Envoie des données via une Promise et redirection vers la page du doc ensuite
+     * @param params
+     */
+    async function sendPromise(params: string) {
+        const ajax = await allInOneAJAX.ajaxSend(params);
+        window.location.search = `?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=${docID}`;
+    };
 
     /** Renvoi vers la page du doc au clic sur "Annuler"
      */
-    function formCancel(): void {
-        window.location.search = '?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=' + docID;
+    function formCancel() {
+        window.location.search = `?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=${docID}`;
     }
 }
