@@ -34,48 +34,42 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var AllInOneAJAX = /** @class */ (function () {
-    function AllInOneAJAX() {
-    }
-    // réception des données à l'ouverture de la page
-    AllInOneAJAX.prototype.receive = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var xhr;
-            return __generator(this, function (_a) {
-                xhr = new XMLHttpRequest();
-                return [2 /*return*/, new Promise(function (resolve) {
-                        var phpScriptPath = window.location.pathname + "?controller=medic&subCtrlr=doc&action=getAJAXDataForSpeMedDocOfficeForm"; // les params sont placés à la fin de l'URL pour le GET
-                        xhr.open("GET", phpScriptPath, true); // true pour avoir une requête asynchrone
-                        xhr.onload = function () { return resolve({
-                            status: xhr.status,
-                            response: JSON.parse(xhr.response)
-                        }); };
-                        // pour le débug, remplacer par "response: xhr.response" et afficher le response dans la DIV "debug"
-                        xhr.send();
-                    })];
-            });
+// envoi des données du form au clic sur "Envoyer"
+export function ajaxSend(params) {
+    return __awaiter(this, void 0, void 0, function () {
+        var xhr;
+        return __generator(this, function (_a) {
+            xhr = new XMLHttpRequest();
+            return [2 /*return*/, new Promise(function (resolve) {
+                    var phpScriptPath = window.location.pathname + "?controller=medic&subCtrlr=docPost&action=editSpeMedDocOfficeForDoc";
+                    xhr.open("POST", phpScriptPath, true); // true pour avoir une requête asynchrone
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // permet d'envoyer des données via le POST
+                    xhr.onload = function () { return resolve({
+                        status: xhr.status,
+                        response: xhr.response
+                    }); };
+                    // pour le debug, afficher le response dans la DIV "debug"
+                    xhr.send(params); // les params sont placés dans le send() pour le POST
+                })];
         });
-    };
-    // envoi des données du form au clic sur "Envoyer"
-    AllInOneAJAX.prototype.send = function (params) {
-        return __awaiter(this, void 0, void 0, function () {
-            var xhr;
-            return __generator(this, function (_a) {
-                xhr = new XMLHttpRequest();
-                return [2 /*return*/, new Promise(function (resolve) {
-                        var phpScriptPath = window.location.pathname + "?controller=medic&subCtrlr=docPost&action=editSpeMedDocOfficeForDoc";
-                        xhr.open("POST", phpScriptPath, true); // true pour avoir une requête asynchrone
-                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // permet d'envoyer des données via le POST
-                        xhr.onload = function () { return resolve({
-                            status: xhr.status,
-                            response: xhr.response
-                        }); };
-                        // pour le debug, afficher le response dans la DIV "debug"
-                        xhr.send(params); // les params sont placés dans le send() pour le POST
-                    })];
-            });
+    });
+}
+// réception des données à l'ouverture de la page
+export function ajaxReceive() {
+    return __awaiter(this, void 0, void 0, function () {
+        var xhr;
+        return __generator(this, function (_a) {
+            xhr = new XMLHttpRequest();
+            return [2 /*return*/, new Promise(function (resolve) {
+                    var phpScriptPath = window.location.pathname + "?controller=medic&subCtrlr=doc&action=getAJAXDataForSpeMedDocOfficeForm"; // les params sont placés à la fin de l'URL pour le GET
+                    xhr.open("GET", phpScriptPath, true); // true pour avoir une requête asynchrone
+                    xhr.onload = function () { return resolve({
+                        status: xhr.status,
+                        response: JSON.parse(xhr.response)
+                    }); };
+                    // pour le débug, remplacer par "response: xhr.response" et afficher le response dans la DIV "debug"
+                    xhr.send();
+                })];
         });
-    };
-    return AllInOneAJAX;
-}());
-export default AllInOneAJAX;
+    });
+}

@@ -1,15 +1,13 @@
-import UserFormBehaviour from './userForm/userFormBehaviour.js';
-import PwdFormBehaviour from './userForm/pwdFormBehaviour.js';
+import userFormBehaviour from './userForm/userFormBehaviour.js';
+import pwdFormBehaviour from './userForm/pwdFormBehaviour.js';
 
-export default class UserAccountController
+export default function userAccountController()
 {
-    constructor() {
-        if (document.body.contains(document.getElementById('user_account_form'))) {
-            const userFormBehaviourLaunch = new UserFormBehaviour();
-        }
+    if (document.body.contains(document.getElementById('user_account_form'))) {
+        userFormBehaviour();
+    }
 
-        if (document.body.contains(document.getElementById('user_account_pwd_form'))) {
-            const pwdFormBehaviourLaunch = new PwdFormBehaviour();
-        }
+    if (document.body.contains(document.getElementById('user_account_pwd_form'))) {
+        pwdFormBehaviour();
     }
 }

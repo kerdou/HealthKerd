@@ -1,17 +1,16 @@
-export default class ScrollUpButton
+export default function scrollUpButton()
 {
-    constructor() {
-        const scrollUpButton = document.getElementById('scrollUpButton') as HTMLButtonElement;
-        scrollUpButton.addEventListener('click', this.scrollToTop);
+    const scrollUpButton = document.getElementById('scrollUpButton') as HTMLButtonElement;
+    scrollUpButton.addEventListener('click', scrollToTop);
 
-        window.onscroll = () => {
-            this.scrollUpButtonDisplayBehaviour();
-        };
-    }
+    window.onscroll = () => {
+        scrollUpButtonDisplayBehaviour();
+    };
+
 
     /** Fait apparaitre ou disparaitre le scrollUp button si l'écran est scroll à plus ou moins de 20px du haut de page
       */
-    private scrollUpButtonDisplayBehaviour(): void {
+    function scrollUpButtonDisplayBehaviour(): void {
         const scrollUpButton = document.getElementById('scrollUpButton') as HTMLButtonElement;
 
         if (document.body.scrollTop > 20 ||
@@ -34,7 +33,7 @@ export default class ScrollUpButton
 
     /** Remonte l'écran quand la fonction est activée
      */
-    private scrollToTop(): void {
+    function scrollToTop(): void {
         const scrollUpButton = document.getElementById('scrollUpButton') as HTMLButtonElement;
 
         if (scrollUpButton.style.opacity === '1') {

@@ -24,45 +24,39 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 import _ from 'lodash';
-var PwdRegex = /** @class */ (function () {
-    function PwdRegex() {
-    }
-    /** Vérification des mots de passe
-     * @param {string} stringToCheck    Mot de passe à vérifier
-     * @return {RegExpMatchArray[]}       Résultat du test du regex
-     */
-    PwdRegex.prototype.pwdRegex = function (stringToCheck) {
-        stringToCheck = stringToCheck.trim();
-        var pwdExpr = /(?<lower>([a-z]+)?)(?<upper>([A-Z]+)?)(?<nbr>([0-9]+)?)(?<spe>(\W+)?)/; // Remplace par \ par des \\. Etape nécessaire avant de transformer la string en expression régulière.
-        var regex = new RegExp(pwdExpr, 'g');
-        var regexResult = __spreadArray([], __read(stringToCheck.matchAll(regex)), false);
-        var pwdSummary = {
-            length: stringToCheck.length,
-            lower: 0,
-            upper: 0,
-            nbr: 0,
-            spe: 0
-        };
-        regexResult.forEach(function (arrValue, arrIndex) {
-            _.forOwn(arrValue.groups, function (objValue, objIndex) {
-                switch (objIndex) {
-                    case 'lower':
-                        pwdSummary.lower += objValue.length;
-                        break;
-                    case 'upper':
-                        pwdSummary.upper += objValue.length;
-                        break;
-                    case 'nbr':
-                        pwdSummary.nbr += objValue.length;
-                        break;
-                    case 'spe':
-                        pwdSummary.spe += objValue.length;
-                        break;
-                }
-            });
-        });
-        return pwdSummary;
+/** Vérification des mots de passe
+ * @param {string} stringToCheck    Mot de passe à vérifier
+ * @return {RegExpMatchArray[]}       Résultat du test du regex
+ */
+export default function pwdRegex(stringToCheck) {
+    stringToCheck = stringToCheck.trim();
+    var pwdExpr = /(?<lower>([a-z]+)?)(?<upper>([A-Z]+)?)(?<nbr>([0-9]+)?)(?<spe>(\W+)?)/; // Remplace par \ par des \\. Etape nécessaire avant de transformer la string en expression régulière.
+    var regex = new RegExp(pwdExpr, 'g');
+    var regexResult = __spreadArray([], __read(stringToCheck.matchAll(regex)), false);
+    var pwdSummary = {
+        length: stringToCheck.length,
+        lower: 0,
+        upper: 0,
+        nbr: 0,
+        spe: 0
     };
-    return PwdRegex;
-}());
-export default PwdRegex;
+    regexResult.forEach(function (arrValue, arrIndex) {
+        _.forOwn(arrValue.groups, function (objValue, objIndex) {
+            switch (objIndex) {
+                case 'lower':
+                    pwdSummary.lower += objValue.length;
+                    break;
+                case 'upper':
+                    pwdSummary.upper += objValue.length;
+                    break;
+                case 'nbr':
+                    pwdSummary.nbr += objValue.length;
+                    break;
+                case 'spe':
+                    pwdSummary.spe += objValue.length;
+                    break;
+            }
+        });
+    });
+    return pwdSummary;
+}

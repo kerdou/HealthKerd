@@ -1,23 +1,21 @@
 import { Offcanvas } from 'bootstrap';
 import _ from 'lodash';
 
-export default class MobileSidebar
+export default function mobileSidebar()
 {
-    private windowWidth: number = window.innerWidth;
-    private mobileSidebarElement = document.getElementById('mobile_sidebar') as HTMLElement;
+    let windowWidth: number = window.innerWidth;
+    const  mobileSidebarElement = document.getElementById('mobile_sidebar') as HTMLElement;
+    const boostrapSidebarObj = Offcanvas.getInstance(mobileSidebarElement) as Offcanvas;
 
-    constructor() {
-        window.addEventListener('resize', _.debounce(this.windowResize.bind(this), 150));
-    }
+    window.addEventListener('resize', _.debounce(windowResize, 150));
 
     /** Se déclenche au resize de la page
      * Au delà de 992px de large (format LG sur Bootstrap), l'offcanvas menu se rétracte
     */
-    private windowResize(): void {
-        this.windowWidth = window.innerWidth;
+    function windowResize(): void {
+        windowWidth = window.innerWidth;
 
-        if (this.windowWidth >= 992 && this.mobileSidebarElement.classList.contains('show')) {
-            const boostrapSidebarObj = Offcanvas.getInstance(this.mobileSidebarElement) as Offcanvas;
+        if (windowWidth >= 992 && mobileSidebarElement.classList.contains('show')) {
             boostrapSidebarObj.hide();
         }
     }

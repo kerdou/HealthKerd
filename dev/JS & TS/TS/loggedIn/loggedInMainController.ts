@@ -1,24 +1,14 @@
-import MedicController from './medic/medicController.js';
-import UserAccountController from './userAccount/userAccountController.js'
+import medicController from './medic/medicController.js';
+import userAccountController from './userAccount/userAccountController.js';
 
-export default class LoggedInMainController
+export default function loggedInMainController()
 {
-    constructor() {
-        if (document.getElementsByClassName('medic_section').length >= 0) {
-            this.medicSectionController();
-        }
-
-        if (document.getElementsByClassName('user_account_section').length >= 0) {
-            this.userAccountSectionController();
-        }
+    if (document.getElementsByClassName('medic_section').length >= 0) {
+        medicController();
     }
 
-    private medicSectionController() {
-        const medicControllerLaunch = new MedicController();
-    }
-
-    private userAccountSectionController() {
-        const userAccountSectionControllerLaunch = new UserAccountController();
+    if (document.getElementsByClassName('user_account_section').length >= 0) {
+        userAccountController();
     }
 }
 

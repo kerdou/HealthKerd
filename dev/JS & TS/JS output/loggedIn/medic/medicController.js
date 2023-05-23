@@ -1,18 +1,14 @@
-import DocModifModal from './doc/oneDocPage/docModifModal';
-import DocFormBehaviour from './doc/generalDocForm/docFormBehaviour';
-import SpeMedicDocOfficeForm from './doc/speMedicDocOfficeForm/speMedicDocOfficeForm';
-var MedicController = /** @class */ (function () {
-    function MedicController() {
-        if (document.body.contains(document.getElementById('one_doc_page'))) {
-            var docModifModalLaunch = new DocModifModal();
-        }
-        if (document.body.contains(document.getElementById('general_doc_form_page'))) {
-            var docFormBehaviourLaunch = new DocFormBehaviour();
-        }
-        if (document.body.contains(document.getElementById('spemedic_docoffice_form_page'))) {
-            var SpeMedicDocOfficeFormLaunch = new SpeMedicDocOfficeForm();
-        }
+import docModifModal from './doc/oneDocPage/docModifModal';
+import docFormBehaviour from './doc/generalDocForm/docFormBehaviour';
+import speMedicDocOfficeForm from './doc/speMedicDocOfficeForm/speMedicDocOfficeForm';
+export default function medicController() {
+    if (document.body.contains(document.getElementById('one_doc_page'))) {
+        docModifModal();
     }
-    return MedicController;
-}());
-export default MedicController;
+    if (document.body.contains(document.getElementById('general_doc_form_page'))) {
+        docFormBehaviour();
+    }
+    if (document.body.contains(document.getElementById('spemedic_docoffice_form_page'))) {
+        speMedicDocOfficeForm();
+    }
+}

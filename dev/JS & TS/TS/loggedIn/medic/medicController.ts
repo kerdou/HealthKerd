@@ -1,20 +1,18 @@
-import DocModifModal from './doc/oneDocPage/docModifModal';
-import DocFormBehaviour from './doc/generalDocForm/docFormBehaviour';
-import SpeMedicDocOfficeForm from './doc/speMedicDocOfficeForm/speMedicDocOfficeForm';
+import docModifModal from './doc/oneDocPage/docModifModal';
+import docFormBehaviour from './doc/generalDocForm/docFormBehaviour';
+import speMedicDocOfficeForm from './doc/speMedicDocOfficeForm/speMedicDocOfficeForm';
 
-export default class MedicController
+export default function medicController()
 {
-    constructor() {
-        if (document.body.contains(document.getElementById('one_doc_page'))) {
-            const docModifModalLaunch = new DocModifModal();
-        }
+    if (document.body.contains(document.getElementById('one_doc_page'))) {
+        docModifModal();
+    }
 
-        if (document.body.contains(document.getElementById('general_doc_form_page'))) {
-            const docFormBehaviourLaunch = new DocFormBehaviour();
-        }
+    if (document.body.contains(document.getElementById('general_doc_form_page'))) {
+        docFormBehaviour();
+    }
 
-        if (document.body.contains(document.getElementById('spemedic_docoffice_form_page'))) {
-            const SpeMedicDocOfficeFormLaunch = new SpeMedicDocOfficeForm();
-        }
+    if (document.body.contains(document.getElementById('spemedic_docoffice_form_page'))) {
+        speMedicDocOfficeForm();
     }
 }

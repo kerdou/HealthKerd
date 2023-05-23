@@ -1,50 +1,50 @@
 import _ from 'lodash';
 
-export default class LoginPage
+export default function loginPage()
 {
-    private docu = document as Document;
-    private loginForm = document.getElementById('loginForm') as HTMLFormElement;
-    private errorMessage = document.getElementById('error_message') as HTMLHeadingElement;
-    private loginField = document.getElementById('login') as HTMLInputElement;
-    private passwordField = document.getElementById('password') as HTMLInputElement;
-    private loginButton = document.getElementById('login_button') as HTMLInputElement;
+    const docu = document as Document;
+    const loginForm = document.getElementById('loginForm') as HTMLFormElement;
+    const errorMessage = document.getElementById('error_message') as HTMLHeadingElement;
+    const loginField = document.getElementById('login') as HTMLInputElement;
+    const passwordField = document.getElementById('password') as HTMLInputElement;
+    const loginButton = document.getElementById('login_button') as HTMLInputElement;
 
-    private loginFieldStatus = false;
-    private passwordFieldStatus = false;
+    let loginFieldStatus = false;
+    let passwordFieldStatus = false;
 
-    constructor() {
-        this.docu.addEventListener('keydown', this.enterPress.bind(this));
-        this.loginField.addEventListener('input', _.debounce(this.loginFieldBehaviour.bind(this), 150));
-        this.passwordField.addEventListener('input', _.debounce(this.passwordFieldBehaviour.bind(this), 150));
-        this.loginButton.addEventListener('click', this.loginButtonBehaviour.bind(this));
 
-        const dataFromGet = window.location.search;
-        (dataFromGet.length != 0) ? this.getCheck(dataFromGet): '';
-    }
+    docu.addEventListener('keydown', enterPress);
+    loginField.addEventListener('input', _.debounce(loginFieldBehaviour, 150));
+    passwordField.addEventListener('input', _.debounce(passwordFieldBehaviour, 150));
+    loginButton.addEventListener('click', loginButtonBehaviour);
+
+    const dataFromGet = window.location.search;
+    (dataFromGet.length != 0) ? getCheck(dataFromGet): '';
+
 
     /** Gestion des erreurs à partir des infos du GET
      */
-    private getCheck(dataFromGet: string): void {
+    function getCheck(dataFromGet: string): void {
         dataFromGet = dataFromGet.replace('?', '');
         const getArray = dataFromGet.split('&');
 
         const givenUser = getArray[0].replace('givenUser=', '');
         const errorType = getArray[1].replace('=true', '');
 
-        this.loginField.value = givenUser;
-        this.loginFieldBehaviour();
+        loginField.value = givenUser;
+        loginFieldBehaviour();
 
         switch (errorType) {
             case 'unknownUser':
-                this.errorMessage.innerText = 'Utilisateur inconnu';
-                this.errorMessage.style.display = 'block';
-                this.loginField.classList.add('inputNotOk');
+                errorMessage.innerText = 'Utilisateur inconnu';
+                errorMessage.style.display = 'block';
+                loginField.classList.add('inputNotOk');
                 break;
 
             case 'wrongPassword':
-                this.errorMessage.innerText = 'Mot de passe incorrect';
-                this.errorMessage.style.display = 'block';
-                this.passwordField.classList.add('inputNotOk');
+                errorMessage.innerText = 'Mot de passe incorrect';
+                errorMessage.style.display = 'block';
+                passwordField.classList.add('inputNotOk');
                 break;
         }
     }
@@ -53,13 +53,13 @@ export default class LoginPage
      * S'il fait moins de 4 caractéres c'est pas bon et on l'entoure en rouge
      * Réagit aprés un debounce de 150ms ou le délenchement de getCheck()
      */
-    private loginFieldBehaviour(): void {
-        if (this.loginField.value.length < 4) {
-            this.loginFieldStatus = false;
-            this.loginField.classList.add('inputNotOk');
+    function loginFieldBehaviour(): void {
+        if (loginField.value.length < 4) {
+            loginFieldStatus = false;
+            loginField.classList.add('inputNotOk');
         } else {
-            this.loginFieldStatus = true;
-            this.loginField.classList.remove('inputNotOk');
+            loginFieldStatus = true;
+            loginField.classList.remove('inputNotOk');
         };
     }
 
@@ -67,30 +67,30 @@ export default class LoginPage
      * S'il fait moins de 8 caractéres c'est pas bon et on l'entoure en rouge
      * Réagit aprés un debounce de 150ms
      */
-    private passwordFieldBehaviour(): void {
-        if (this.passwordField.value.length < 8) {
-            this.passwordFieldStatus = false;
-            this.passwordField.classList.add('inputNotOk');
+    function passwordFieldBehaviour(): void {
+        if (passwordField.value.length < 8) {
+            passwordFieldStatus = false;
+            passwordField.classList.add('inputNotOk');
         } else {
-            this.passwordFieldStatus = true;
-            this.passwordField.classList.remove('inputNotOk');
+            passwordFieldStatus = true;
+            passwordField.classList.remove('inputNotOk');
         };
     }
 
     /** Déclenchement d'une tentative de submit avec l'appui de la touche ENTER
      * @param event
      */
-    private enterPress(event: KeyboardEvent): void {
+    function enterPress(event: KeyboardEvent): void {
         if (event.key == 'Enter') {
-            this.loginButtonBehaviour();
+            loginButtonBehaviour();
         }
     }
 
     /** Submit uniquement si les champs de Login et Password sont corrects
      */
-    private loginButtonBehaviour(): void {
-        if ((this.loginFieldStatus) && (this.passwordFieldStatus)) {
-            this.loginForm.submit();
+    function loginButtonBehaviour(): void {
+        if ((loginFieldStatus) && (passwordFieldStatus)) {
+            loginForm.submit();
         }
     }
 }

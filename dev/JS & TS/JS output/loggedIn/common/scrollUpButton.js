@@ -1,15 +1,12 @@
-var ScrollUpButton = /** @class */ (function () {
-    function ScrollUpButton() {
-        var _this = this;
-        var scrollUpButton = document.getElementById('scrollUpButton');
-        scrollUpButton.addEventListener('click', this.scrollToTop);
-        window.onscroll = function () {
-            _this.scrollUpButtonDisplayBehaviour();
-        };
-    }
+export default function scrollUpButton() {
+    var scrollUpButton = document.getElementById('scrollUpButton');
+    scrollUpButton.addEventListener('click', scrollToTop);
+    window.onscroll = function () {
+        scrollUpButtonDisplayBehaviour();
+    };
     /** Fait apparaitre ou disparaitre le scrollUp button si l'écran est scroll à plus ou moins de 20px du haut de page
       */
-    ScrollUpButton.prototype.scrollUpButtonDisplayBehaviour = function () {
+    function scrollUpButtonDisplayBehaviour() {
         var scrollUpButton = document.getElementById('scrollUpButton');
         if (document.body.scrollTop > 20 ||
             document.documentElement.scrollTop > 20) {
@@ -26,16 +23,14 @@ var ScrollUpButton = /** @class */ (function () {
                 }
             }, 300);
         }
-    };
+    }
     /** Remonte l'écran quand la fonction est activée
      */
-    ScrollUpButton.prototype.scrollToTop = function () {
+    function scrollToTop() {
         var scrollUpButton = document.getElementById('scrollUpButton');
         if (scrollUpButton.style.opacity === '1') {
             document.body.scrollTop = 0; // For Safari
             document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
         }
-    };
-    return ScrollUpButton;
-}());
-export default ScrollUpButton;
+    }
+}

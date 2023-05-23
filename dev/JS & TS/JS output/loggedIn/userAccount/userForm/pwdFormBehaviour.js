@@ -1,73 +1,51 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-import PwdFormChecks from './pwdFormChecks.js';
+import * as pwdFormChecks from './pwdFormChecks.js';
 import _ from 'lodash';
-var PwdFormBehaviour = /** @class */ (function (_super) {
-    __extends(PwdFormBehaviour, _super);
-    function PwdFormBehaviour() {
-        var _this = _super.call(this) || this;
-        _this.pwdForm = document.getElementById('user_account_pwd_form');
-        _this.pwdInput = document.getElementById('pwd');
-        _this.confPwdInput = document.getElementById('confPwd');
-        _this.samePwdInput = document.getElementById('samePwd');
-        _this.formResetButton = document.getElementById('formResetButton');
-        _this.formSubmitButton = document.getElementById('formSubmitButton');
-        _this.fieldInputsEventListeners();
-        _this.formButtonsEventListeners();
-        return _this;
-    }
+export default function pwdFormBehaviour() {
+    var pwdForm = document.getElementById('user_account_pwd_form');
+    var pwdInput = document.getElementById('pwd');
+    var confPwdInput = document.getElementById('confPwd');
+    var samePwdInput = document.getElementById('samePwd');
+    var formResetButton = document.getElementById('formResetButton');
+    var formSubmitButton = document.getElementById('formSubmitButton');
+    fieldInputsEventListeners();
+    formButtonsEventListeners();
     /** Listeners pour les champs du form quand on change leur contenu avec un debounce, sert à lancer la vérification des champs
      */
-    PwdFormBehaviour.prototype.fieldInputsEventListeners = function () {
-        this.pwdInput.addEventListener('input', _.debounce(this.formChecks.bind(this), 150));
-        this.confPwdInput.addEventListener('input', _.debounce(this.formChecks.bind(this), 150));
-    };
+    function fieldInputsEventListeners() {
+        pwdInput.addEventListener('input', _.debounce(formChecks, 150));
+        confPwdInput.addEventListener('input', _.debounce(formChecks, 150));
+    }
     /** Bloque tous les caractéres sauf les chiffres et quelques touches utiles dans le champ de téléphone
      */
-    PwdFormBehaviour.prototype.formButtonsEventListeners = function () {
-        this.formResetButton.addEventListener('click', this.resetForm.bind(this));
-        this.formSubmitButton.addEventListener('click', this.submitForm.bind(this));
-    };
+    function formButtonsEventListeners() {
+        formResetButton.addEventListener('click', resetForm);
+        formSubmitButton.addEventListener('click', submitForm);
+    }
     /** Reset du form et des classes des champs inputs
      */
-    PwdFormBehaviour.prototype.resetForm = function () {
-        this.pwdInput.classList.remove('is-invalid');
-        this.confPwdInput.classList.remove('is-invalid');
-        this.samePwdInput.classList.remove('is-invalid');
-        this.pwdForm.reset();
-    };
+    function resetForm() {
+        pwdInput.classList.remove('is-invalid');
+        confPwdInput.classList.remove('is-invalid');
+        samePwdInput.classList.remove('is-invalid');
+        pwdForm.reset();
+    }
     /** Comportement lors de l'appui sur le bouton de Submit
      */
-    PwdFormBehaviour.prototype.submitForm = function () {
-        var formHasIssues = this.formChecks();
+    function submitForm() {
+        var formHasIssues = formChecks();
         // Si aucun test ne renvoie false, on peut submit le form
         if (formHasIssues == false) {
-            this.pwdForm.submit();
+            pwdForm.submit();
         }
-    };
+    }
     /** Série de vérifications des champs du formulaire
      * @returns {boolean} Renvoie du statut de vérification du formulaire
      */
-    PwdFormBehaviour.prototype.formChecks = function () {
-        var pwdCheck = _super.prototype.pwdCheck.call(this, 'pwd');
-        var confPwdCheck = _super.prototype.pwdCheck.call(this, 'confPwd');
+    function formChecks() {
+        var pwdCheck = pwdFormChecks.pwdCheck('pwd');
+        var confPwdCheck = pwdFormChecks.pwdCheck('confPwd');
         var formHasIssues = false;
-        formHasIssues = _super.prototype.samePwdCheck.call(this, pwdCheck, confPwdCheck);
+        formHasIssues = pwdFormChecks.samePwdCheck(pwdCheck, confPwdCheck);
         return formHasIssues;
-    };
-    return PwdFormBehaviour;
-}(PwdFormChecks));
-export default PwdFormBehaviour;
+    }
+}

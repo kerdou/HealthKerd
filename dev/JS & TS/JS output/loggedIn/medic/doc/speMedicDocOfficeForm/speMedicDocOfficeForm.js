@@ -59,223 +59,213 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-import allInOneAJAX from './allInOneAJAX.js';
+import * as allInOneAJAX from './allInOneAJAX.js';
 import _ from 'lodash';
-var SpeMedicDocOfficeForm = /** @class */ (function () {
-    function SpeMedicDocOfficeForm() {
-        var _this = this;
-        this.allInOne = new allInOneAJAX;
-        this.badgeStoreDiv = document.getElementById("badge_store"); // DIV contenant les badges de spécialités médicales
-        this.selectElement = document.getElementById("select"); // SELECT de choix de spé médicales
-        this.addButton = document.getElementById('add_button'); // bouton à droite du SELECT
-        this.actualOfficeStoreDiv = document.getElementById("actual_office_store");
-        this.potentialOfficeStoreDiv = document.getElementById("potential_office_store");
-        this.submitButton = document.getElementById("submit_button");
-        this.cancelButton = document.getElementById("cancel_button");
-        this.officeCardStoreObj = {}; // contient toutes les doc offices cards préassemblées
-        this.allInOneData = []; // toutes les données récupérées en AJAX
-        this.docID = ''; // ID du doc concerné
-        this.everySpeMedicForDoc = []; // toutes les spé médicales attribuales au doc
-        this.everyDocOfficesOfUser = []; // toutes les données de tous les doc offices du user
-        this.everySpeMedicOfAllDocOfficesOfUser = []; // toutes les spé médic de tous les doc offices du user
-        // suivi des ID de spécialités médicales et de doc offices
-        this.actualSpeMedicOfDocArray = []; // id de spé médic assignées au doc
-        this.actualOfficesIdArray = []; // id des doc offices assignés au doc
-        this.potentialOfficesIdArray = []; // id de tous les doc offices potentiellement assignables au doc
-        // templates d'élements HTML
-        this.removableSpeMedicBadgeTemplate = ''; // template de tous les badges de spé medic assignés au doc
-        this.officeCardTemplate = ''; // template de doc office card
-        this.speMedicBadgeForOfficeCardTemplate = ''; // template des badge de spé medic destinées au doc office cards
-        this.addButton.addEventListener('click', this.addSpeMedic.bind(this));
-        this.submitButton.addEventListener('click', this.formSubmit.bind(this));
-        this.cancelButton.addEventListener('click', this.formCancel.bind(this));
-        (function () { return __awaiter(_this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = this;
-                        return [4 /*yield*/, this.allInOne.receive()];
-                    case 1:
-                        _a.allInOneData = _b.sent(); // récupération de toutes les données en AJAX
-                        //console.log(this.allInOneData.response);
-                        //let debug = document.getElementById('debug') as HTMLDivElement;
-                        //debug.innerHTML = this.allInOneData.response;
-                        this.docID = this.allInOneData.response.docID;
-                        this.everySpeMedicForDoc = this.allInOneData.response.everySpeMedicForDoc.pdoResult;
-                        this.everyDocOfficesOfUser = this.allInOneData.response.everyDocOfficesOfUser.pdoResult;
-                        this.everySpeMedicOfAllDocOfficesOfUser = this.allInOneData.response.everySpeMedicOfAllDocOfficesOfUser.pdoResult;
-                        this.actualSpeMedicOfDocArray = this.initialSpeMedicIdExtractor(this.allInOneData.response.speMedicOfDoc.pdoResult);
-                        this.actualOfficesIdArray = this.initialDocOfficeIdExtractor(this.allInOneData.response.docOfficesOfDoc.pdoResult);
-                        // récupération des templates HTML
-                        this.removableSpeMedicBadgeTemplate = this.allInOneData.response.removableSpeMedicBadgeTemplate;
-                        this.officeCardTemplate = this.allInOneData.response.officeCardTemplate;
-                        this.speMedicBadgeForOfficeCardTemplate = this.allInOneData.response.speMedicBadgeForOfficeCardTemplate;
-                        this.docOfficeCardStoreBuilder();
-                        this.speMedicBadgeBuilder();
-                        return [2 /*return*/];
-                }
-            });
-        }); })();
-    }
+export default function speMedicDocOfficeForm() {
+    var _this = this;
+    var badgeStoreDiv = document.getElementById("badge_store"); // DIV contenant les badges de spécialités médicales
+    var selectElement = document.getElementById("select"); // SELECT de choix de spé médicales
+    var addButton = document.getElementById('add_button'); // bouton à droite du SELECT
+    var actualOfficeStoreDiv = document.getElementById("actual_office_store");
+    var potentialOfficeStoreDiv = document.getElementById("potential_office_store");
+    var submitButton = document.getElementById("submit_button");
+    var cancelButton = document.getElementById("cancel_button");
+    var officeCardStoreObj = {}; // contient toutes les doc offices cards préassemblées
+    var allInOneData = []; // toutes les données récupérées en AJAX
+    var docID = ''; // ID du doc concerné
+    var everySpeMedicForDoc = []; // toutes les spé médicales attribuales au doc
+    var everyDocOfficesOfUser = []; // toutes les données de tous les doc offices du user
+    var everySpeMedicOfAllDocOfficesOfUser = []; // toutes les spé médic de tous les doc offices du user
+    // suivi des ID de spécialités médicales et de doc offices
+    var actualSpeMedicOfDocArray = []; // id de spé médic assignées au doc
+    var actualOfficesIdArray = []; // id des doc offices assignés au doc
+    var potentialOfficesIdArray = []; // id de tous les doc offices potentiellement assignables au doc
+    // templates d'élements HTML
+    var removableSpeMedicBadgeTemplate = ''; // template de tous les badges de spé medic assignés au doc
+    var officeCardTemplate = ''; // template de doc office card
+    var speMedicBadgeForOfficeCardTemplate = ''; // template des badge de spé medic destinées au doc office cards
+    addButton.addEventListener('click', addSpeMedic);
+    submitButton.addEventListener('click', formSubmit);
+    cancelButton.addEventListener('click', formCancel);
+    (function () { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, allInOneAJAX.ajaxReceive()];
+                case 1:
+                    allInOneData = _a.sent(); // récupération de toutes les données en AJAX
+                    //console.log(this.allInOneData.response);
+                    //let debug = document.getElementById('debug') as HTMLDivElement;
+                    //debug.innerHTML = this.allInOneData.response;
+                    docID = allInOneData.response.docID;
+                    everySpeMedicForDoc = allInOneData.response.everySpeMedicForDoc.pdoResult;
+                    everyDocOfficesOfUser = allInOneData.response.everyDocOfficesOfUser.pdoResult;
+                    everySpeMedicOfAllDocOfficesOfUser = allInOneData.response.everySpeMedicOfAllDocOfficesOfUser.pdoResult;
+                    actualSpeMedicOfDocArray = initialSpeMedicIdExtractor(allInOneData.response.speMedicOfDoc.pdoResult);
+                    actualOfficesIdArray = initialDocOfficeIdExtractor(allInOneData.response.docOfficesOfDoc.pdoResult);
+                    // récupération des templates HTML
+                    removableSpeMedicBadgeTemplate = allInOneData.response.removableSpeMedicBadgeTemplate;
+                    officeCardTemplate = allInOneData.response.officeCardTemplate;
+                    speMedicBadgeForOfficeCardTemplate = allInOneData.response.speMedicBadgeForOfficeCardTemplate;
+                    docOfficeCardStoreBuilder();
+                    speMedicBadgeBuilder();
+                    return [2 /*return*/];
+            }
+        });
+    }); })();
     /** Extraction des ID de spe medic déjà assignées au doc
      * @param speList
      * @returns
      */
-    SpeMedicDocOfficeForm.prototype.initialSpeMedicIdExtractor = function (speList) {
+    function initialSpeMedicIdExtractor(speList) {
         var result = [];
         speList.forEach(function (value, index) {
             result.push(value.speMedicID);
         });
         return result;
-    };
+    }
     /** Extraction des ID de doc offices déjà assignés au doc
      * @param officeList
      * @returns
      */
-    SpeMedicDocOfficeForm.prototype.initialDocOfficeIdExtractor = function (officeList) {
+    function initialDocOfficeIdExtractor(officeList) {
         var result = [];
         officeList.forEach(function (value, index) {
             result.push(value.docOfficeID);
         });
         return result;
-    };
+    }
     /** Création de tous les carss de doc office pour les stocker dans officeCardStoreObj
      */
-    SpeMedicDocOfficeForm.prototype.docOfficeCardStoreBuilder = function () {
-        var _this = this;
-        this.everyDocOfficesOfUser.forEach(function (value, index) {
-            var badgesHTML = _this.speMedicBadgeForOfficeCardBuilder(value.docOfficeID);
-            var tempCard = _this.officeCardTemplate;
+    function docOfficeCardStoreBuilder() {
+        everyDocOfficesOfUser.forEach(function (value, index) {
+            var badgesHTML = speMedicBadgeForOfficeCardBuilder(value.docOfficeID);
+            var tempCard = officeCardTemplate;
             tempCard = tempCard.replace('{docOfficeID}', value.docOfficeID);
             tempCard = tempCard.replace('{name}', value.name);
             tempCard = tempCard.replace('{cityName}', value.cityName);
             tempCard = tempCard.replace('{badgesHTML}', badgesHTML);
             var key = value.docOfficeID + "_office";
-            _this.officeCardStoreObj[key] = tempCard; // ajout d'un caractére à la fin de la clé pour qu'elle soit une string et qu'elle garde le bon ordre
+            officeCardStoreObj[key] = tempCard; // ajout d'un caractére à la fin de la clé pour qu'elle soit une string et qu'elle garde le bon ordre
         });
-    };
+    }
     /** Construction des badges de spe medic à destination des cards de doc office
      * @param docOfficeID
      * @returns
      */
-    SpeMedicDocOfficeForm.prototype.speMedicBadgeForOfficeCardBuilder = function (docOfficeID) {
-        var _this = this;
+    function speMedicBadgeForOfficeCardBuilder(docOfficeID) {
         var badgesHTML = '';
-        this.everySpeMedicOfAllDocOfficesOfUser.forEach(function (value, index) {
+        everySpeMedicOfAllDocOfficesOfUser.forEach(function (value, index) {
             if (value.docOfficeID == docOfficeID) {
-                var tempBadge = _this.speMedicBadgeForOfficeCardTemplate;
+                var tempBadge = speMedicBadgeForOfficeCardTemplate;
                 tempBadge = tempBadge.replace('{speName}', value.name);
                 badgesHTML = badgesHTML.concat(tempBadge);
             }
         });
         return badgesHTML;
-    };
+    }
     /** Cycle de création/recyclage des badges de spé medic et d'Options du Select
      * * Vidage puis remplissage de la liste de badges de spé médic
      * * Vidage puis remplissage du SELECT
      * * Lancement de la gestion des cards de doc office
      */
-    SpeMedicDocOfficeForm.prototype.speMedicBadgeBuilder = function () {
-        var _this = this;
+    function speMedicBadgeBuilder() {
         // vidage puis remplissage de la liste de badges de spé médic
-        this.badgeStoreDiv.innerHTML = '';
-        if (this.actualSpeMedicOfDocArray.length == 0) {
-            this.badgeStoreDiv.insertAdjacentHTML("beforeend", '<p>Pas de spécialité médicale sélectionnée</p>');
+        badgeStoreDiv.innerHTML = '';
+        if (actualSpeMedicOfDocArray.length == 0) {
+            badgeStoreDiv.insertAdjacentHTML("beforeend", '<p>Pas de spécialité médicale sélectionnée</p>');
         }
         else {
-            this.everySpeMedicForDoc.forEach(function (everySpe) {
-                if (_this.actualSpeMedicOfDocArray.includes(everySpe.speMedicID)) {
-                    var tempBadge = _this.removableSpeMedicBadgeTemplate;
+            everySpeMedicForDoc.forEach(function (everySpe) {
+                if (actualSpeMedicOfDocArray.includes(everySpe.speMedicID)) {
+                    var tempBadge = removableSpeMedicBadgeTemplate;
                     tempBadge = tempBadge.replace('{speMedicID}', everySpe.speMedicID); // utiliser replaceAll() obligerait à passer en lib ES2021
                     tempBadge = tempBadge.replace('{speMedicID}', everySpe.speMedicID); // utiliser replaceAll() obligerait à passer en lib ES2021
                     tempBadge = tempBadge.replace('{speName}', everySpe.nameForDoc);
-                    _this.badgeStoreDiv.insertAdjacentHTML("beforeend", tempBadge);
+                    badgeStoreDiv.insertAdjacentHTML("beforeend", tempBadge);
                     var badge = document.getElementById(everySpe.speMedicID + '_spe');
                     badge.style.cursor = 'pointer';
-                    badge.addEventListener("click", _this.speBadgeRemover.bind(_this));
+                    badge.addEventListener("click", speBadgeRemover);
                 }
             });
         }
         // vidage puis remplissage du SELECT
-        this.selectElement.innerHTML = '';
-        this.everySpeMedicForDoc.forEach(function (spe) {
-            if (_this.actualSpeMedicOfDocArray.includes(spe.speMedicID) == false) {
+        selectElement.innerHTML = '';
+        everySpeMedicForDoc.forEach(function (spe) {
+            if (actualSpeMedicOfDocArray.includes(spe.speMedicID) == false) {
                 var optionElement = document.createElement("option");
                 optionElement.value = spe.speMedicID;
                 optionElement.text = spe.nameForDoc;
-                _this.selectElement.add(optionElement);
+                selectElement.add(optionElement);
             }
         });
-        this.buttonsAbilityCheck();
-        this.officeCardsMngmt();
-    };
+        buttonsAbilityCheck();
+        officeCardsMngmt();
+    }
     /** Suppression d'un badge de spé médicales de doc quand on a clic dessus
      * @param {MouseEvent} evt - Event du clic de souris sur le badge de spé medic du doc
      */
-    SpeMedicDocOfficeForm.prototype.speBadgeRemover = function (evt) {
+    function speBadgeRemover(evt) {
         var clickedBadge = evt.currentTarget;
         var badge = document.getElementById(clickedBadge.id);
-        badge.removeEventListener("click", this.speBadgeRemover);
+        badge.removeEventListener("click", speBadgeRemover);
         var badgeId = badge.id.replace('_spe', '');
-        _.pull(this.actualSpeMedicOfDocArray, badgeId);
-        this.speMedicBadgeBuilder();
-    };
+        _.pull(actualSpeMedicOfDocArray, badgeId);
+        speMedicBadgeBuilder();
+    }
     /** Ajout de l'ID de la spé medic à ajouter au actualSpeMedicOfDocArray puis recréation des badges et des Options du Select
      */
-    SpeMedicDocOfficeForm.prototype.addSpeMedic = function () {
-        this.actualSpeMedicOfDocArray.push(this.selectElement.value);
-        this.speMedicBadgeBuilder();
-    };
+    function addSpeMedic() {
+        actualSpeMedicOfDocArray.push(selectElement.value);
+        speMedicBadgeBuilder();
+    }
     /** Vérification du nombre de spe medic badges, arrivé à 5 on désactive le bouton d'ajout de spe medic
      */
-    SpeMedicDocOfficeForm.prototype.buttonsAbilityCheck = function () {
-        if (this.actualSpeMedicOfDocArray.length < 5) {
-            this.addButton.disabled = false;
+    function buttonsAbilityCheck() {
+        if (actualSpeMedicOfDocArray.length < 5) {
+            addButton.disabled = false;
         }
         else {
-            this.addButton.disabled = true;
+            addButton.disabled = true;
         }
-        if (this.actualSpeMedicOfDocArray.length == 0) {
-            this.submitButton.disabled = true;
+        if (actualSpeMedicOfDocArray.length == 0) {
+            submitButton.disabled = true;
         }
         else {
-            this.submitButton.disabled = false;
+            submitButton.disabled = false;
         }
-    };
+    }
     /** Gestion de la gestion des arrays dédiés aux cards de doc office et à leur effacement dans le HTML avant de les redessiner
      */
-    SpeMedicDocOfficeForm.prototype.officeCardsMngmt = function () {
-        var _this = this;
-        this.potentialOfficesIdArray = []; // vidage de potentialOfficesIdArray pour commencer un nouveau cycle
+    function officeCardsMngmt() {
+        potentialOfficesIdArray = []; // vidage de potentialOfficesIdArray pour commencer un nouveau cycle
         // ajout de tous les doc offices potentiels dans potentialOfficesIdArray
-        this.everySpeMedicOfAllDocOfficesOfUser.forEach(function (value) {
-            if (_this.actualSpeMedicOfDocArray.includes(value.speMedicID)) {
-                _this.potentialOfficesIdArray.push(value.docOfficeID);
+        everySpeMedicOfAllDocOfficesOfUser.forEach(function (value) {
+            if (actualSpeMedicOfDocArray.includes(value.speMedicID)) {
+                potentialOfficesIdArray.push(value.docOfficeID);
             }
         });
         // suppression des offices déjà assignés au doc de la liste des offices potentiels
-        this.actualOfficesIdArray.forEach(function (docOfficeID) {
-            if (_this.potentialOfficesIdArray.includes(docOfficeID)) {
-                _.pull(_this.potentialOfficesIdArray, docOfficeID);
+        actualOfficesIdArray.forEach(function (docOfficeID) {
+            if (potentialOfficesIdArray.includes(docOfficeID)) {
+                _.pull(potentialOfficesIdArray, docOfficeID);
             }
         });
         // suppression des cards dans actual_office_store et potential_office_store
-        this.actualOfficeStoreDiv.innerHTML = '';
-        this.potentialOfficeStoreDiv.innerHTML = '';
-        if (this.actualOfficesIdArray.length == 0) {
-            this.actualOfficeStoreDiv.insertAdjacentHTML("beforeend", '<p>Aucun cabinet médical assigné</p>');
+        actualOfficeStoreDiv.innerHTML = '';
+        potentialOfficeStoreDiv.innerHTML = '';
+        if (actualOfficesIdArray.length == 0) {
+            actualOfficeStoreDiv.insertAdjacentHTML("beforeend", '<p>Aucun cabinet médical assigné</p>');
         }
         else {
-            this.cardsDrawer('actual', this.actualOfficesIdArray);
+            cardsDrawer('actual', actualOfficesIdArray);
         }
-        if (this.potentialOfficesIdArray.length == 0) {
-            this.potentialOfficeStoreDiv.insertAdjacentHTML("beforeend", '<p>Aucun cabinet médical supplémentaire disponible</p>');
+        if (potentialOfficesIdArray.length == 0) {
+            potentialOfficeStoreDiv.insertAdjacentHTML("beforeend", '<p>Aucun cabinet médical supplémentaire disponible</p>');
         }
         else {
-            this.cardsDrawer('potential', this.potentialOfficesIdArray);
+            cardsDrawer('potential', potentialOfficesIdArray);
         }
-    };
+    }
     /** Affichage des cards dans actual_office_store et potential_office_store
      * * On fait un forEach de toutes les cards stockées dans officeCardStoreObj
      * * On change adapte les formats d'ID des doc offices
@@ -285,62 +275,61 @@ var SpeMedicDocOfficeForm = /** @class */ (function () {
      * @param type - Indique si l'on gére un affichage dans actual_office_store ou dans potential_office_store
      * @param officesIdArray - Liste des ID des doc offices
      */
-    SpeMedicDocOfficeForm.prototype.cardsDrawer = function (type, officesIdArray) {
-        var _this = this;
-        Object.keys(this.officeCardStoreObj).forEach(function (longObjKey) {
+    function cardsDrawer(type, officesIdArray) {
+        Object.keys(officeCardStoreObj).forEach(function (longObjKey) {
             var shortObjKey = longObjKey.replace('_office', '');
             if (officesIdArray.includes(shortObjKey)) {
                 if (type == 'actual') {
-                    _this.actualOfficeStoreDiv.insertAdjacentHTML("beforeend", _this.officeCardStoreObj[longObjKey]);
+                    actualOfficeStoreDiv.insertAdjacentHTML("beforeend", officeCardStoreObj[longObjKey]);
                     var cardElement = document.getElementById(longObjKey);
                     cardElement.style.cursor = 'pointer';
-                    cardElement.addEventListener("click", _this.actualCardClick.bind(_this));
+                    cardElement.addEventListener("click", actualCardClick);
                 }
                 else {
-                    _this.potentialOfficeStoreDiv.insertAdjacentHTML("beforeend", _this.officeCardStoreObj[longObjKey]);
+                    potentialOfficeStoreDiv.insertAdjacentHTML("beforeend", officeCardStoreObj[longObjKey]);
                     var cardElement = document.getElementById(longObjKey);
-                    if (_this.actualOfficesIdArray.length < 5) {
+                    if (actualOfficesIdArray.length < 5) {
                         cardElement.style.cursor = 'pointer';
-                        cardElement.addEventListener("click", _this.potentialCardClick.bind(_this));
+                        cardElement.addEventListener("click", potentialCardClick);
                     }
                 }
             }
         });
-    };
+    }
     /** Si le user clic sur une card assignée, son ID est supprimé de actualOfficesIdArray et on relance l'affichage des cards
      * @param evt
      */
-    SpeMedicDocOfficeForm.prototype.actualCardClick = function (evt) {
+    function actualCardClick(evt) {
         var clickedCard = evt.currentTarget;
-        clickedCard.removeEventListener("click", this.actualCardClick);
+        clickedCard.removeEventListener("click", actualCardClick);
         var cardId = clickedCard.id.replace('_office', '');
-        _.pull(this.actualOfficesIdArray, cardId);
-        this.officeCardsMngmt();
-    };
+        _.pull(actualOfficesIdArray, cardId);
+        officeCardsMngmt();
+    }
     /** Si le user clic sur une card potentielle, son ID est ajoutée à actualOfficesIdArray et on relance l'affichage des cards
      * @param evt
      */
-    SpeMedicDocOfficeForm.prototype.potentialCardClick = function (evt) {
+    function potentialCardClick(evt) {
         var clickedCard = evt.currentTarget;
-        clickedCard.removeEventListener("click", this.potentialCardClick);
+        clickedCard.removeEventListener("click", potentialCardClick);
         var cardId = clickedCard.id.replace('_office', '');
-        this.actualOfficesIdArray.push(cardId);
-        this.officeCardsMngmt();
-    };
+        actualOfficesIdArray.push(cardId);
+        officeCardsMngmt();
+    }
     /** Récupération des données puis mise en forme avant envoyé en POST via AJAX au clic sur le bouton Envoyer
      */
-    SpeMedicDocOfficeForm.prototype.formSubmit = function () {
+    function formSubmit() {
         var _this = this;
         // récupération des ID des spé medics confirmées puis transformation
         var confirmedIdsArrayPrep = [];
-        this.actualSpeMedicOfDocArray.forEach(function (id, index) {
-            var template = 'speMedicID_' + index + '=' + id;
+        actualSpeMedicOfDocArray.forEach(function (id, index) {
+            var template = "speMedicID_".concat(index, "=").concat(id);
             confirmedIdsArrayPrep.push(template);
         });
         // récupératin des ID des doc offices confirmés puis transformation
         var confirmedDocOfficeIdsArrayPrep = [];
-        this.actualOfficesIdArray.forEach(function (id, index) {
-            var template = 'docOfficeID_' + index + '=' + id;
+        actualOfficesIdArray.forEach(function (id, index) {
+            var template = "docOfficeID_".concat(index, "=").concat(id);
             confirmedDocOfficeIdsArrayPrep.push(template);
         });
         var concatenadedArrays = __spreadArray(__spreadArray([], __read(confirmedIdsArrayPrep), false), __read(confirmedDocOfficeIdsArrayPrep), false);
@@ -349,24 +338,22 @@ var SpeMedicDocOfficeForm = /** @class */ (function () {
             var ajax;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.allInOne.send(params)];
+                    case 0: return [4 /*yield*/, allInOneAJAX.ajaxSend(params)];
                     case 1:
                         ajax = _a.sent();
                         //const debug = document.getElementById('debug') as HTMLDivElement;
                         //debug.innerHTML = ajax.response;
                         if (ajax.status == 200) {
-                            window.location.search = '?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=' + this.docID;
+                            window.location.search = "?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=".concat(docID);
                         }
                         return [2 /*return*/];
                 }
             });
         }); })();
-    };
+    }
     /** Renvoi vers la page du doc au clic sur "Annuler"
      */
-    SpeMedicDocOfficeForm.prototype.formCancel = function () {
-        window.location.search = '?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=' + this.docID;
-    };
-    return SpeMedicDocOfficeForm;
-}());
-export default SpeMedicDocOfficeForm;
+    function formCancel() {
+        window.location.search = '?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=' + docID;
+    }
+}
