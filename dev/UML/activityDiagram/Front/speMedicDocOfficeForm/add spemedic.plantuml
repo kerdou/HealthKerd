@@ -1,0 +1,20 @@
+@startuml InitialLoading
+
+
+
+
+start
+
+:speBadgeRemover()
+- Identification du badge cliqué dans la section "Spécialités médicales assignées"
+- Suppression de son eventListener
+- Suppression de l'ID de la spé medic du actualSpeMedicOfDocArray;
+
+:speMedicBadgeBuilder();
+
+:speMedicSelectBuilder();
+
+stop
+
+
+@enduml

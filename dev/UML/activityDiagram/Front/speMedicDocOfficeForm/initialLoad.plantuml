@@ -1,0 +1,102 @@
+@startuml InitialLoading
+
+|Main tasks|
+
+
+start
+    note
+    User clique sur le lien de la page
+    end note
+
+:Le chargement de la page se termine;
+
+:<b>preLauncher()</b>;
+
+:<b>initialBuildUpLauncher()</b>
+Accés asynchrone pour charger:
+- ID du doc
+- Tous les doc offices du doc
+- Toutes les spé medic du doc
+- Toutes les spé medic attribuables au doc
+- Tous les doc offices du user
+- Toutes les spe medic des doc offices du user
+
+- Template des office cards
+- Template des badges de spe medic cliquables
+- Template des badges de spe medic non cliquables;
+    note
+    On attend la fin du chargement de la
+    page avant de lancerla récupération
+    des données et la création des élements HTML
+    end note
+    note
+    Chargement des données depuis
+    une Promise au lancement de la page
+    end note
+
+
+|Sub tasks|
+
+:<b>dataExtractFromPromise()</b>
+- Extraction des données du Promise
+- Extraction des templates du Promise
+- Copie de ces datas dans les bonnes variables;
+    note right
+    Utilisation des fonctions suivantes
+    pour des extractions de données du Promise
+    - <b>initialSpeMedicIdExtractor()</b>
+        - ID de spe medic déjà assignées au doc
+    - <b>initialDocOfficeIdExtractor()</b>
+        - ID de doc offices déjà assignés au doc
+    end note
+
+|Main tasks|
+
+:<b>initialElementsBuildUp()</b>;
+    note
+    Construction des éléments HTML
+    à partir des datas du Promise
+    end note
+
+
+
+
+|Sub tasks|
+
+:<b>docOfficeCardStoreBuilder()</b>
+Création de tous les cards de doc office pour les stocker dans <b>officeCardStoreObj</b>;
+    note right
+    Utilise <b>speMedicBadgeForOfficeCardBuilder()</b>
+    end note
+
+:<b>speMedicBadgeBuilder()</b>
+Cycle de création/recyclage des badges de spé medic et d'Options du Select
+- Vidage puis remplissage de la liste de badges de spé médic
+- Vidage puis remplissage du SELECT
+- Lancement de la gestion des cards de doc office;
+
+
+:<b>buttonsAbilityCheck()</b>
+Vérification du nombre de spe medic badges, arrivé à 5 on désactive le bouton d'ajout de spe medic;
+
+
+:<b>officeCardsMngmt()</b>
+Gestion des arrays dédiés aux cards de doc office et à leur effacement dans le
+HTML avant de les redessiner dans les offices actuels et les offices potentiels
+- Vidage de <b>potentialOfficesIdArray</b> pour commencer un nouveau cycle
+- Ajout de tous les doc offices potentiels dans <b>potentialOfficesIdArray</b>
+- Suppression des offices déjà assignés au doc de la liste des offices potentiels
+- Suppression des cards dans <b>actual_office_store</b> et <b>potential_office_store</b>;
+    note right
+    Utilise la fonction <b>cardsDrawer()</b>
+    end note
+
+
+
+
+
+|Main tasks|
+stop
+
+
+@enduml

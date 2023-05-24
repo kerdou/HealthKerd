@@ -69,7 +69,9 @@ export default function speMedicDocOfficeForm() {
     var potentialOfficeStoreDiv = document.getElementById("potential_office_store");
     var submitButton = document.getElementById("submit_button");
     var cancelButton = document.getElementById("cancel_button");
-    var officeCardStoreObj = {}; // contient toutes les doc offices cards préassemblées
+    addButton.addEventListener('click', addSpeMedic);
+    submitButton.addEventListener('click', formSubmit);
+    cancelButton.addEventListener('click', formCancel);
     var allInOneData; // toutes les données récupérées en AJAX
     var docID = ''; // ID du doc concerné
     var everySpeMedicForDoc = []; // toutes les spé médicales attribuales au doc
@@ -83,38 +85,47 @@ export default function speMedicDocOfficeForm() {
     var removableSpeMedicBadgeTemplate = ''; // template de tous les badges de spé medic assignés au doc
     var officeCardTemplate = ''; // template de doc office card
     var speMedicBadgeForOfficeCardTemplate = ''; // template des badge de spé medic destinées au doc office cards
-    addButton.addEventListener('click', addSpeMedic);
-    submitButton.addEventListener('click', formSubmit);
-    cancelButton.addEventListener('click', formCancel);
-    /** Récupération de toutes les données depuis le backend via un Promise
-     * Le fait de l'appeler avec l'opérateur void évite l'apparition de messages d'erreur
+    var officeCardStoreObj = {}; // contient toutes les doc offices cards préassemblées
+    window.addEventListener('load', preLauncher);
+    /** Comme on ne peut pas lancer une fonction avec un void depuis un addEventListener,
+     * cette fonction a été rajoutée en tant qu'étape intermédiaire
      */
-    function callInPromisedData() {
+    function preLauncher() {
+        void initialBuildUpLauncher(); // Le fait de l'appeler avec l'opérateur void évite l'apparition de messages d'erreur car la Promise n'a pas de Return
+    }
+    /** Chargement des données depuis une Promise au lancement de la page
+     * * Puis extraction des données de la Promise
+     * * Puis construction des éléments HTML
+     */
+    function initialBuildUpLauncher() {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, allInOneAJAX.ajaxReceive()];
                     case 1:
-                        allInOneData = _a.sent(); // récupération de toutes les données en AJAX
-                        docID = allInOneData.response.docID;
-                        everySpeMedicForDoc = allInOneData.response.everySpeMedicForDoc.pdoResult;
-                        everyDocOfficesOfUser = allInOneData.response.everyDocOfficesOfUser.pdoResult;
-                        everySpeMedicOfAllDocOfficesOfUser = allInOneData.response.everySpeMedicOfAllDocOfficesOfUser.pdoResult;
-                        actualSpeMedicOfDocArray = initialSpeMedicIdExtractor(allInOneData.response.speMedicOfDoc.pdoResult);
-                        actualOfficesIdArray = initialDocOfficeIdExtractor(allInOneData.response.docOfficesOfDoc.pdoResult);
-                        // récupération des templates HTML
-                        removableSpeMedicBadgeTemplate = allInOneData.response.removableSpeMedicBadgeTemplate;
-                        officeCardTemplate = allInOneData.response.officeCardTemplate;
-                        speMedicBadgeForOfficeCardTemplate = allInOneData.response.speMedicBadgeForOfficeCardTemplate;
-                        docOfficeCardStoreBuilder();
-                        speMedicBadgeBuilder();
+                        allInOneData = _a.sent();
+                        dataExtractFromPromise();
+                        initialElementsBuildUp();
                         return [2 /*return*/];
                 }
             });
         });
     }
     ;
-    void callInPromisedData();
+    /** Extraction des données du Promise et copie dans les variables necessaires
+     */
+    function dataExtractFromPromise() {
+        docID = allInOneData.response.docID;
+        everySpeMedicForDoc = allInOneData.response.everySpeMedicForDoc.pdoResult;
+        everyDocOfficesOfUser = allInOneData.response.everyDocOfficesOfUser.pdoResult;
+        everySpeMedicOfAllDocOfficesOfUser = allInOneData.response.everySpeMedicOfAllDocOfficesOfUser.pdoResult;
+        actualSpeMedicOfDocArray = initialSpeMedicIdExtractor(allInOneData.response.speMedicOfDoc.pdoResult);
+        actualOfficesIdArray = initialDocOfficeIdExtractor(allInOneData.response.docOfficesOfDoc.pdoResult);
+        // récupération des templates HTML
+        removableSpeMedicBadgeTemplate = allInOneData.response.removableSpeMedicBadgeTemplate;
+        officeCardTemplate = allInOneData.response.officeCardTemplate;
+        speMedicBadgeForOfficeCardTemplate = allInOneData.response.speMedicBadgeForOfficeCardTemplate;
+    }
     /** Extraction des ID de spe medic déjà assignées au doc
      * @param speList
      * @returns
@@ -137,7 +148,16 @@ export default function speMedicDocOfficeForm() {
         });
         return result;
     }
-    /** Création de tous les carss de doc office pour les stocker dans officeCardStoreObj
+    /** Construction des éléments HTML à partir des données extraites du Promise
+    */
+    function initialElementsBuildUp() {
+        docOfficeCardStoreBuilder();
+        speMedicBadgeBuilder();
+        speMedicSelectBuilder();
+        buttonsAbilityCheck();
+        officeCardsMngmt();
+    }
+    /** Création de tous les cards de doc office pour les stocker dans officeCardStoreObj
      */
     function docOfficeCardStoreBuilder() {
         everyDocOfficesOfUser.forEach(function (value) {
@@ -166,9 +186,8 @@ export default function speMedicDocOfficeForm() {
         });
         return badgesHTML;
     }
-    /** Cycle de création/recyclage des badges de spé medic et d'Options du Select
+    /** Cycle de création/recyclage des badges de spé medic
      * * Vidage puis remplissage de la liste de badges de spé médic
-     * * Vidage puis remplissage du SELECT
      * * Lancement de la gestion des cards de doc office
      */
     function speMedicBadgeBuilder() {
@@ -191,6 +210,12 @@ export default function speMedicDocOfficeForm() {
                 }
             });
         }
+    }
+    /** Cycle de création/recyclage des Options du Select de spé medic
+     * * Vidage puis remplissage du SELECT
+     * * Lancement de la gestion des cards de doc office
+     */
+    function speMedicSelectBuilder() {
         // vidage puis remplissage du SELECT
         selectElement.innerHTML = '';
         everySpeMedicForDoc.forEach(function (spe) {
@@ -201,8 +226,6 @@ export default function speMedicDocOfficeForm() {
                 selectElement.add(optionElement);
             }
         });
-        buttonsAbilityCheck();
-        officeCardsMngmt();
     }
     /** Suppression d'un badge de spé médicales de doc quand on a clic dessus
      * @param {MouseEvent} evt - Event du clic de souris sur le badge de spé medic du doc
@@ -210,16 +233,20 @@ export default function speMedicDocOfficeForm() {
     function speBadgeRemover(evt) {
         var clickedBadge = evt.currentTarget;
         var badge = document.getElementById(clickedBadge.id);
-        badge.removeEventListener("click", speBadgeRemover);
         var badgeId = badge.id.replace('_spe', '');
         _.pull(actualSpeMedicOfDocArray, badgeId);
+        badge.removeEventListener("click", speBadgeRemover);
         speMedicBadgeBuilder();
+        speMedicSelectBuilder();
+        officeCardsMngmt();
     }
     /** Ajout de l'ID de la spé medic à ajouter au actualSpeMedicOfDocArray puis recréation des badges et des Options du Select
      */
     function addSpeMedic() {
         actualSpeMedicOfDocArray.push(selectElement.value);
         speMedicBadgeBuilder();
+        speMedicSelectBuilder();
+        officeCardsMngmt();
     }
     /** Vérification du nombre de spe medic badges, arrivé à 5 on désactive le bouton d'ajout de spe medic
      */
@@ -237,7 +264,7 @@ export default function speMedicDocOfficeForm() {
             submitButton.disabled = false;
         }
     }
-    /** Gestion de la gestion des arrays dédiés aux cards de doc office et à leur effacement dans le HTML avant de les redessiner
+    /** Gestion des arrays dédiés aux cards de doc office et à leur effacement dans le HTML avant de les redessiner
      */
     function officeCardsMngmt() {
         potentialOfficesIdArray = []; // vidage de potentialOfficesIdArray pour commencer un nouveau cycle
@@ -344,12 +371,11 @@ export default function speMedicDocOfficeForm() {
      */
     function sendPromise(params) {
         return __awaiter(this, void 0, void 0, function () {
-            var ajax;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, allInOneAJAX.ajaxSend(params)];
                     case 1:
-                        ajax = _a.sent();
+                        _a.sent();
                         window.location.search = "?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=".concat(docID);
                         return [2 /*return*/];
                 }
