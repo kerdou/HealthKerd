@@ -1,4 +1,4 @@
-import * as allInOneAJAX from './allInOneAJAX.js';
+import fetchDataTransfer from '../../../../services/fetchAPI.js';
 import _ from 'lodash';
 
 export default function speMedicDocOfficeForm()
@@ -120,33 +120,31 @@ export default function speMedicDocOfficeForm()
 
 
     interface allInOneDataInterf {
-        status: number,
-        response: {
-            docID: string,
-            docOfficesOfDoc: {
-                pdoStmt: string,
-                pdoResult: {docOfficeID: string}[]
-            },
-            speMedicOfDoc: {
-                pdoStmt: string,
-                pdoResult: {speMedicID: string}[]
-            },
-            everySpeMedicForDoc: {
-                pdoStmt: string,
-                pdoResult: {speMedicID: string, nameForDoc: string}[]
-            },
-            everyDocOfficesOfUser: {
-                pdoStmt: string,
-                pdoResult: {docOfficeID: string, name: string, cityName: string}[]
-            },
-            everySpeMedicOfAllDocOfficesOfUser: {
-                pdoStmt: string,
-                pdoResult: {docOfficeID: string, speMedicID: string, name: string}[]
-            },
-            officeCardTemplate: string,
-            removableSpeMedicBadgeTemplate: string,
-            speMedicBadgeForOfficeCardTemplate: string
-        }
+        docID: string,
+        docOfficesOfDoc: {
+            pdoStmt: string,
+            pdoResult: {docOfficeID: string}[]
+        },
+        speMedicOfDoc: {
+            pdoStmt: string,
+            pdoResult: {speMedicID: string}[]
+        },
+        everySpeMedicForDoc: {
+            pdoStmt: string,
+            pdoResult: {speMedicID: string, nameForDoc: string}[]
+        },
+        everyDocOfficesOfUser: {
+            pdoStmt: string,
+            pdoResult: {docOfficeID: string, name: string, cityName: string}[]
+        },
+        everySpeMedicOfAllDocOfficesOfUser: {
+            pdoStmt: string,
+            pdoResult: {docOfficeID: string, speMedicID: string, name: string}[]
+        },
+        officeCardTemplate: string,
+        removableSpeMedicBadgeTemplate: string,
+        speMedicBadgeForOfficeCardTemplate: string
+
     }
     let allInOneData: allInOneDataInterf; // toutes les données récupérées en AJAX
 
@@ -165,7 +163,7 @@ export default function speMedicDocOfficeForm()
      * * Puis construction des éléments HTML
      */
     async function initialBuildUpLauncher() {
-        allInOneData = await allInOneAJAX.ajaxReceive();
+        allInOneData = await fetchDataTransfer("?controller=medic&subCtrlr=doc&action=getAJAXDataForSpeMedDocOfficeForm", {});
         dataExtractFromPromise();
         initialElementsBuildUp();
     };
@@ -173,17 +171,17 @@ export default function speMedicDocOfficeForm()
     /** Extraction des données du Promise et copie dans les variables necessaires
      */
     function dataExtractFromPromise() {
-        formObj.data.thisDoc.docID = allInOneData.response.docID;
-        formObj.data.allDocs.fullSpeMedicList = allInOneData.response.everySpeMedicForDoc.pdoResult;
-        formObj.data.userData.everyDocOfficesOfUser = allInOneData.response.everyDocOfficesOfUser.pdoResult;
-        formObj.data.userData.everySpeMedicOfAllDocOfficesOfUser = allInOneData.response.everySpeMedicOfAllDocOfficesOfUser.pdoResult;
-        formObj.sections.speMedics.clickableBadges.array = initialSpeMedicIdExtractor(allInOneData.response.speMedicOfDoc.pdoResult);
-        formObj.sections.docOffice.assignedOffices.array = initialDocOfficeIdExtractor(allInOneData.response.docOfficesOfDoc.pdoResult);
+        formObj.data.thisDoc.docID = allInOneData.docID;
+        formObj.data.allDocs.fullSpeMedicList = allInOneData.everySpeMedicForDoc.pdoResult;
+        formObj.data.userData.everyDocOfficesOfUser = allInOneData.everyDocOfficesOfUser.pdoResult;
+        formObj.data.userData.everySpeMedicOfAllDocOfficesOfUser = allInOneData.everySpeMedicOfAllDocOfficesOfUser.pdoResult;
+        formObj.sections.speMedics.clickableBadges.array = initialSpeMedicIdExtractor(allInOneData.speMedicOfDoc.pdoResult);
+        formObj.sections.docOffice.assignedOffices.array = initialDocOfficeIdExtractor(allInOneData.docOfficesOfDoc.pdoResult);
 
         // récupération des templates HTML
-        formObj.htmlTemplates.clickableSpeMedicBadge = allInOneData.response.removableSpeMedicBadgeTemplate;
-        formObj.htmlTemplates.officeCard = allInOneData.response.officeCardTemplate;
-        formObj.htmlTemplates.speMedicBadgeForOfficeCard = allInOneData.response.speMedicBadgeForOfficeCardTemplate;
+        formObj.htmlTemplates.clickableSpeMedicBadge = allInOneData.removableSpeMedicBadgeTemplate;
+        formObj.htmlTemplates.officeCard = allInOneData.officeCardTemplate;
+        formObj.htmlTemplates.speMedicBadgeForOfficeCard = allInOneData.speMedicBadgeForOfficeCardTemplate;
     }
 
 
@@ -457,39 +455,29 @@ export default function speMedicDocOfficeForm()
     }
 
 
-    /** Récupération des données puis mise en forme avant envoyé en POST via AJAX au clic sur le bouton Envoyer
+    /** Récupération des données puis mise en forme avant envoyé en POST via Fetch API au clic sur le bouton Envoyer
      */
     function formSubmit() {
-        // récupération des ID des spé medics confirmées puis transformation
-        const confirmedIdsArrayPrep: string[] = [];
+        const confirmedIdsObj: {[key: string]: string} = {};
+
         formObj.sections.speMedics.clickableBadges.array.forEach( (id, index) => {
-            const template = `speMedicID_${index}=${id}`;
-            confirmedIdsArrayPrep.push(template);
+            confirmedIdsObj[`speMedicID_${index}`] = id;
         });
 
-        // récupératin des ID des doc offices confirmés puis transformation
-        const confirmedDocOfficeIdsArrayPrep: string[] = [];
         formObj.sections.docOffice.assignedOffices.array.forEach( (id, index) => {
-            const template = `docOfficeID_${index}=${id}`;
-            confirmedDocOfficeIdsArrayPrep.push(template);
+            confirmedIdsObj[`docOfficeID_${index}`] = id;
         });
 
-        const concatenadedArrays = [
-            ...confirmedIdsArrayPrep,
-            ...confirmedDocOfficeIdsArrayPrep
-        ];
-        const params = concatenadedArrays.join('&');
-
-        void sendPromise(params);
+        void sendFormData(confirmedIdsObj);
     }
 
 
     /** Actions au clic sur le bouton "Confirmer"
      * Envoie des données via une Promise et redirection vers la page du doc ensuite
-     * @param params
+     * @param {[key: string]: string} confirmedIdsObj
      */
-    async function sendPromise(params: string) {
-        await allInOneAJAX.ajaxSend(params);
+    async function sendFormData(confirmedIdsObj: {[key: string]: string}) {
+        await fetchDataTransfer("?controller=medicAsync&subCtrlr=docPost&action=editSpeMedDocOfficeForDoc", confirmedIdsObj);
         window.location.search = `?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=${formObj.data.thisDoc.docID}`;
     };
 

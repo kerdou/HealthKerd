@@ -191,7 +191,6 @@ class DocSelectModel extends \HealthKerd\Model\common\PdoBufferManager
         $dataStore['speMedicBadgeForOfficeCardTemplate'] = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/speMedicDocOfficeForm/elements/speMedicBadgeForOfficeCardTemplate.html');
         $dataStore['removableSpeMedicBadgeTemplate'] = file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/medic/doc/speMedicDocOfficeForm/elements/removableSpeMedicBadgeTemplate.html');
 
-        header('content-type:application/json');
         echo json_encode($dataStore, JSON_PRETTY_PRINT);
     }
 

@@ -117,6 +117,17 @@ class ControllerDispatch extends GetAndPostCleaner
                 $controllerObj->subContReceiver($this->cleanedUpGet, $this->cleanedUpPost);
                 break;
 
+            case 'medicAsync': // controleur général de la partie 'medic' avec accés via FetchAPI
+                // Récupération des données du form envoyées par fetch()
+                // Puis conversion en tableau associatif et nettoyage des données
+                $receivedJsonFile = file_get_contents('php://input');
+                $receivedInputData = json_decode($receivedJsonFile, true);
+                $cleanedUpInputData = $this->inputCleaner($receivedInputData);
+
+                $controllerObj = new \HealthKerd\Controller\medic\MedicMainController();
+                $controllerObj->subContReceiver($this->cleanedUpGet, $cleanedUpInputData);
+                break;
+
             default:
                 $controllerObj = new \HealthKerd\Controller\home\HomeGetController();
                 $controllerObj->displayHomePage();

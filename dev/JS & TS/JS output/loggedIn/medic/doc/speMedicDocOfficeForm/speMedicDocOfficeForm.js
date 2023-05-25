@@ -34,32 +34,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
-import * as allInOneAJAX from './allInOneAJAX.js';
+import fetchDataTransfer from '../../../../services/fetchAPI.js';
 import _ from 'lodash';
 export default function speMedicDocOfficeForm() {
     var formObj = {
@@ -135,7 +110,7 @@ export default function speMedicDocOfficeForm() {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, allInOneAJAX.ajaxReceive()];
+                    case 0: return [4 /*yield*/, fetchDataTransfer("?controller=medic&subCtrlr=doc&action=getAJAXDataForSpeMedDocOfficeForm", {})];
                     case 1:
                         allInOneData = _a.sent();
                         dataExtractFromPromise();
@@ -149,16 +124,16 @@ export default function speMedicDocOfficeForm() {
     /** Extraction des données du Promise et copie dans les variables necessaires
      */
     function dataExtractFromPromise() {
-        formObj.data.thisDoc.docID = allInOneData.response.docID;
-        formObj.data.allDocs.fullSpeMedicList = allInOneData.response.everySpeMedicForDoc.pdoResult;
-        formObj.data.userData.everyDocOfficesOfUser = allInOneData.response.everyDocOfficesOfUser.pdoResult;
-        formObj.data.userData.everySpeMedicOfAllDocOfficesOfUser = allInOneData.response.everySpeMedicOfAllDocOfficesOfUser.pdoResult;
-        formObj.sections.speMedics.clickableBadges.array = initialSpeMedicIdExtractor(allInOneData.response.speMedicOfDoc.pdoResult);
-        formObj.sections.docOffice.assignedOffices.array = initialDocOfficeIdExtractor(allInOneData.response.docOfficesOfDoc.pdoResult);
+        formObj.data.thisDoc.docID = allInOneData.docID;
+        formObj.data.allDocs.fullSpeMedicList = allInOneData.everySpeMedicForDoc.pdoResult;
+        formObj.data.userData.everyDocOfficesOfUser = allInOneData.everyDocOfficesOfUser.pdoResult;
+        formObj.data.userData.everySpeMedicOfAllDocOfficesOfUser = allInOneData.everySpeMedicOfAllDocOfficesOfUser.pdoResult;
+        formObj.sections.speMedics.clickableBadges.array = initialSpeMedicIdExtractor(allInOneData.speMedicOfDoc.pdoResult);
+        formObj.sections.docOffice.assignedOffices.array = initialDocOfficeIdExtractor(allInOneData.docOfficesOfDoc.pdoResult);
         // récupération des templates HTML
-        formObj.htmlTemplates.clickableSpeMedicBadge = allInOneData.response.removableSpeMedicBadgeTemplate;
-        formObj.htmlTemplates.officeCard = allInOneData.response.officeCardTemplate;
-        formObj.htmlTemplates.speMedicBadgeForOfficeCard = allInOneData.response.speMedicBadgeForOfficeCardTemplate;
+        formObj.htmlTemplates.clickableSpeMedicBadge = allInOneData.removableSpeMedicBadgeTemplate;
+        formObj.htmlTemplates.officeCard = allInOneData.officeCardTemplate;
+        formObj.htmlTemplates.speMedicBadgeForOfficeCard = allInOneData.speMedicBadgeForOfficeCardTemplate;
     }
     /** Extraction des ID de spe medic déjà assignées au doc
      * @param speList
@@ -390,34 +365,27 @@ export default function speMedicDocOfficeForm() {
         formObj.sections.docOffice.assignedOffices.array.push(cardId);
         officeCardsMngmt();
     }
-    /** Récupération des données puis mise en forme avant envoyé en POST via AJAX au clic sur le bouton Envoyer
+    /** Récupération des données puis mise en forme avant envoyé en POST via Fetch API au clic sur le bouton Envoyer
      */
     function formSubmit() {
-        // récupération des ID des spé medics confirmées puis transformation
-        var confirmedIdsArrayPrep = [];
+        var confirmedIdsObj = {};
         formObj.sections.speMedics.clickableBadges.array.forEach(function (id, index) {
-            var template = "speMedicID_".concat(index, "=").concat(id);
-            confirmedIdsArrayPrep.push(template);
+            confirmedIdsObj["speMedicID_".concat(index)] = id;
         });
-        // récupératin des ID des doc offices confirmés puis transformation
-        var confirmedDocOfficeIdsArrayPrep = [];
         formObj.sections.docOffice.assignedOffices.array.forEach(function (id, index) {
-            var template = "docOfficeID_".concat(index, "=").concat(id);
-            confirmedDocOfficeIdsArrayPrep.push(template);
+            confirmedIdsObj["docOfficeID_".concat(index)] = id;
         });
-        var concatenadedArrays = __spreadArray(__spreadArray([], __read(confirmedIdsArrayPrep), false), __read(confirmedDocOfficeIdsArrayPrep), false);
-        var params = concatenadedArrays.join('&');
-        void sendPromise(params);
+        void sendFormData(confirmedIdsObj);
     }
     /** Actions au clic sur le bouton "Confirmer"
      * Envoie des données via une Promise et redirection vers la page du doc ensuite
-     * @param params
+     * @param {[key: string]: string} confirmedIdsObj
      */
-    function sendPromise(params) {
+    function sendFormData(confirmedIdsObj) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, allInOneAJAX.ajaxSend(params)];
+                    case 0: return [4 /*yield*/, fetchDataTransfer("?controller=medicAsync&subCtrlr=docPost&action=editSpeMedDocOfficeForDoc", confirmedIdsObj)];
                     case 1:
                         _a.sent();
                         window.location.search = "?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=".concat(formObj.data.thisDoc.docID);
