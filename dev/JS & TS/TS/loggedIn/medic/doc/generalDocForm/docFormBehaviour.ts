@@ -289,6 +289,7 @@ export default function docFormBehaviour()
         });
     }
 
+
     /** Comportement lors de l'appui sur le bouton de Submit
      */
     function submitForm() {
