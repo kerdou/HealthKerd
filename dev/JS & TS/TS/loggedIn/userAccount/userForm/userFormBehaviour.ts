@@ -74,7 +74,7 @@ export default function userFormBehaviour()
                 htmlElement: document.getElementById('login') as HTMLInputElement,
                 checkCriterias: {
                     isRequired: false,
-                    minLengthReq: 7
+                    minLengthReq: 5
                 },
                 checksVerdicts: {
                     lengthValidity: false,
