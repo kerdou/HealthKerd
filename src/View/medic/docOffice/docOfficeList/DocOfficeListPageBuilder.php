@@ -10,6 +10,7 @@ class DocOfficeListPageBuilder extends \HealthKerd\View\common\ViewInChief
     private array $docOfficeList = array();
     private array $docOfficeSpeMedicList = array();
     private string $docOfficeCardsListHTML = '';
+    private array $contentSettingsList = array();
 
     public function __construct()
     {
@@ -27,15 +28,15 @@ class DocOfficeListPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function pageElementsSettingsList(): void
     {
         $this->pageSettingsList = array(
-            'headContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/head.html'),
+            'headContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/globalLayout/head.html'),
             "pageTitle" => 'Liste des cabinets médicaux consultés',
-            'headerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/header.html'),
+            'headerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/globalLayout/header.html'),
             'mainContainer' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/mainContainer.html'),
             'sidebarMenuUlContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/sidebarMenuUlContent.html'),
             'userFullName' => $_SESSION['firstName'] . ' ' . $_SESSION['lastName'],
             'scrollUpButton' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/scrollUpArrow.html'),
-            'footerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/footer.html'),
-            'BodyBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/BodyBottomDeclarations.html')
+            'footerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/globalLayout/footer.html'),
+            'BodyBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/globalLayout/BodyBottomDeclarations.html')
         );
     }
 

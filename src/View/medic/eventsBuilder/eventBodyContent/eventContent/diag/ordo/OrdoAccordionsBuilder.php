@@ -55,8 +55,8 @@ class OrdoAccordionsBuilder
      */
     private function pharmaOrdo(array $singleOrdo)
     {
-        $this->pharmaOrdoObj = new \HealthKerd\View\medic\eventsBuilder\eventBodyContent\eventContent\diag\ordo\pharma\PharmaOrdoBuilder();
-        $pharmaOrdoHTML = $this->pharmaOrdoObj->ordoBuilder($singleOrdo);
+        $pharmaOrdoObj = new \HealthKerd\View\medic\eventsBuilder\eventBodyContent\eventContent\diag\ordo\pharma\PharmaOrdoBuilder();
+        $pharmaOrdoHTML = $pharmaOrdoObj->ordoBuilder($singleOrdo);
         return $pharmaOrdoHTML;
     }
 
@@ -66,8 +66,8 @@ class OrdoAccordionsBuilder
      */
     private function glassOrdo(array $singleOrdo)
     {
-        $this->glassOrdoObj = new \HealthKerd\View\medic\eventsBuilder\eventBodyContent\eventContent\diag\ordo\glass\GlassOrdoBuilder();
-        $glassOrdoHTML = $this->glassOrdoObj->ordoBuilder($singleOrdo);
+        $glassOrdoObj = new \HealthKerd\View\medic\eventsBuilder\eventBodyContent\eventContent\diag\ordo\glass\GlassOrdoBuilder();
+        $glassOrdoHTML = $glassOrdoObj->ordoBuilder($singleOrdo);
         return $glassOrdoHTML;
     }
 
@@ -77,8 +77,8 @@ class OrdoAccordionsBuilder
      */
     private function lensOrdo(array $singleOrdo)
     {
-        $this->lensOrdoObj = new \HealthKerd\View\medic\eventsBuilder\eventBodyContent\eventContent\diag\ordo\lens\LensOrdoBuilder();
-        $lensOrdoHTML = $this->lensOrdoObj->ordoBuilder($singleOrdo);
+        $lensOrdoObj = new \HealthKerd\View\medic\eventsBuilder\eventBodyContent\eventContent\diag\ordo\lens\LensOrdoBuilder();
+        $lensOrdoHTML = $lensOrdoObj->ordoBuilder($singleOrdo);
         return $lensOrdoHTML;
     }
 
@@ -88,8 +88,8 @@ class OrdoAccordionsBuilder
      */
     private function laboOrdo(array $singleOrdo)
     {
-        $this->laboOrdoObj = new \HealthKerd\View\medic\eventsBuilder\eventBodyContent\eventContent\diag\ordo\labo\LaboOrdoBuilder();
-        $laboOrdoHTML = $this->laboOrdoObj->ordoBuilder($singleOrdo);
+        $laboOrdoObj = new \HealthKerd\View\medic\eventsBuilder\eventBodyContent\eventContent\diag\ordo\labo\LaboOrdoBuilder();
+        $laboOrdoHTML = $laboOrdoObj->ordoBuilder($singleOrdo);
         return $laboOrdoHTML;
     }
 
@@ -99,8 +99,8 @@ class OrdoAccordionsBuilder
      */
     private function vaxOrdo(array $singleOrdo)
     {
-        $this->vaxOrdoObj = new \HealthKerd\View\medic\eventsBuilder\eventBodyContent\eventContent\diag\ordo\vax\VaxOrdoBuilder();
-        $vaxOrdoHTML = $this->vaxOrdoObj->ordoBuilder($singleOrdo);
+        $vaxOrdoObj = new \HealthKerd\View\medic\eventsBuilder\eventBodyContent\eventContent\diag\ordo\vax\VaxOrdoBuilder();
+        $vaxOrdoHTML = $vaxOrdoObj->ordoBuilder($singleOrdo);
         return $vaxOrdoHTML;
     }
 }

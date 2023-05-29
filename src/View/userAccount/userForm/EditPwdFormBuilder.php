@@ -30,15 +30,15 @@ class EditPwdFormBuilder extends \HealthKerd\View\common\ViewInChief
     private function pageElementsSettingsList(): void
     {
         $this->pageSettingsList = array(
-            'headContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/head.html'),
+            'headContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/globalLayout/head.html'),
             "pageTitle" => 'Modification de mot de passe',
-            'headerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/header.html'),
+            'headerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/globalLayout/header.html'),
             'mainContainer' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/mainContainer.html'),
             'sidebarMenuUlContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/sidebarMenuUlContent.html'),
             'userFullName' => $_SESSION['firstName'] . ' ' . $_SESSION['lastName'],
             'scrollUpButton' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/loggedGlobal/scrollUpArrow.html'),
-            'footerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/footer.html'),
-            'BodyBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/BodyBottomDeclarations.html')
+            'footerContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/globalLayout/footer.html'),
+            'BodyBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/globalLayout/BodyBottomDeclarations.html')
         );
     }
 

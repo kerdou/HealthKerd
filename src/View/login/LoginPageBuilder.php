@@ -12,12 +12,12 @@ class LoginPageBuilder extends \HealthKerd\View\common\ViewInChief
     {
         parent::__construct();
         $this->pageSettingsList = array(
-            'headContent' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/head.html'),
+            'headContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/globalLayout/head.html'),
             'pageTitle' => 'Page de connexion',
             'headerContent' => '',
             'mainContainer' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/unlogged/login/main.html'),
             'footerContent' => '',
-            'BodyBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'public/html/BodyBottomDeclarations.html')
+            'BodyBottomDeclarations' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/globalLayout/BodyBottomDeclarations.html')
         );
     }
 
