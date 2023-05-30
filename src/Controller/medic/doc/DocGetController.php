@@ -4,7 +4,7 @@ namespace HealthKerd\Controller\medic\doc;
 
 /** Contrôleur GET des docteurs
  */
-class DocGetController extends DocGetControllerFunctionsPool
+class DocGetController
 {
     protected array $cleanedUpGet = array();
     protected array $docList = array();
@@ -21,6 +21,7 @@ class DocGetController extends DocGetControllerFunctionsPool
     {
     }
 
+
     /** recoit GET['action'] et lance la suite
      * @param array $cleanedUpGet   Infos nettoyées provenants du GET
      */
@@ -35,8 +36,8 @@ class DocGetController extends DocGetControllerFunctionsPool
                     break;
 
                 case 'dispOneDoc': // affichage de la fiche d'un seul doc
-                    $docID = $cleanedUpGet['docID'];
-                    $this->displayOneDoc($docID);
+                    $_SESSION['checkedDocID'] = $cleanedUpGet['docID'];
+                    $this->displayOneDoc();
                     break;
 
                 case 'showEventsWithOneDoc': // affichage de tous les events liés à un doc
@@ -48,8 +49,8 @@ class DocGetController extends DocGetControllerFunctionsPool
                     break;
 
                 case 'showDocEditGeneralForm': // affichage du formulaire général de modif de doc
-                    $docID = $cleanedUpGet['docID'];
-                    $this->showDocEditGeneralForm($docID);
+                    $_SESSION['checkedDocID'] = $cleanedUpGet['docID'];
+                    $this->showDocEditGeneralForm();
                     break;
 
                 case 'showDocEditSpeMedDocOfficeForm': // affichage du formulaire de modif de spé medic et doc office
@@ -57,18 +58,18 @@ class DocGetController extends DocGetControllerFunctionsPool
                     $this->showDocEditSpeMedDocOfficeForm();
                     break;
 
-                case 'getAJAXDataForSpeMedDocOfficeForm': // récupération des données pour le form de modif de spé medic et doc office
+                case 'getFetchDataForSpeMedDocOfficeForm': // récupération des données pour le form de modif de spé medic et doc office
                     // fait suite au case 'showDocEditSpeMedDocOfficeForm'
                     if (isset($_SESSION['checkedDocID'])) {
-                        $this->getAJAXDataForSpeMedDocOfficeForm();
+                        $this->getFetchDataForSpeMedDocOfficeForm();
                     } else {
                         $this->displayAllDocList();
                     }
                     break;
 
                 case 'showDocDeleteForm': // affichage du formulaire de suppr de doc
-                    $docID = $cleanedUpGet['docID'];
-                    $this->showDocDeleteForm($docID);
+                    $_SESSION['checkedDocID'] = $cleanedUpGet['docID'];
+                    $this->showDocDeleteForm();
                     break;
 
                 default:
@@ -96,16 +97,15 @@ class DocGetController extends DocGetControllerFunctionsPool
     }
 
     /** Affichage de la fiche d'un seul doc
-     * @param string $docID
     */
-    private function displayOneDoc(string $docID): void
+    private function displayOneDoc(): void
     {
-        $mixedDataResult = $this->docSelectModel->getDataForOneDocPageModel($docID); // model
+        $mixedDataResult = $this->docSelectModel->getDataForOneDocPageModel($_SESSION['checkedDocID']); // model
 
         // Création de la phrase combinant civilité / prénom / nom du docteur
         $docTitleAndNameSentenceBuilder = new \HealthKerd\Services\medic\doc\DocTitleAndNameSentence();
         $fullNameSentence = $docTitleAndNameSentenceBuilder->dataReceiver(
-            $docID,
+            $_SESSION['checkedDocID'],
             $mixedDataResult['doc']['title'],
             $mixedDataResult['doc']['firstName'],
             $mixedDataResult['doc']['lastName']
@@ -148,6 +148,36 @@ class DocGetController extends DocGetControllerFunctionsPool
         $docView->buildOrder($this->docList); // view
     }
 
+
+    /** Récapitulatif des nombres et dates d'events passés et futurs
+     * @param array $medicEvents        Données des events passés et à venir
+     */
+    private function eventsSummaryCreation(array $medicEvents): void
+    {
+        $pastEventsQty = sizeof($medicEvents['past']);
+        $futureEventsQty = sizeof($medicEvents['future']);
+
+        $this->docList['medicEvent']['qty']['past'] = $pastEventsQty;
+        $this->docList['medicEvent']['qty']['coming'] = $futureEventsQty;
+        $this->docList['medicEvent']['qty']['total'] = $pastEventsQty + $futureEventsQty;
+
+        if ($pastEventsQty > 0) {
+            $this->docList['medicEvent']['dates']['first'] = $this->docList['medicEvent']['past'][0]['time']['frenchDate'];
+
+            $this->docList['medicEvent']['dates']['last'] = $this->docList['medicEvent']['past'][$pastEventsQty - 1]['time']['frenchDate'];
+        } else {
+            $this->docList['medicEvent']['dates']['first'] = 'Aucun';
+            $this->docList['medicEvent']['dates']['last'] = 'Aucun';
+        }
+
+        if ($futureEventsQty > 0) {
+            $this->docList['medicEvent']['dates']['next'] = $this->docList['medicEvent']['future'][0]['time']['frenchDate'];
+        } else {
+            $this->docList['medicEvent']['dates']['next'] = 'Aucun';
+        }
+    }
+
+
     /** Affichage de tous les events liés à un doc
     */
     private function showEventsWithOneDoc(): void
@@ -168,11 +198,10 @@ class DocGetController extends DocGetControllerFunctionsPool
     }
 
     /** Affichage du formulaire de modif de doc
-     * @param string $docID
     */
-    private function showDocEditGeneralForm(string $docID): void
+    private function showDocEditGeneralForm(): void
     {
-        $docData = $this->docSelectModel->getAllDataForOneDocFromDocListModel($docID);
+        $docData = $this->docSelectModel->getAllDataForOneDocFromDocListModel($_SESSION['checkedDocID']);
 
         $docView = new \HealthKerd\View\medic\doc\generalDocForm\DocEditFormPageBuilder();
         $docView->buildOrder($docData);
@@ -189,17 +218,16 @@ class DocGetController extends DocGetControllerFunctionsPool
     /** Récupération des données pour le form de modif de spé medic et doc office
      * * Fait suite au case 'showDocEditSpeMedDocOfficeForm'
      */
-    private function getAJAXDataForSpeMedDocOfficeForm(): void
+    private function getFetchDataForSpeMedDocOfficeForm(): void
     {
-        $this->docSelectModel->getAJAXDataForSpeMedDocOfficeForm();
+        $this->docSelectModel->getFetchDataForSpeMedDocOfficeForm();
     }
 
     /** Affichage du formulaire de suppr de doc
-     * @param string $docID
     */
-    private function showDocDeleteForm(string $docID): void
+    private function showDocDeleteForm(): void
     {
-        $docData = $this->docSelectModel->getAllDataForOneDocFromDocListModel($docID);
+        $docData = $this->docSelectModel->getAllDataForOneDocFromDocListModel($_SESSION['checkedDocID']);
 
         $docView = new \HealthKerd\View\medic\doc\generalDocForm\DocDeleteFormPageBuilder();
         $docView->buildOrder($docData);

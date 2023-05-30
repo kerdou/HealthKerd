@@ -85,7 +85,7 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
      */
     private function formActionAndTitleSetup(): void
     {
-        $this->formTemplate = str_replace('{formAction}', 'index.php?controller=medic&subCtrlr=docPost&action=addDoc', $this->formTemplate);
+        $this->formTemplate = str_replace('{formAction}', 'addDoc', $this->formTemplate);
         $this->formTemplate = str_replace('{formTitle}', 'Création d\'un professionnel de santé', $this->formTemplate);
     }
 

@@ -160,9 +160,9 @@ class DocSelectModel extends \HealthKerd\Model\common\PdoBufferManager
      * du formulaire de spe medic et doc office d'un doc
      * * Renvoyé en JSON puisque demandé via AJAX
      */
-    public function getAJAXDataForSpeMedDocOfficeForm()
+    public function getFetchDataForSpeMedDocOfficeForm()
     {
-        $this->mapper->getAJAXDataForSpeMedDocOfficeFormMapper();
+        $this->mapper->getFetchDataForSpeMedDocOfficeFormMapper();
         $dataStore = [];
 
         $dataStore['everySpeMedicForDoc']['pdoStmt'] = $this->mapper->maps['SelectSpeMedicFullList']->selectEverySpeMedicForDocStmt();

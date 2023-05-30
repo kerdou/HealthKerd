@@ -58,7 +58,10 @@ import fetchDataTransfer from '../../../../services/fetchAPI.js';
 import _ from 'lodash';
 export default function docFormBehaviour() {
     var formObj = {
-        form: document.getElementById('general_doc_form_page'),
+        form: {
+            htmlElement: document.getElementById('general_doc_form_page'),
+            case: ''
+        },
         checkedInputs: {
             lastname: {
                 htmlElement: document.getElementById('lastname'),
@@ -332,7 +335,7 @@ export default function docFormBehaviour() {
     /** Reset du form et des classes des champs inputs
      */
     function resetForm() {
-        formObj.form.reset();
+        formObj.form.htmlElement.reset();
         Object.entries(formObj.checkedInputs).forEach(function (_a) {
             var _b = __read(_a, 2), key = _b[0], value = _b[1];
             fieldCheck(key);
@@ -346,9 +349,9 @@ export default function docFormBehaviour() {
      */
     function submitFormAsyncManagmnt() {
         return __awaiter(this, void 0, void 0, function () {
-            var formGlobalValidityResults, formIsValid, formContent;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var formGlobalValidityResults, formIsValid, formContent, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         formGlobalValidityResults = [];
                         Object.entries(formObj.checkedInputs).forEach(function (_a) {
@@ -358,7 +361,7 @@ export default function docFormBehaviour() {
                         formIsValid = formGlobalValidityResults.every(function (value, index, arr) {
                             return value;
                         });
-                        if (!formIsValid) return [3 /*break*/, 2];
+                        if (!formIsValid) return [3 /*break*/, 7];
                         formContent = {
                             title: formObj.uncheckedInputs.titlegroup.querySelector('& > input:checked').id,
                             lastname: formObj.checkedInputs.lastname.htmlElement.value,
@@ -369,36 +372,46 @@ export default function docFormBehaviour() {
                             doctolibpage: formObj.checkedInputs.doctolibpage.htmlElement.value,
                             comment: formObj.uncheckedInputs.comment.value
                         };
-                        return [4 /*yield*/, fetchDataTransfer('?controller=medicAsync&subCtrlr=docPost&action=addDoc', formContent)];
-                    case 1:
-                        /*
-                        const formContent = {
-                            title: (formObj.uncheckedInputs.titlegroup.querySelector('& > input:checked') as HTMLInputElement).id,
-                            lastname: formObj.checkedInputs.lastname.htmlElement.value,
-                            firstname: formObj.checkedInputs.firstname.htmlElement.value,
-                            tel: '+33689967669',
-                            mail: formObj.checkedInputs.mail.htmlElement.value,
-                            webpage: formObj.checkedInputs.webpage.htmlElement.value,
-                            doctolibpage: formObj.checkedInputs.doctolibpage.htmlElement.value,
-                            comment: (formObj.uncheckedInputs.comment as HTMLTextAreaElement).value
-                        };
-                        */
-                        feedbackFromBackend = _a.sent();
-                        console.log(feedbackFromBackend);
-                        if (feedbackFromBackend.formIsValid) {
-                            validFormFollowUp();
+                        formObj.form.case = formObj.form.htmlElement.getAttribute('action');
+                        _a = formObj.form.case;
+                        switch (_a) {
+                            case 'addDoc': return [3 /*break*/, 1];
+                            case 'editGeneralDoc': return [3 /*break*/, 3];
+                            case 'removeDoc': return [3 /*break*/, 5];
                         }
-                        else {
-                            invalidFormFollowUp();
-                        }
-                        _a.label = 2;
-                    case 2: return [2 /*return*/];
+                        return [3 /*break*/, 7];
+                    case 1: return [4 /*yield*/, fetchDataTransfer('?controller=medicAsync&subCtrlr=docPost&action=addDoc', formContent)];
+                    case 2:
+                        feedbackFromBackend = _b.sent();
+                        addAndModifyFormFeedback();
+                        return [3 /*break*/, 7];
+                    case 3: return [4 /*yield*/, fetchDataTransfer('?controller=medicAsync&subCtrlr=docPost&action=editGeneralDoc', formContent)];
+                    case 4:
+                        feedbackFromBackend = _b.sent();
+                        addAndModifyFormFeedback();
+                        return [3 /*break*/, 7];
+                    case 5: return [4 /*yield*/, fetchDataTransfer('?controller=medic&subCtrlr=docPost&action=removeDoc', formContent)];
+                    case 6:
+                        feedbackFromBackend = _b.sent();
+                        removedDocFollowUp();
+                        return [3 /*break*/, 7];
+                    case 7: return [2 /*return*/];
                 }
             });
         });
     }
-    /**
-     *
+    /** Gestion du feedback du backend pour la creéation et la modif d'un doc
+     */
+    function addAndModifyFormFeedback() {
+        if (feedbackFromBackend.formIsValid) {
+            validFormFollowUp();
+        }
+        else {
+            invalidFormFollowUp();
+        }
+    }
+    /** S'il y a un souci sur un des champs on met à jour l'overallValidityVerdict l'état du champ dans
+     * formObj.checkedInputs[key].overallValidityVerdict et on fait apparaitre un erreur sur le champ concerné
      */
     function invalidFormFollowUp() {
         Object.entries(formObj.checkedInputs).forEach(function (_a) {
@@ -407,12 +420,37 @@ export default function docFormBehaviour() {
             fieldClassManagmnt(key);
         });
     }
-    /**
-     *
+    /** Cas de figure où tous les champs sont bons
+     * Si l'ajout du doc dans la DB s'est bien passé, on part sur la nouvelle page du donc
+     * Sinon on se contente d'avoir un message dans la console...pour le moment
      */
     function validFormFollowUp() {
+        switch (formObj.form.case) {
+            case 'addDoc':
+                if (feedbackFromBackend['feedbackFromDB'] == 'success') {
+                    window.location.assign("index.php?controller=medic&subCtrlr=doc&action=showDocEditSpeMedDocOfficeForm&docID=".concat(feedbackFromBackend['newDocID']));
+                }
+                else {
+                    console.log('On a un pépin');
+                }
+                break;
+            case 'editGeneralDoc':
+                if (feedbackFromBackend['feedbackFromDB'] == 'success') {
+                    var docPagePath = document.getElementById('cancelbutton').getAttribute('href');
+                    window.location.assign(docPagePath);
+                }
+                else {
+                    console.log('On a un pépin');
+                }
+                break;
+        }
+    }
+    /** Si la suppression dans la DB se passe bien, on revient sur la liste des docs
+     *  Sinon on se contente d'avoir un message dans la console...pour le moment
+     */
+    function removedDocFollowUp() {
         if (feedbackFromBackend['feedbackFromDB'] == 'success') {
-            window.location.assign("index.php?controller=medic&subCtrlr=doc&action=showDocEditSpeMedDocOfficeForm&docID=".concat(feedbackFromBackend['newDocID']));
+            window.location.assign("index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp");
         }
         else {
             console.log('On a un pépin');

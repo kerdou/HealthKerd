@@ -163,7 +163,7 @@ export default function speMedicDocOfficeForm()
      * * Puis construction des éléments HTML
      */
     async function initialBuildUpLauncher() {
-        allInOneData = await fetchDataTransfer("?controller=medic&subCtrlr=doc&action=getAJAXDataForSpeMedDocOfficeForm", {});
+        allInOneData = await fetchDataTransfer("?controller=medic&subCtrlr=doc&action=getFetchDataForSpeMedDocOfficeForm", {});
         dataExtractFromPromise();
         initialElementsBuildUp();
     };

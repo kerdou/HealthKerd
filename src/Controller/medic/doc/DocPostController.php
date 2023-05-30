@@ -24,19 +24,21 @@ class DocPostController
         $this->cleanedUpGet = $cleanedUpGet;
         $this->cleanedUpPost = $cleanedUpPost;
 
-        // Se déclenche uniquement si le tel n'est pas au format 01.02.03.04.05
-        if (strlen($this->cleanedUpPost['tel']) < 14) {
-            $this->telNbrReorganizer();
-        }
+        if ($this->cleanedUpGet['action'] == 'addDoc' || $this->cleanedUpGet['action'] == 'editGeneralDoc') {
+            // Se déclenche uniquement si le tel n'est pas au format 01.02.03.04.05
+            if (strlen($this->cleanedUpPost['tel']) < 14) {
+                $this->telNbrReorganizer();
+            }
 
-        $this->fieldsToCheck = array(
-            'lastname' => $this->cleanedUpPost['lastname'],
-            'firstname' => $this->cleanedUpPost['firstname'],
-            'tel' => $this->cleanedUpPost['tel'],
-            'mail' => $this->cleanedUpPost['mail'],
-            'webpage' => $this->cleanedUpPost['webpage'],
-            'doctolibpage' => $this->cleanedUpPost['doctolibpage'],
-        );
+            $this->fieldsToCheck = array(
+                'lastname' => $this->cleanedUpPost['lastname'],
+                'firstname' => $this->cleanedUpPost['firstname'],
+                'tel' => $this->cleanedUpPost['tel'],
+                'mail' => $this->cleanedUpPost['mail'],
+                'webpage' => $this->cleanedUpPost['webpage'],
+                'doctolibpage' => $this->cleanedUpPost['doctolibpage'],
+            );
+        }
 
         // ensemble des données à renvoyer au form, doit être completé un peu plus bas
         $this->feedbackToForm = array(
@@ -72,6 +74,7 @@ class DocPostController
         }
     }
 
+
     /** Réorganise l'agencement des numéros de tel pour avoir le format 01.02.03.04.05
      */
     private function telNbrReorganizer()
@@ -82,12 +85,13 @@ class DocPostController
         $this->cleanedUpPost['tel'] = $teltemp;
     }
 
+
     /** Ajout d'un docteur
      */
     private function addDoc(): void
     {
         // vérification des données contenues dans le POST
-        $docFormChecker = new \HealthKerd\Controller\medic\doc\DocFormChecker2();
+        $docFormChecker = new \HealthKerd\Controller\medic\doc\DocFormChecker();
         $formChecksFeedback = $docFormChecker->docFormChecks($this->fieldsToCheck);
         $overallVerdictsArr = array(); // recoit les verdicts finaux des test
 
@@ -131,18 +135,35 @@ class DocPostController
     private function editGeneralDoc(): void
     {
         // vérification des données contenues dans le POST
-        $checksArray = array();
         $docFormChecker = new \HealthKerd\Controller\medic\doc\DocFormChecker();
-        $checksArray = $docFormChecker->docFormChecks($this->cleanedUpPost);
+        $formChecksFeedback = $docFormChecker->docFormChecks($this->fieldsToCheck);
+        $overallVerdictsArr = array(); // recoit les verdicts finaux des test
 
-        // si $checksArray contient des erreurs (des false), on réaffiche le formulaire en indiquant les champs à modifier
-        if (in_array(false, $checksArray)) {
-            $docView = new \HealthKerd\View\medic\doc\generalDocForm\DocFailedEditFormPageBuilder();
-            $docView->buildOrder($this->cleanedUpPost, $checksArray, $this->cleanedUpGet['docID']);
+        // extraction des verdicts finaux des tests dans $overallVerdictsArr
+        // et remplissage des checkedInputs dans $feedbackToForm
+        foreach ($formChecksFeedback as $field => $element) {
+            array_push($overallVerdictsArr, $element['overallValidityVerdict']);
+
+            $this->feedbackToForm['checkedInputs'][$field]['checksVerdicts'] = $element['checksVerdicts'];
+            $this->feedbackToForm['checkedInputs'][$field]['overallValidityVerdict'] = $element['overallValidityVerdict'];
+        }
+
+        // s'il y a le moindre souci dans les checks on renvoie le résultat des tests au form, sinon on poursuit
+        if (in_array(false, $overallVerdictsArr)) {
+            echo json_encode($this->feedbackToForm);
         } else {
+            $this->feedbackToForm['formIsValid'] = true;
+
             $docUpdateModel = new \HealthKerd\Model\modelInit\medic\doc\DocUpdateModel();
-            $pdoErrorMessage = $docUpdateModel->editDocModel($this->cleanedUpPost, $this->cleanedUpGet['docID']);
-            echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $this->cleanedUpGet['docID'] . "';</script>";
+            $pdoFeedback = $docUpdateModel->editDocModel($this->cleanedUpPost, $_SESSION['checkedDocID']);
+
+            if (strlen($pdoFeedback) == 0) {
+                $this->feedbackToForm['feedbackFromDB'] = 'success';
+            } else {
+                $this->feedbackToForm['feedbackFromDB'] = 'fail';
+            }
+
+            echo json_encode($this->feedbackToForm);
         }
     }
 
@@ -170,12 +191,20 @@ class DocPostController
         $docUpdateModel->editDocOfficeForDocModel($docOfficeIDArray);
     }
 
+
     /** Suppression d'un docteur
      */
     private function removeDoc(): void
     {
         $docDeleteModel = new \HealthKerd\Model\modelInit\medic\doc\DocDeleteModel();
-        $pdoErrorMessage = $docDeleteModel->deleteDoc($this->cleanedUpGet['docID']);
-        echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp';</script>";
+        $pdoErrorMessage = $docDeleteModel->deleteDoc($_SESSION['checkedDocID']);
+
+        if (strlen($pdoErrorMessage) == 0) {
+            $this->feedbackToForm['feedbackFromDB'] = 'success';
+        } else {
+            $this->feedbackToForm['feedbackFromDB'] = 'fail';
+        }
+
+        echo json_encode($this->feedbackToForm);
     }
 }

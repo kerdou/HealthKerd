@@ -89,7 +89,7 @@ class DocEditFormPageBuilder extends \HealthKerd\View\common\ViewInChief
      */
     private function formActionAndTitleSetup(): void
     {
-        $this->formTemplate = str_replace('{formAction}', "index.php?controller=medic&subCtrlr=docPost&action=editGeneralDoc&docID=" . $this->docData['docID'] . "", $this->formTemplate);
+        $this->formTemplate = str_replace('{formAction}', 'editGeneralDoc', $this->formTemplate);
         $this->formTemplate = str_replace('{formTitle}', 'Modification d\'un professionnel de santé', $this->formTemplate);
     }
 

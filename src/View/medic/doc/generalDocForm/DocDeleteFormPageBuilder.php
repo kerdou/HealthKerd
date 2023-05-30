@@ -89,7 +89,7 @@ class DocDeleteFormPageBuilder extends \HealthKerd\View\common\ViewInChief
      */
     private function formActionAndTitleSetup(): void
     {
-        $this->formTemplate = str_replace('{formAction}', 'index.php?controller=medic&subCtrlr=docPost&action=removeDoc&docID=' . $this->docData['docID'] . '', $this->formTemplate);
+        $this->formTemplate = str_replace('{formAction}', 'removeDoc', $this->formTemplate);
         $this->formTemplate = str_replace('{formTitle}', 'Suppression d\'un professionnel de santé', $this->formTemplate);
     }
 

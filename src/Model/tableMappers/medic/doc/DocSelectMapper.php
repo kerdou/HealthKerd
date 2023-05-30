@@ -45,7 +45,7 @@ class DocSelectMapper
         $this->maps['SelectDocList'] = new \HealthKerd\Model\sqlStmtStore\docList\SelectDocList();
     }
 
-    public function getAJAXDataForSpeMedDocOfficeFormMapper(): void
+    public function getFetchDataForSpeMedDocOfficeFormMapper(): void
     {
         $this->maps['SelectSpeMedicFullList'] = new \HealthKerd\Model\sqlStmtStore\speMedicFullList\SelectSpeMedicFullList();
         $this->maps['SelectDocofficeSpemedicRelation'] = new \HealthKerd\Model\sqlStmtStore\docofficeSpemedicRelation\SelectDocofficeSpemedicRelation();
