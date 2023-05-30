@@ -361,7 +361,7 @@ export default function docFormBehaviour() {
                         formIsValid = formGlobalValidityResults.every(function (value, index, arr) {
                             return value;
                         });
-                        if (!formIsValid) return [3 /*break*/, 7];
+                        if (!formIsValid) return [3 /*break*/, 8];
                         formContent = {
                             title: formObj.uncheckedInputs.titlegroup.querySelector('& > input:checked').id,
                             lastname: formObj.checkedInputs.lastname.htmlElement.value,
@@ -384,18 +384,21 @@ export default function docFormBehaviour() {
                     case 2:
                         feedbackFromBackend = _b.sent();
                         addAndModifyFormFeedback();
-                        return [3 /*break*/, 7];
+                        return [3 /*break*/, 8];
                     case 3: return [4 /*yield*/, fetchDataTransfer('?controller=medicAsync&subCtrlr=docPost&action=editGeneralDoc', formContent)];
                     case 4:
                         feedbackFromBackend = _b.sent();
                         addAndModifyFormFeedback();
-                        return [3 /*break*/, 7];
+                        return [3 /*break*/, 8];
                     case 5: return [4 /*yield*/, fetchDataTransfer('?controller=medic&subCtrlr=docPost&action=removeDoc', formContent)];
                     case 6:
                         feedbackFromBackend = _b.sent();
                         removedDocFollowUp();
-                        return [3 /*break*/, 7];
-                    case 7: return [2 /*return*/];
+                        return [3 /*break*/, 8];
+                    case 7:
+                        window.location.assign("index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp");
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/];
                 }
             });
         });
@@ -442,6 +445,9 @@ export default function docFormBehaviour() {
                 else {
                     console.log('On a un pépin');
                 }
+                break;
+            default:
+                window.location.assign("index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp");
                 break;
         }
     }

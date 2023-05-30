@@ -409,6 +409,10 @@ export default function docFormBehaviour()
                     feedbackFromBackend = await fetchDataTransfer('?controller=medic&subCtrlr=docPost&action=removeDoc', formContent);
                     removedDocFollowUp();
                     break;
+
+                default:
+                    window.location.assign(`index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp`);
+                    break;
             }
 
 
@@ -459,6 +463,10 @@ export default function docFormBehaviour()
                 } else {
                     console.log('On a un pépin');
                 }
+                break;
+
+            default:
+                window.location.assign(`index.php?controller=medic&subCtrlr=doc&action=allDocsListDisp`);
                 break;
         }
     }
