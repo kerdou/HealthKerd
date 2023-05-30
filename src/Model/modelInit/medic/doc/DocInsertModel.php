@@ -40,7 +40,6 @@ class DocInsertModel extends \HealthKerd\Model\common\ModelInChief
         $this->query->bindParam(':doctolibPage', $cleanedUpPost['doctolibpage']);
         $this->query->bindParam(':comment', $cleanedUpPost['comment']);
 
-        $pdoErrorMessage = '';
         $pdoErrorMessage = $this->pdoPreparedInsertUpdateDeleteExecute();
         return $pdoErrorMessage;
     }

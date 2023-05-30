@@ -168,7 +168,7 @@ abstract class ModelInChief
             $this->query->execute();
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
-            echo 'Error : ' . $e->getMessage();
+            //echo 'Error : ' . $e->getMessage();
             throw $e; // permet d'arrêter le script et d'ajouter l'erreur dans les logs Apache (merci Reno!)
         }
 

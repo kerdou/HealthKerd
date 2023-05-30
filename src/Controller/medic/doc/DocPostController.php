@@ -8,6 +8,9 @@ class DocPostController
     private array $cleanedUpGet = array();
     private array $cleanedUpPost = array();
 
+    private array $fieldsToCheck = array();
+    private array $feedbackToForm = array();
+
     public function __destruct()
     {
     }
@@ -25,6 +28,23 @@ class DocPostController
         if (strlen($this->cleanedUpPost['tel']) < 14) {
             $this->telNbrReorganizer();
         }
+
+        $this->fieldsToCheck = array(
+            'lastname' => $this->cleanedUpPost['lastname'],
+            'firstname' => $this->cleanedUpPost['firstname'],
+            'tel' => $this->cleanedUpPost['tel'],
+            'mail' => $this->cleanedUpPost['mail'],
+            'webpage' => $this->cleanedUpPost['webpage'],
+            'doctolibpage' => $this->cleanedUpPost['doctolibpage'],
+        );
+
+        // ensemble des données à renvoyer au form, doit être completé un peu plus bas
+        $this->feedbackToForm = array(
+            'checkedInputs' => array(),
+            'formIsValid' => false,
+            'feedbackFromDB' => 'aborted',
+            'newDocID' => -1
+        );
 
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
@@ -67,25 +87,44 @@ class DocPostController
     private function addDoc(): void
     {
         // vérification des données contenues dans le POST
-        $checksArray = array();
-        $docFormChecker = new \HealthKerd\Controller\medic\doc\DocFormChecker();
-        $checksArray = $docFormChecker->docFormChecks($this->cleanedUpPost);
+        $docFormChecker = new \HealthKerd\Controller\medic\doc\DocFormChecker2();
+        $formChecksFeedback = $docFormChecker->docFormChecks($this->fieldsToCheck);
+        $overallVerdictsArr = array(); // recoit les verdicts finaux des test
 
-        // si $checksArray contient des erreurs (des false), on réaffich le formulaire en indiquant les champs à modifier
-        if (in_array(false, $checksArray)) {
-            $docView = new \HealthKerd\View\medic\doc\generalDocForm\DocFailedAddFormPageBuilder();
-            $docView->buildOrder($this->cleanedUpPost, $checksArray);
+        // extraction des verdicts finaux des tests dans $overallVerdictsArr
+        // et remplissage des checkedInputs dans $feedbackToForm
+        foreach ($formChecksFeedback as $field => $element) {
+            array_push($overallVerdictsArr, $element['overallValidityVerdict']);
+
+            $this->feedbackToForm['checkedInputs'][$field]['checksVerdicts'] = $element['checksVerdicts'];
+            $this->feedbackToForm['checkedInputs'][$field]['overallValidityVerdict'] = $element['overallValidityVerdict'];
+        }
+
+        // s'il y a le moindre souci dans les checks on renvoie le résultat des tests au form, sinon on poursuit
+        if (in_array(false, $overallVerdictsArr)) {
+            echo json_encode($this->feedbackToForm);
         } else {
+            $this->feedbackToForm['formIsValid'] = true;
+
             $insertModel = new \HealthKerd\Model\modelInit\medic\doc\DocInsertModel();
-            $pdoErrorMessage = $insertModel->addDocModel($this->cleanedUpPost);
+            $pdoFeedback = $insertModel->addDocModel($this->cleanedUpPost);
 
-            $selectModel = new \HealthKerd\Model\modelInit\medic\doc\DocSelectModel();
-            $newDocID = $selectModel->getNewDocIDModel();
+            if (strlen($pdoFeedback) == 0) {
+                $this->feedbackToForm['feedbackFromDB'] = 'success';
 
-            $_SESSION['checkedDocID'] = $newDocID;
-            echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=showDocEditSpeMedDocOfficeForm&docID=" . $newDocID . "';</script>";
+                $selectModel = new \HealthKerd\Model\modelInit\medic\doc\DocSelectModel();
+                $newDocID = $selectModel->getNewDocIDModel();
+
+                $_SESSION['checkedDocID'] = $newDocID;
+                $this->feedbackToForm['newDocID'] = $newDocID;
+            } else {
+                $this->feedbackToForm['feedbackFromDB'] = 'fail';
+            }
+
+            echo json_encode($this->feedbackToForm);
         }
     }
+
 
     /** Modifications générales d'un docteur
      */
@@ -106,6 +145,7 @@ class DocPostController
             echo "<script>window.location = 'index.php?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=" . $this->cleanedUpGet['docID'] . "';</script>";
         }
     }
+
 
     /** Modification des spé médicales et doc office d'un doc
      */

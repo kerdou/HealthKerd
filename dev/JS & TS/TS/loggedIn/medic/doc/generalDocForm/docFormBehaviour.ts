@@ -2,13 +2,14 @@ import nameRegex from '../../../../services/regexStore/nameRegex.js';
 import mailRegex from '../../../../services/regexStore/mailRegex.js';
 import telRegex from '../../../../services/regexStore/telRegex.js';
 import urlRegex from '../../../../services/regexStore/urlRegex.js';
+import fetchDataTransfer from '../../../../services/fetchAPI.js';
 import _ from 'lodash';
 
 export default function docFormBehaviour()
 {
     interface formObjInterf {
         form: HTMLFormElement,
-        inputs: {
+        checkedInputs: {
             [key: string]: {
                 htmlElement: HTMLInputElement,
                 checkCriterias: {
@@ -22,6 +23,9 @@ export default function docFormBehaviour()
                 overallValidityVerdict: boolean
             }
         },
+        uncheckedInputs: {
+            [key: string]:  HTMLDivElement | HTMLTextAreaElement
+        },
         buttons: {
             [key: string]: HTMLButtonElement
         }
@@ -30,7 +34,7 @@ export default function docFormBehaviour()
 
     const formObj: formObjInterf = {
         form: document.getElementById('general_doc_form_page') as HTMLFormElement,
-        inputs: {
+        checkedInputs: {
             lastname: {
                 htmlElement: document.getElementById('lastname') as HTMLInputElement,
                 checkCriterias: {
@@ -104,10 +108,80 @@ export default function docFormBehaviour()
                 overallValidityVerdict: false
             }
         },
+        uncheckedInputs: {
+            titlegroup: document.getElementById('titlegroup') as HTMLDivElement,
+            comment: document.getElementById('comment') as HTMLTextAreaElement
+        },
         buttons: {
             formReset: document.getElementById('formResetButton') as HTMLButtonElement,
             formSubmit: document.getElementById('formSubmitButton') as HTMLButtonElement
         }
+    };
+
+
+    interface feedbackFromBackendInterf {
+        checkedInputs: {
+            [key: string]: {
+                checksVerdicts: {
+                    lengthValidity: boolean,
+                    regexValidity: boolean
+                },
+                overallValidityVerdict: boolean
+            }
+        },
+        feedbackFromDB: string,
+        formIsValid: boolean,
+        newDocID: number
+    }
+
+    let feedbackFromBackend: feedbackFromBackendInterf = {
+        checkedInputs: {
+            lastname: {
+                checksVerdicts: {
+                    lengthValidity: false,
+                    regexValidity: false
+                },
+                overallValidityVerdict: false
+            },
+            firstname: {
+                checksVerdicts: {
+                    lengthValidity: false,
+                    regexValidity: false
+                },
+                overallValidityVerdict: false
+            },
+            tel: {
+                checksVerdicts: {
+                    lengthValidity: false,
+                    regexValidity: false
+                },
+                overallValidityVerdict: false
+            },
+            mail: {
+                checksVerdicts: {
+                    lengthValidity: false,
+                    regexValidity: false
+                },
+                overallValidityVerdict: false
+            },
+            webpage: {
+                checksVerdicts: {
+                    lengthValidity: false,
+                    regexValidity: false
+                },
+                overallValidityVerdict: false
+            },
+            doctolibpage: {
+                checksVerdicts: {
+                    lengthValidity: false,
+                    regexValidity: false
+                },
+                overallValidityVerdict: false
+            },
+        },
+        feedbackFromDB: 'aborted',
+        formIsValid: false,
+        newDocID: -1
     };
 
 
@@ -119,7 +193,7 @@ export default function docFormBehaviour()
     /** Passe de check de tous les checks de champs au démarrage pour mettre à jour formObj.inputs
      */
     function fieldInputsCheckAtStartup() {
-        Object.entries(formObj.inputs).forEach(([key, value]) => {
+        Object.entries(formObj.checkedInputs).forEach(([key, value]) => {
             fieldCheck(key);
         });
     }
@@ -128,11 +202,11 @@ export default function docFormBehaviour()
     /** Listeners pour les champs du form quand un appui de touche est fait
      */
     function fieldInputsEventListenersAdd() {
-        Object.entries(formObj.inputs).forEach(([key, value]) => {
+        Object.entries(formObj.checkedInputs).forEach(([key, value]) => {
             value.htmlElement.addEventListener('input', _.debounce(fieldCheckOnInput, 500));
         });
 
-        formObj.inputs.tel.htmlElement.addEventListener('keydown', telKeyCheck);
+        formObj.checkedInputs.tel.htmlElement.addEventListener('keydown', telKeyCheck);
     }
 
 
@@ -154,30 +228,28 @@ export default function docFormBehaviour()
      * @param {string} fieldID ID du champ à vérifier
      */
     function fieldCheck(fieldID: string) {
-        const fieldLength = formObj.inputs[fieldID].htmlElement.value.trim().length;
+        const fieldLength = formObj.checkedInputs[fieldID].htmlElement.value.trim().length;
 
         if (fieldLength == 0) {
-            if (formObj.inputs[fieldID].checkCriterias.isRequired) {
-                formObj.inputs[fieldID].checksVerdicts.lengthValidity = false;
-                formObj.inputs[fieldID].overallValidityVerdict = false;
+            if (formObj.checkedInputs[fieldID].checkCriterias.isRequired) {
+                formObj.checkedInputs[fieldID].checksVerdicts.lengthValidity = false;
+                formObj.checkedInputs[fieldID].overallValidityVerdict = false;
             } else {
-                formObj.inputs[fieldID].checksVerdicts.lengthValidity = true;
-                formObj.inputs[fieldID].overallValidityVerdict = true;
+                formObj.checkedInputs[fieldID].checksVerdicts.lengthValidity = true;
+                formObj.checkedInputs[fieldID].overallValidityVerdict = true;
             }
         } else {
-            if (fieldLength < formObj.inputs[fieldID].checkCriterias.minLengthReq) {
-                formObj.inputs[fieldID].checksVerdicts.lengthValidity = false;
-                formObj.inputs[fieldID].overallValidityVerdict = false;
+            if (fieldLength < formObj.checkedInputs[fieldID].checkCriterias.minLengthReq) {
+                formObj.checkedInputs[fieldID].checksVerdicts.lengthValidity = false;
+                formObj.checkedInputs[fieldID].overallValidityVerdict = false;
             } else {
-                formObj.inputs[fieldID].checksVerdicts.lengthValidity = true;
+                formObj.checkedInputs[fieldID].checksVerdicts.lengthValidity = true;
                 regexFieldCheck(fieldID);
 
-                if (formObj.inputs[fieldID].checksVerdicts.regexValidity) {
-                    formObj.inputs[fieldID].checksVerdicts.regexValidity = true;
-                    formObj.inputs[fieldID].overallValidityVerdict = true;
+                if (formObj.checkedInputs[fieldID].checksVerdicts.regexValidity) {
+                    formObj.checkedInputs[fieldID].overallValidityVerdict = true;
                 } else {
-                    formObj.inputs[fieldID].checksVerdicts.regexValidity = false;
-                    formObj.inputs[fieldID].overallValidityVerdict = false;
+                    formObj.checkedInputs[fieldID].overallValidityVerdict = false;
                 }
             }
         }
@@ -190,27 +262,21 @@ export default function docFormBehaviour()
     function regexFieldCheck(fieldID: string) {
         switch(fieldID) {
             case 'lastname':
-                formObj.inputs[fieldID].checksVerdicts.regexValidity = nameRegex(formObj.inputs[fieldID].htmlElement.value.trim());
-                break;
-
             case 'firstname':
-                formObj.inputs[fieldID].checksVerdicts.regexValidity = nameRegex(formObj.inputs[fieldID].htmlElement.value.trim());
+                formObj.checkedInputs[fieldID].checksVerdicts.regexValidity = nameRegex(formObj.checkedInputs[fieldID].htmlElement.value.trim());
                 break;
 
             case 'tel':
-                formObj.inputs[fieldID].checksVerdicts.regexValidity = telRegex(formObj.inputs[fieldID].htmlElement.value.trim());
+                formObj.checkedInputs[fieldID].checksVerdicts.regexValidity = telRegex(formObj.checkedInputs[fieldID].htmlElement.value.trim());
                 break;
 
             case 'mail':
-                formObj.inputs[fieldID].checksVerdicts.regexValidity = mailRegex(formObj.inputs[fieldID].htmlElement.value.trim());
+                formObj.checkedInputs[fieldID].checksVerdicts.regexValidity = mailRegex(formObj.checkedInputs[fieldID].htmlElement.value.trim());
                 break;
 
             case 'webpage':
-                formObj.inputs[fieldID].checksVerdicts.regexValidity = urlRegex(formObj.inputs[fieldID].htmlElement.value.trim());
-                break;
-
             case 'doctolibpage':
-                formObj.inputs[fieldID].checksVerdicts.regexValidity = urlRegex(formObj.inputs[fieldID].htmlElement.value.trim());
+                formObj.checkedInputs[fieldID].checksVerdicts.regexValidity = urlRegex(formObj.checkedInputs[fieldID].htmlElement.value.trim());
                 break;
         };
     }
@@ -220,10 +286,10 @@ export default function docFormBehaviour()
      * @param {string} fieldID ID du champ concerné
      */
     function fieldClassManagmnt(fieldID: string) {
-        if (formObj.inputs[fieldID].overallValidityVerdict) {
-            formObj.inputs[fieldID].htmlElement.classList.remove('is-invalid');
+        if (formObj.checkedInputs[fieldID].overallValidityVerdict) {
+            formObj.checkedInputs[fieldID].htmlElement.classList.remove('is-invalid');
         } else {
-            formObj.inputs[fieldID].htmlElement.classList.add('is-invalid');
+            formObj.checkedInputs[fieldID].htmlElement.classList.add('is-invalid');
         }
     }
 
@@ -283,19 +349,23 @@ export default function docFormBehaviour()
     function resetForm() {
         formObj.form.reset();
 
-        Object.entries(formObj.inputs).forEach(([key, value]) => {
+        Object.entries(formObj.checkedInputs).forEach(([key, value]) => {
             fieldCheck(key);
             fieldClassManagmnt(key);
         });
     }
 
+    function submitForm() {
+        void submitFormAsyncManagmnt();
+    }
+
 
     /** Comportement lors de l'appui sur le bouton de Submit
      */
-    function submitForm() {
+    async function submitFormAsyncManagmnt() {
         const formGlobalValidityResults: boolean[] = [];
 
-        Object.entries(formObj.inputs).forEach(([key, value]) => {
+        Object.entries(formObj.checkedInputs).forEach(([key, value]) => {
             formGlobalValidityResults.push(value.overallValidityVerdict);
         });
 
@@ -305,7 +375,64 @@ export default function docFormBehaviour()
         });
 
         if (formIsValid) {
-            formObj.form.submit();
+            const formContent = {
+                title: (formObj.uncheckedInputs.titlegroup.querySelector('& > input:checked') as HTMLInputElement).id,
+                lastname: formObj.checkedInputs.lastname.htmlElement.value,
+                firstname: formObj.checkedInputs.firstname.htmlElement.value,
+                tel: formObj.checkedInputs.tel.htmlElement.value,
+                mail: formObj.checkedInputs.mail.htmlElement.value,
+                webpage: formObj.checkedInputs.webpage.htmlElement.value,
+                doctolibpage: formObj.checkedInputs.doctolibpage.htmlElement.value,
+                comment: (formObj.uncheckedInputs.comment as HTMLTextAreaElement).value
+            };
+
+
+            /*
+            const formContent = {
+                title: (formObj.uncheckedInputs.titlegroup.querySelector('& > input:checked') as HTMLInputElement).id,
+                lastname: formObj.checkedInputs.lastname.htmlElement.value,
+                firstname: formObj.checkedInputs.firstname.htmlElement.value,
+                tel: '+33689967669',
+                mail: formObj.checkedInputs.mail.htmlElement.value,
+                webpage: formObj.checkedInputs.webpage.htmlElement.value,
+                doctolibpage: formObj.checkedInputs.doctolibpage.htmlElement.value,
+                comment: (formObj.uncheckedInputs.comment as HTMLTextAreaElement).value
+            };
+            */
+
+            feedbackFromBackend = await fetchDataTransfer('?controller=medicAsync&subCtrlr=docPost&action=addDoc', formContent);
+
+            console.log(feedbackFromBackend);
+
+            if (feedbackFromBackend.formIsValid) {
+                validFormFollowUp();
+            } else {
+                invalidFormFollowUp();
+            }
         }
     }
+
+    /**
+     *
+     */
+    function invalidFormFollowUp() {
+        Object.entries(formObj.checkedInputs).forEach(([key, value]) => {
+            formObj.checkedInputs[key].overallValidityVerdict = feedbackFromBackend.checkedInputs[key].overallValidityVerdict;
+            fieldClassManagmnt(key);
+        });
+    }
+
+    /**
+     *
+     */
+    function validFormFollowUp() {
+        if (feedbackFromBackend['feedbackFromDB'] == 'success') {
+            window.location.assign(`index.php?controller=medic&subCtrlr=doc&action=showDocEditSpeMedDocOfficeForm&docID=${feedbackFromBackend['newDocID']}`);
+        } else {
+            console.log('On a un pépin');
+        }
+
+    }
+
+
 }

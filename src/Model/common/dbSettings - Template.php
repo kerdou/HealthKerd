@@ -2,13 +2,13 @@
 
 // stockages des paramétres d'accés à la BDD
 
-    // LOCAL
+    // DEV
     const DEVHOST = "";
     const DEVBASE = "";
     const DEVUSER = "";
     const DEVPWD = "";
 
-    // DISTANT
+    // PROD
     const PRODHOST = "";
     const PRODBASE = "";
     const PRODUSER = "";

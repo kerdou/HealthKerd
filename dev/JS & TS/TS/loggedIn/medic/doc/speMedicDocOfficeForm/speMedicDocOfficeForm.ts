@@ -477,7 +477,7 @@ export default function speMedicDocOfficeForm()
      * @param {[key: string]: string} confirmedIdsObj
      */
     async function sendFormData(confirmedIdsObj: {[key: string]: string}) {
-        await fetchDataTransfer("?controller=medicAsync&subCtrlr=docPost&action=editSpeMedDocOfficeForDoc", confirmedIdsObj);
+        await fetchDataTransfer('?controller=medicAsync&subCtrlr=docPost&action=editSpeMedDocOfficeForDoc', confirmedIdsObj);
         window.location.search = `?controller=medic&subCtrlr=doc&action=dispOneDoc&docID=${formObj.data.thisDoc.docID}`;
     };
 
