@@ -2,10 +2,81 @@
 
 namespace HealthKerd\Controller\userAccount;
 
+use SebastianBergmann\Environment\Console;
+
 /** Contrôles fait sur les données entrées dans les champs des formulaires du user
  */
 class UserFormChecker
 {
+    private array $formChecksArr = array();
+
+    public function __construct()
+    {
+        $this->formChecksArr = array(
+            'lastname' => array(
+                'value' => '',
+                'checkCriterias' => array(
+                    'isRequired' => true,
+                    'minLengthReq' => 2
+                ),
+                'checksVerdicts' => array(
+                    'lengthValidity' => false,
+                    'regexValidity' => false
+                ),
+                'overallValidityVerdict' => false
+            ),
+            'firstname' => array(
+                'value' => '',
+                'checkCriterias' => array(
+                    'isRequired' => true,
+                    'minLengthReq' => 2
+                ),
+                'checksVerdicts' => array(
+                    'lengthValidity' => false,
+                    'regexValidity' => false
+                ),
+                'overallValidityVerdict' => false
+            ),
+            'birthDate' => array(
+                'value' => '',
+                'checkCriterias' => array(
+                    'isRequired' => true,
+                    'minLengthReq' => 10
+                ),
+                'checksVerdicts' => array(
+                    'lengthValidity' => false,
+                    'regexValidity' => false
+                ),
+                'overallValidityVerdict' => false
+            ),
+            'login' => array(
+                'value' => '',
+                'checkCriterias' => array(
+                    'isRequired' => true,
+                    'minLengthReq' => 5
+                ),
+                'checksVerdicts' => array(
+                    'lengthValidity' => false,
+                    'regexValidity' => false
+                ),
+                'overallValidityVerdict' => false
+            ),
+            'mail' => array(
+                'value' => '',
+                'checkCriterias' => array(
+                    'isRequired' => true,
+                    'minLengthReq' => 7
+                ),
+                'checksVerdicts' => array(
+                    'lengthValidity' => false,
+                    'regexValidity' => false
+                ),
+                'overallValidityVerdict' => false
+            )
+        );
+    }
+
+
     public function __destruct()
     {
     }
@@ -16,56 +87,76 @@ class UserFormChecker
      */
     public function userFormChecks(array $cleanedUpPost): array
     {
-        $checksResultsArray = array();
-
-        // vérification des noms et prénoms
-        $nameRegexChecker = new \HealthKerd\Services\regexStore\NameRegex();
-        $checksResultsArray['lastname'] = false; // champ obligatoire
-        $checksResultsArray['firstname'] = false; // champ obligatoire
-        $checksResultsArray['login'] = false; // champ obligatoire
-
-        if (strlen($cleanedUpPost['lastname']) > 0) {
-            $checksResultsArray['lastname'] = $nameRegexChecker->nameRegex($cleanedUpPost['lastname']);
+        foreach ($cleanedUpPost as $key => $value) {
+            $this->formChecksArr[$key]['value'] = $value;
         }
 
-        if (strlen($cleanedUpPost['firstname']) > 0) {
-            $checksResultsArray['firstname'] = $nameRegexChecker->nameRegex($cleanedUpPost['firstname']);
-        }
+        foreach ($this->formChecksArr as $field => $params) {
+            $fieldLength = strlen($this->formChecksArr[$field]['value']);
 
-        if (strlen($cleanedUpPost['login']) > 0) {
-            $checksResultsArray['login'] = $nameRegexChecker->nameRegex($cleanedUpPost['login']);
-        }
+            if ($fieldLength == 0) {
+                if ($this->formChecksArr[$field]['checkCriterias']['isRequired']) {
+                    $this->formChecksArr[$field]['checksVerdicts']['lengthValidity'] = false;
+                    $this->formChecksArr[$field]['overallValidityVerdict'] = false;
+                } else {
+                    $this->formChecksArr[$field]['checksVerdicts']['lengthValidity'] = true;
+                    $this->formChecksArr[$field]['overallValidityVerdict'] = true;
+                }
+            } else {
+                if ($fieldLength < $this->formChecksArr[$field]['checkCriterias']['minLengthReq']) {
+                    $this->formChecksArr[$field]['checksVerdicts']['lengthValidity'] = false;
+                    $this->formChecksArr[$field]['overallValidityVerdict'] = false;
+                } else {
+                    $this->formChecksArr[$field]['checksVerdicts']['lengthValidity'] = true;
+                    $this->regexFieldCheck($field);
 
-
-
-        // vérification de la date de naissance
-        $birthDateChecker = new \HealthKerd\Services\regexStore\DateRegex();
-        $checksResultsArray['birthDate'] = false; // champ obligatoire
-
-        if (strlen($cleanedUpPost['birthDate']) > 0) {
-            $dateRegexResult['birthDate'] = $birthDateChecker->frenchDateRegex($cleanedUpPost['birthDate']);
-
-            if ($dateRegexResult['birthDate']) {
-                $checksResultsArray['birthDate'] = $this->dateExistenceCheck($cleanedUpPost['birthDate']);
+                    if ($this->formChecksArr[$field]['checksVerdicts']['regexValidity']) {
+                        $this->formChecksArr[$field]['overallValidityVerdict'] = true;
+                    } else {
+                        $this->formChecksArr[$field]['overallValidityVerdict'] = false;
+                    }
+                }
             }
         }
 
-
-
-        // vérification du mail
-        $mailRegexChecker = new \HealthKerd\Services\regexStore\MailRegex();
-        $checksResultsArray['mail'] = false; // champ obligatoire
-
-        if (strlen($cleanedUpPost['mail']) > 0) {
-            $checksResultsArray['mail'] = $mailRegexChecker->mailRegex($cleanedUpPost['mail']);
-        }
-
-        return $checksResultsArray;
+        return $this->formChecksArr;
     }
+
+
+    /** Lancement des regex selon l'input
+     * @param string $field Champ à checker
+     */
+    private function regexFieldCheck(string $field)
+    {
+        switch ($field) {
+            case 'lastname':
+            case 'firstname':
+            case 'login':
+                $nameRegexChecker = new \HealthKerd\Services\regexStore\NameRegex();
+                $this->formChecksArr[$field]['checksVerdicts']['regexValidity'] = $nameRegexChecker->nameRegex($this->formChecksArr[$field]['value']);
+                break;
+
+            case 'birthDate':
+                $birthDateChecker = new \HealthKerd\Services\regexStore\DateRegex();
+                $this->formChecksArr[$field]['checksVerdicts']['regexValidity'] = $birthDateChecker->frenchDateRegex($this->formChecksArr[$field]['value']);
+
+                if ($this->formChecksArr[$field]['checksVerdicts']['regexValidity']) {
+                    $this->formChecksArr[$field]['checksVerdicts']['regexValidity'] = $this->dateExistenceCheck($this->formChecksArr[$field]['value']);
+                }
+                break;
+
+            case 'mail':
+                $mailRegexChecker = new \HealthKerd\Services\regexStore\MailRegex();
+                $this->formChecksArr[$field]['checksVerdicts']['regexValidity'] = $mailRegexChecker->mailRegex($this->formChecksArr[$field]['value']);
+                break;
+        }
+    }
+
+
 
     /** Vérification de l'existence de la date donnée
      * * Conversion en chiffres pour supprimer d'éventuels 0 en début de nombre. Ex: 01 au lieu de 1.
-     * * Permet de vérifier si la date existe ou pas avec checkdate()
+     * * Permet de vérifier si la date existe, si elle est dans le passé et si la personne a plus de 18 ans.
      * @param string $birthDate     Date au format jj/mm/aaaa
      * @return bool                 Booléen de conformité
      */
@@ -77,8 +168,30 @@ class UserFormChecker
         $assoExplodate['month'] = intval($exploDate[1]);
         $assoExplodate['year'] = intval($exploDate[2]);
 
-        $dateExists = checkdate($assoExplodate['month'], $assoExplodate['day'], $assoExplodate['year']);
+        $birthDateString = (string) $assoExplodate['year'] . '-' . $assoExplodate['month'] . '-' . $assoExplodate['day'];
+        $birthDateObj = date_create($birthDateString, $_ENV['DATEANDTIME']['timezoneObj']);
 
-        return $dateExists;
+        $dateCheckSummary = array(
+            'dateExists' => checkdate($assoExplodate['month'], $assoExplodate['day'], $assoExplodate['year']),
+            'isInThePast' => false,
+            'oldEnough' => false
+        );
+
+        if ($dateCheckSummary['dateExists']) {
+            $dateCheckSummary['isInThePast'] = ($birthDateObj < $_ENV['DATEANDTIME']['nowDate']['nowTimeObj']) ? true : false;
+
+            $timeDiff = $birthDateObj->diff($_ENV['DATEANDTIME']['nowDate']['nowTimeObj']);
+            $yearsDiffString = $timeDiff->format('%y');
+            $yearsNumber = (int)$yearsDiffString;
+            $dateCheckSummary['oldEnough'] = ($yearsNumber > 18) ? true : false;
+        }
+
+        $finalVerdict = false;
+
+        if (!in_array(false, $dateCheckSummary)) {
+            $finalVerdict = true;
+        }
+
+        return $finalVerdict;
     }
 }

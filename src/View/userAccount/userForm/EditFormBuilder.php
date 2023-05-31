@@ -240,7 +240,7 @@ class EditFormBuilder extends \HealthKerd\View\common\ViewInChief
         $this->contentSettingsList = array(
             'mainContent' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/userAccount/userForm/userAccountForm.html'),
             'userFormId' => 'user_account_form',
-            'formAction' => 'index.php?controller=userAccountPost&action=accountModif',
+            'formAction' => 'accountModif',
             'formTitle' => 'Modification du compte utilisateur',
             'mainFields' => $this->mainFieldsContent,
             'pwdSection' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/userAccount/userForm/sections/pwdChangeButton.html'),

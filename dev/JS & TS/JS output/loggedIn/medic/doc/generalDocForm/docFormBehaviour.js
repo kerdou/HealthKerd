@@ -363,7 +363,7 @@ export default function docFormBehaviour() {
                         });
                         if (!formIsValid) return [3 /*break*/, 8];
                         formContent = {
-                            title: formObj.uncheckedInputs.titlegroup.querySelector('& > input:checked').id,
+                            title: formObj.uncheckedInputs.titlegroup.querySelector('input:checked').value,
                             lastname: formObj.checkedInputs.lastname.htmlElement.value,
                             firstname: formObj.checkedInputs.firstname.htmlElement.value,
                             tel: formObj.checkedInputs.tel.htmlElement.value,

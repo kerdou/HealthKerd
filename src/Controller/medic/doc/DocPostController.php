@@ -93,7 +93,7 @@ class DocPostController
         // vérification des données contenues dans le POST
         $docFormChecker = new \HealthKerd\Controller\medic\doc\DocFormChecker();
         $formChecksFeedback = $docFormChecker->docFormChecks($this->fieldsToCheck);
-        $overallVerdictsArr = array(); // recoit les verdicts finaux des test
+        $overallVerdictsArr = array(); // recoit les verdicts finaux des tests
 
         // extraction des verdicts finaux des tests dans $overallVerdictsArr
         // et remplissage des checkedInputs dans $feedbackToForm

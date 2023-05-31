@@ -107,6 +107,17 @@ class ControllerDispatch extends GetAndPostCleaner
                 $controllerObj->actionReceiver($this->cleanedUpGet, $this->cleanedUpPost);
                 break;
 
+            case 'userAccountPostAsync':
+                // Récupération des données du form envoyées par fetch()
+                // Puis conversion en tableau associatif et nettoyage des données
+                $receivedJsonFile = file_get_contents('php://input');
+                $receivedInputData = json_decode($receivedJsonFile, true);
+                $cleanedUpInputData = $this->inputCleaner($receivedInputData);
+
+                $controllerObj = new \HealthKerd\Controller\userAccount\UserAccountPostController();
+                $controllerObj->actionReceiver($this->cleanedUpGet, $cleanedUpInputData);
+                break;
+
             case 'home':
                 $controllerObj = new \HealthKerd\Controller\home\HomeGetController();
                 $controllerObj->displayHomePage();

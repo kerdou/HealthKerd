@@ -9,6 +9,12 @@ class UserAccountPostController
     private array $cleanedUpGet;
     private array $cleanedUpPost;
 
+    private array $userFieldsToCheck = array();
+    private array $userFeedbackToForm = array();
+
+    private array $pwdFieldsToCheck = array();
+    private array $pwdFeedbackToForm = array();
+
     public function __destruct()
     {
     }
@@ -21,6 +27,25 @@ class UserAccountPostController
     {
         $this->cleanedUpGet = $cleanedUpGet;
         $this->cleanedUpPost = $cleanedUpPost;
+
+        if ($this->cleanedUpGet['action'] == 'accountCreate' || $this->cleanedUpGet['action'] == 'accountModif') {
+            $this->userFieldsToCheck = array(
+                'lastname' => $this->cleanedUpPost['lastname'],
+                'firstname' => $this->cleanedUpPost['firstname'],
+                'birthDate' => $this->cleanedUpPost['birthDate'],
+                'login' => $this->cleanedUpPost['login'],
+                'mail' => $this->cleanedUpPost['mail']
+            );
+
+            // ensemble des données à renvoyer au form, doit être completé un peu plus bas
+            $this->userFeedbackToForm = array(
+                'checkedInputs' => array(),
+                'formIsValid' => false,
+                'feedbackFromDB' => 'aborted',
+                'newUserID' => -1
+            );
+        }
+
 
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
@@ -48,21 +73,32 @@ class UserAccountPostController
         }
     }
 
-    /**
-     *
+
+    /** Modification d'un compte user
      */
     private function accountModif(): void
     {
         // vérification des données contenues dans le POST
-        $checksArray = array();
         $userFormChecker = new \HealthKerd\Controller\userAccount\UserFormChecker();
-        $checksArray = $userFormChecker->userFormChecks($this->cleanedUpPost);
+        $userFormChecksFeedback = $userFormChecker->userFormChecks($this->userFieldsToCheck);
+        $overallVerdictsArr = array(); // recoit les verdicts finaux des tests
 
-        // si $checksArray contient des erreurs (des false), on réaffiche le formulaire en indiquant les champs à modifier
-        if (in_array(false, $checksArray)) {
-            $userAccountView = new \HealthKerd\View\userAccount\userForm\FailedEditFormBuilder();
-            $userAccountView->buildOrder($this->cleanedUpPost, $checksArray);
+        // extraction des verdicts finaux des tests dans $overallVerdictsArr
+        // et remplissage des checkedInputs dans $feedbackToForm
+        foreach ($userFormChecksFeedback as $field => $element) {
+            array_push($overallVerdictsArr, $element['overallValidityVerdict']);
+
+            $this->userFeedbackToForm['checkedInputs'][$field]['checksVerdicts'] = $element['checksVerdicts'];
+            $this->userFeedbackToForm['checkedInputs'][$field]['overallValidityVerdict'] = $element['overallValidityVerdict'];
+        }
+
+        // s'il y a le moindre souci dans les checks on renvoie le résultat des tests au form, sinon on poursuit
+        if (in_array(false, $overallVerdictsArr)) {
+            echo json_encode($this->userFeedbackToForm);
         } else {
+            $this->userFeedbackToForm['formIsValid'] = true;
+
+            // formatage de la date de naissance avant insertion dans la DB
             $exploDate = explode('/', $this->cleanedUpPost['birthDate']);
             $exploDate['day'] = $this->zerosAdder($exploDate[0]);
             $exploDate['month'] = $this->zerosAdder($exploDate[1]);
@@ -73,11 +109,15 @@ class UserAccountPostController
             $pdoErrorMessage = $userUpdateModel->updateUserAccountData($this->cleanedUpPost);
 
             if (strlen($pdoErrorMessage) == 0) {
+                $this->userFeedbackToForm['feedbackFromDB'] = 'success';
+
                 $_SESSION['firstName'] = $this->cleanedUpPost['firstname'];
                 $_SESSION['lastName'] = $this->cleanedUpPost['lastname'];
+            } else {
+                $this->userFeedbackToForm['feedbackFromDB'] = 'fail';
             }
 
-            echo "<script>window.location = 'index.php?controller=userAccount&action=showAccountPage';</script>";
+            echo json_encode($this->userFeedbackToForm);
         }
     }
 

@@ -4,14 +4,14 @@ import frenchDateRegex from '../../../services/regexStore/dateRegex.js';
 import isExists from 'date-fns/isExists';
 import isPast from 'date-fns/isPast';
 import differenceInYears from 'date-fns/differenceInYears';
-
+import fetchDataTransfer from '../../../services/fetchAPI.js';
 import _ from 'lodash';
 
 export default function userFormBehaviour()
 {
     interface formObjInterf {
         form: HTMLFormElement,
-        inputs: {
+        checkedInputs: {
             [key: string]: {
                 htmlElement: HTMLInputElement,
                 checkCriterias: {
@@ -25,6 +25,9 @@ export default function userFormBehaviour()
                 overallValidityVerdict: boolean
             }
         },
+        uncheckedInputs: {
+            [key: string]: HTMLDivElement
+        }
         buttons: {
             [key: string]: HTMLButtonElement
         }
@@ -33,7 +36,7 @@ export default function userFormBehaviour()
 
     const formObj: formObjInterf = {
         form: document.getElementById('user_account_form') as HTMLFormElement,
-        inputs: {
+        checkedInputs: {
             lastname: {
                 htmlElement: document.getElementById('lastname') as HTMLInputElement,
                 checkCriterias: {
@@ -49,7 +52,7 @@ export default function userFormBehaviour()
             firstname: {
                 htmlElement: document.getElementById('firstname') as HTMLInputElement,
                 checkCriterias: {
-                    isRequired: false,
+                    isRequired: true,
                     minLengthReq: 2
                 },
                 checksVerdicts: {
@@ -61,7 +64,7 @@ export default function userFormBehaviour()
             birthDate: {
                 htmlElement: document.getElementById('birthDate') as HTMLInputElement,
                 checkCriterias: {
-                    isRequired: false,
+                    isRequired: true,
                     minLengthReq: 10
                 },
                 checksVerdicts: {
@@ -73,7 +76,7 @@ export default function userFormBehaviour()
             login: {
                 htmlElement: document.getElementById('login') as HTMLInputElement,
                 checkCriterias: {
-                    isRequired: false,
+                    isRequired: true,
                     minLengthReq: 5
                 },
                 checksVerdicts: {
@@ -85,7 +88,7 @@ export default function userFormBehaviour()
             mail: {
                 htmlElement: document.getElementById('mail') as HTMLInputElement,
                 checkCriterias: {
-                    isRequired: false,
+                    isRequired: true,
                     minLengthReq: 7
                 },
                 checksVerdicts: {
@@ -95,10 +98,72 @@ export default function userFormBehaviour()
                 overallValidityVerdict: false
             }
         },
+        uncheckedInputs: {
+            gender: document.getElementById('gender') as HTMLDivElement
+        },
         buttons: {
             formReset: document.getElementById('formResetButton') as HTMLButtonElement,
             formSubmit: document.getElementById('formSubmitButton') as HTMLButtonElement
         }
+    };
+
+    interface feedbackFromBackendInterf {
+        checkedInputs: {
+            [key: string]: {
+                checksVerdicts: {
+                    lengthValidity: boolean,
+                    contentValidity: boolean
+                },
+                overallValidityVerdict: boolean
+            }
+        },
+        feedbackFromDB: string,
+        formIsValid: boolean,
+        newUserID: number
+    }
+
+
+    let feedbackFromBackend: feedbackFromBackendInterf = {
+        checkedInputs: {
+            lastname: {
+                checksVerdicts: {
+                    lengthValidity: false,
+                    contentValidity: false
+                },
+                overallValidityVerdict: false
+            },
+            firstname: {
+                checksVerdicts: {
+                    lengthValidity: false,
+                    contentValidity: false
+                },
+                overallValidityVerdict: false
+            },
+            birthDate: {
+                checksVerdicts: {
+                    lengthValidity: false,
+                    contentValidity: false
+                },
+                overallValidityVerdict: false
+            },
+            login: {
+                checksVerdicts: {
+                    lengthValidity: false,
+                    contentValidity: false
+                },
+                overallValidityVerdict: false
+            },
+            mail: {
+                checksVerdicts: {
+                    lengthValidity: false,
+                    contentValidity: false
+                },
+                overallValidityVerdict: false
+            }
+        },
+        feedbackFromDB: 'aborted',
+        formIsValid: false,
+        newUserID: -1
     };
 
 
@@ -110,7 +175,7 @@ export default function userFormBehaviour()
     /** Passe de check de tous les checks de champs au démarrage pour mettre à jour formObj.inputs
      */
     function fieldInputsCheckAtStartup() {
-        Object.entries(formObj.inputs).forEach(([key, value]) => {
+        Object.entries(formObj.checkedInputs).forEach(([key, value]) => {
             fieldCheck(key);
         });
     }
@@ -119,7 +184,7 @@ export default function userFormBehaviour()
     /** Listeners pour les champs du form quand on change leur contenu avec un debounce, sert à lancer la vérification des champs
      */
     function fieldInputsEventListeners() {
-        Object.entries(formObj.inputs).forEach(([key, value]) => {
+        Object.entries(formObj.checkedInputs).forEach(([key, value]) => {
             value.htmlElement.addEventListener('input', _.debounce(fieldCheckOnInput, 500));
         });
     }
@@ -150,30 +215,30 @@ export default function userFormBehaviour()
      * @param {string} fieldID ID du champ à vérifier
      */
     function fieldCheck(fieldID: string) {
-        const fieldLength = formObj.inputs[fieldID].htmlElement.value.trim().length;
+        const fieldLength = formObj.checkedInputs[fieldID].htmlElement.value.trim().length;
 
         if (fieldLength == 0) {
-            if (formObj.inputs[fieldID].checkCriterias.isRequired) {
-                formObj.inputs[fieldID].checksVerdicts.lengthValidity = false;
-                formObj.inputs[fieldID].overallValidityVerdict = false;
+            if (formObj.checkedInputs[fieldID].checkCriterias.isRequired) {
+                formObj.checkedInputs[fieldID].checksVerdicts.lengthValidity = false;
+                formObj.checkedInputs[fieldID].overallValidityVerdict = false;
             } else {
-                formObj.inputs[fieldID].checksVerdicts.lengthValidity = true;
-                formObj.inputs[fieldID].overallValidityVerdict = true;
+                formObj.checkedInputs[fieldID].checksVerdicts.lengthValidity = true;
+                formObj.checkedInputs[fieldID].overallValidityVerdict = true;
             }
         } else {
-            if (fieldLength < formObj.inputs[fieldID].checkCriterias.minLengthReq) {
-                formObj.inputs[fieldID].checksVerdicts.lengthValidity = false;
-                formObj.inputs[fieldID].overallValidityVerdict = false;
+            if (fieldLength < formObj.checkedInputs[fieldID].checkCriterias.minLengthReq) {
+                formObj.checkedInputs[fieldID].checksVerdicts.lengthValidity = false;
+                formObj.checkedInputs[fieldID].overallValidityVerdict = false;
             } else {
-                formObj.inputs[fieldID].checksVerdicts.lengthValidity = true;
+                formObj.checkedInputs[fieldID].checksVerdicts.lengthValidity = true;
                 regexFieldCheck(fieldID);
 
-                if (formObj.inputs[fieldID].checksVerdicts.contentValidity) {
-                    formObj.inputs[fieldID].checksVerdicts.contentValidity = true;
-                    formObj.inputs[fieldID].overallValidityVerdict = true;
+                if (formObj.checkedInputs[fieldID].checksVerdicts.contentValidity) {
+                    formObj.checkedInputs[fieldID].checksVerdicts.contentValidity = true;
+                    formObj.checkedInputs[fieldID].overallValidityVerdict = true;
                 } else {
-                    formObj.inputs[fieldID].checksVerdicts.contentValidity = false;
-                    formObj.inputs[fieldID].overallValidityVerdict = false;
+                    formObj.checkedInputs[fieldID].checksVerdicts.contentValidity = false;
+                    formObj.checkedInputs[fieldID].overallValidityVerdict = false;
                 }
             }
         }
@@ -186,24 +251,24 @@ export default function userFormBehaviour()
     function regexFieldCheck(fieldID: string) {
         switch(fieldID) {
             case 'lastname':
-                formObj.inputs[fieldID].checksVerdicts.contentValidity = nameRegex(formObj.inputs[fieldID].htmlElement.value.trim());
+                formObj.checkedInputs[fieldID].checksVerdicts.contentValidity = nameRegex(formObj.checkedInputs[fieldID].htmlElement.value.trim());
                 break;
 
             case 'firstname':
-                formObj.inputs[fieldID].checksVerdicts.contentValidity = nameRegex(formObj.inputs[fieldID].htmlElement.value.trim());
+                formObj.checkedInputs[fieldID].checksVerdicts.contentValidity = nameRegex(formObj.checkedInputs[fieldID].htmlElement.value.trim());
                 break;
 
             case 'login':
-                formObj.inputs[fieldID].checksVerdicts.contentValidity = nameRegex(formObj.inputs[fieldID].htmlElement.value.trim());
+                formObj.checkedInputs[fieldID].checksVerdicts.contentValidity = nameRegex(formObj.checkedInputs[fieldID].htmlElement.value.trim());
                 break;
 
             case 'mail':
-                formObj.inputs[fieldID].checksVerdicts.contentValidity = mailRegex(formObj.inputs[fieldID].htmlElement.value.trim());
+                formObj.checkedInputs[fieldID].checksVerdicts.contentValidity = mailRegex(formObj.checkedInputs[fieldID].htmlElement.value.trim());
                 break;
 
             case 'birthDate':
-                if (frenchDateRegex(formObj.inputs[fieldID].htmlElement.value.trim()) == false) {
-                    formObj.inputs[fieldID].checksVerdicts.contentValidity = false;
+                if (frenchDateRegex(formObj.checkedInputs[fieldID].htmlElement.value.trim()) == false) {
+                    formObj.checkedInputs[fieldID].checksVerdicts.contentValidity = false;
                 } else {
                     birthDateCheck(fieldID);
                 }
@@ -218,7 +283,7 @@ export default function userFormBehaviour()
      * @param fieldID
      */
     function birthDateCheck(fieldID: string) {
-        const splittedDate: string[] = formObj.inputs[fieldID].htmlElement.value.trim().split('/');
+        const splittedDate: string[] = formObj.checkedInputs[fieldID].htmlElement.value.trim().split('/');
 
         const nbrSplittedDate = {
             year: 0,
@@ -244,22 +309,26 @@ export default function userFormBehaviour()
             }
         );
 
-        const dateExists = isExists(nbrSplittedDate.year, nbrSplittedDate.month, nbrSplittedDate.day);
-
-        const dateIsInThePast = isPast(
-            new Date(nbrSplittedDate.year, nbrSplittedDate.month, nbrSplittedDate.day)
-        );
-
-        const howManyYears = differenceInYears(
-            new Date(nbrSplittedDate.year, nbrSplittedDate.month, nbrSplittedDate.day),
-            new Date()
-        );
 
         const dateCheckSummary = {
-            exists: dateExists,
-            isInThePast: dateIsInThePast,
-            oldEnough: (howManyYears > 18) ? true : false
+            exists: isExists(nbrSplittedDate.year, nbrSplittedDate.month, nbrSplittedDate.day),
+            isInThePast: false,
+            oldEnough: false
         };
+
+        // il vaut mieux confirmer que la date existe avant de créer une date potentiellement fausse qui renverrait des erreurs
+        if (dateCheckSummary.exists) {
+            dateCheckSummary.isInThePast = isPast(
+                new Date(nbrSplittedDate.year, nbrSplittedDate.month, nbrSplittedDate.day)
+            );
+
+            const howManyYearsDiff = differenceInYears(
+                new Date(),
+                new Date(nbrSplittedDate.year, nbrSplittedDate.month, nbrSplittedDate.day)
+            );
+
+            dateCheckSummary.oldEnough = (howManyYearsDiff > 18) ? true : false;
+        }
 
         const dateValidityResults: boolean[] = [];
 
@@ -267,14 +336,15 @@ export default function userFormBehaviour()
             dateValidityResults.push(value);
         });
 
+        // si tous les élements de dateCheckSummary et donc de dateValidityResults sont valid, alors dateIsValid sera true. Si un seul est false, dateIsValid sera false
         const dateIsValid = dateValidityResults.every((value, index, arr) => {
             return value;
         });
 
         if (dateIsValid) {
-            formObj.inputs[fieldID].checksVerdicts.contentValidity = true;
+            formObj.checkedInputs[fieldID].checksVerdicts.contentValidity = true;
         } else {
-            formObj.inputs[fieldID].checksVerdicts.contentValidity = false;
+            formObj.checkedInputs[fieldID].checksVerdicts.contentValidity = false;
         }
     }
 
@@ -283,10 +353,10 @@ export default function userFormBehaviour()
      * @param {string} fieldID ID du champ concerné
      */
     function fieldClassManagmnt(fieldID: string) {
-        if (formObj.inputs[fieldID].overallValidityVerdict) {
-            formObj.inputs[fieldID].htmlElement.classList.remove('is-invalid');
+        if (formObj.checkedInputs[fieldID].overallValidityVerdict) {
+            formObj.checkedInputs[fieldID].htmlElement.classList.remove('is-invalid');
         } else {
-            formObj.inputs[fieldID].htmlElement.classList.add('is-invalid');
+            formObj.checkedInputs[fieldID].htmlElement.classList.add('is-invalid');
         }
     }
 
@@ -295,18 +365,24 @@ export default function userFormBehaviour()
     function resetForm() {
         formObj.form.reset();
 
-        Object.entries(formObj.inputs).forEach(([key, value]) => {
+        Object.entries(formObj.checkedInputs).forEach(([key, value]) => {
             fieldCheck(key);
             fieldClassManagmnt(key);
         });
     }
 
+
+    function submitForm() {
+        void submitFormAsyncManagmnt();
+    }
+
+
     /** Comportement lors de l'appui sur le bouton de Submit
      */
-    function submitForm() {
+    async function submitFormAsyncManagmnt() {
         const formGlobalValidityResults: boolean[] = [];
 
-        Object.entries(formObj.inputs).forEach(([key, value]) => {
+        Object.entries(formObj.checkedInputs).forEach(([key, value]) => {
             formGlobalValidityResults.push(value.overallValidityVerdict);
         });
 
@@ -316,7 +392,70 @@ export default function userFormBehaviour()
         });
 
         if (formIsValid) {
-            formObj.form.submit();
+            const formContent = {
+                lastname: formObj.checkedInputs.lastname.htmlElement.value,
+                firstname: formObj.checkedInputs.firstname.htmlElement.value,
+                gender: (formObj.uncheckedInputs.gender.querySelector('input:checked') as HTMLInputElement).value,
+                birthDate: formObj.checkedInputs.birthDate.htmlElement.value,
+                login: formObj.checkedInputs.login.htmlElement.value,
+                mail: formObj.checkedInputs.mail.htmlElement.value
+            };
+
+            const formCase = formObj.form.getAttribute('action') as string;
+
+            switch (formCase) {
+                case 'accountModif':
+                    feedbackFromBackend = await fetchDataTransfer('?controller=userAccountPostAsync&action=accountModif', formContent);
+                    addAndModifyFormFeedback();
+                    break;
+
+                default:
+                    window.location.assign(`index.php?controller=userAccount&action=showAccountPage`);
+                    break;
+            }
         }
     }
+
+
+    /** Gestion du feedback du backend pour la creéation et la modif d'un doc
+     */
+    function addAndModifyFormFeedback() {
+        if (feedbackFromBackend.formIsValid) {
+            validFormFollowUp();
+        } else {
+            invalidFormFollowUp();
+        }
+    }
+
+    /** S'il y a un souci sur un des champs on met à jour l'overallValidityVerdict l'état du champ dans
+     * formObj.checkedInputs[key].overallValidityVerdict et on fait apparaitre un erreur sur le champ concerné
+     */
+    function invalidFormFollowUp() {
+        Object.entries(formObj.checkedInputs).forEach(([key, value]) => {
+            formObj.checkedInputs[key].overallValidityVerdict = feedbackFromBackend.checkedInputs[key].overallValidityVerdict;
+            fieldClassManagmnt(key);
+        });
+    }
+
+    /** Cas de figure où tous les champs sont bons
+     * On revient sur la page montrant le compte du user
+     * Sinon on se contente d'avoir un message dans la console...pour le moment
+     */
+    function validFormFollowUp() {
+        switch (formObj.form.case) {
+            case 'accountModif':
+                if (feedbackFromBackend['feedbackFromDB'] == 'success') {
+                    window.location.assign(`index.php?controller=userAccount&action=showAccountPage`);
+                } else {
+                    console.log('On a un pépin');
+                }
+                break;
+
+            default:
+                window.location.assign(`index.php?controller=userAccount&action=showAccountPage`);
+                break;
+        }
+    }
+
+
 }

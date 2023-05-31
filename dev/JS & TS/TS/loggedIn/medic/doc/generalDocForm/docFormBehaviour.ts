@@ -382,7 +382,7 @@ export default function docFormBehaviour()
 
         if (formIsValid) {
             const formContent = {
-                title: (formObj.uncheckedInputs.titlegroup.querySelector('& > input:checked') as HTMLInputElement).id,
+                title: (formObj.uncheckedInputs.titlegroup.querySelector('input:checked') as HTMLInputElement).value,
                 lastname: formObj.checkedInputs.lastname.htmlElement.value,
                 firstname: formObj.checkedInputs.firstname.htmlElement.value,
                 tel: formObj.checkedInputs.tel.htmlElement.value,
