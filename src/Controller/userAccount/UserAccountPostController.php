@@ -19,6 +19,7 @@ class UserAccountPostController
     {
     }
 
+
     /** Recoit POST['action'] et lance la suite
      * @param array $cleanedUpGet       Données nettoyées du GET
      * @param array $cleanedUpPost      Données nettoyées du POST
@@ -28,37 +29,21 @@ class UserAccountPostController
         $this->cleanedUpGet = $cleanedUpGet;
         $this->cleanedUpPost = $cleanedUpPost;
 
-        if ($this->cleanedUpGet['action'] == 'accountCreate' || $this->cleanedUpGet['action'] == 'accountModif') {
-            $this->userFieldsToCheck = array(
-                'lastname' => $this->cleanedUpPost['lastname'],
-                'firstname' => $this->cleanedUpPost['firstname'],
-                'birthDate' => $this->cleanedUpPost['birthDate'],
-                'login' => $this->cleanedUpPost['login'],
-                'mail' => $this->cleanedUpPost['mail']
-            );
-
-            // ensemble des données à renvoyer au form, doit être completé un peu plus bas
-            $this->userFeedbackToForm = array(
-                'checkedInputs' => array(),
-                'formIsValid' => false,
-                'feedbackFromDB' => 'aborted',
-                'newUserID' => -1
-            );
-        }
-
 
         if (isset($cleanedUpGet['action'])) {
             switch ($cleanedUpGet['action']) {
                 case 'accountCreate':
                     // todo
-                    echo "<h1>CREATION DE COMPTE</h1>";
+                    $this->accountArraysSetup();
                     break;
 
                 case 'accountModif':
+                    $this->accountArraysSetup();
                     $this->accountModif();
                     break;
 
                 case 'pwdModif':
+                    $this->pwdArraySetup();
                     $this->pwdModif();
                     break;
 
@@ -71,6 +56,47 @@ class UserAccountPostController
         } else {
             echo "<script>window.location = 'index.php';</script>";
         }
+    }
+
+
+    /** Préparation des arrays dédiés à la création ou modif de compte user
+    */
+    private function accountArraysSetup()
+    {
+        $this->userFieldsToCheck = array(
+            'lastname' => $this->cleanedUpPost['lastname'],
+            'firstname' => $this->cleanedUpPost['firstname'],
+            'birthDate' => $this->cleanedUpPost['birthDate'],
+            'login' => $this->cleanedUpPost['login'],
+            'mail' => $this->cleanedUpPost['mail']
+        );
+
+        // ensemble des données à renvoyer au form, doit être completé un peu plus bas
+        $this->userFeedbackToForm = array(
+            'checkedInputs' => array(),
+            'formIsValid' => false,
+            'feedbackFromDB' => 'aborted',
+            'newUserID' => -1
+        );
+    }
+
+
+    /** Préparation des arrays dédiés à la création ou modif de mot de passe
+     */
+    private function pwdArraySetup()
+    {
+        $this->pwdFieldsToCheck = array(
+            'pwd' => $this->cleanedUpPost['pwd'],
+            'confPwd' => $this->cleanedUpPost['confPwd']
+        );
+
+        // ensemble des données à renvoyer au form, doit être completé un peu plus bas
+        $this->pwdFeedbackToForm = array(
+            'checkedInputs' => array(),
+            'pwdsAreIdentical' => false,
+            'pwdsAreValid' => false,
+            'feedbackFromDB' => 'aborted'
+        );
     }
 
 
@@ -121,8 +147,8 @@ class UserAccountPostController
         }
     }
 
-    /**
-     *
+
+    /** Ajout d'un zéro pour renvoyer systématiquement un nombre à 2 chiffres
      */
     private function zerosAdder(int $nbr): string
     {
@@ -136,23 +162,36 @@ class UserAccountPostController
         return $nbr;
     }
 
-    /**
-     *
+
+    /** Modification du mot de passe
+     * Gestion asynchrone
      */
     private function pwdModif(): void
     {
-        $checksArray = array();
         $pwdFormChecker = new \HealthKerd\Controller\userAccount\PwdFormChecker();
-        $checksArray = $pwdFormChecker->pwdFormChecks($this->cleanedUpPost);
+        $this->pwdFeedbackToForm['checkedInputs'] = $pwdFormChecker->pwdFormChecks($this->pwdFieldsToCheck);
 
-        if ($checksArray['overall']['identical'] == true && $checksArray['overall']['areValid'] == true) {
+        $fieldsValidity = array();
+
+        foreach ($this->pwdFeedbackToForm['checkedInputs'] as $key => $value) {
+            array_push($fieldsValidity, $this->pwdFeedbackToForm['checkedInputs'][$key]['overallValidityVerdict']);
+        }
+
+        $this->pwdFeedbackToForm['pwdsAreValid'] = (in_array(false, $fieldsValidity)) ? false : true;
+        $this->pwdFeedbackToForm['pwdsAreIdentical'] = ($this->pwdFieldsToCheck['pwd'] == $this->pwdFieldsToCheck['confPwd']) ? true : false;
+
+        if ($this->pwdFeedbackToForm['pwdsAreValid'] && $this->pwdFeedbackToForm['pwdsAreIdentical']) {
             $hash = password_hash($this->cleanedUpPost['pwd'], PASSWORD_ARGON2ID);
             $userUpdateModel = new \HealthKerd\Model\modelInit\userAccount\UserUpdateModel();
             $pdoErrorMessage = $userUpdateModel->updateUserPwd($hash);
-            echo "<script>window.location = 'index.php?controller=userAccount&action=showAccountPage';</script>";
-        } else {
-            $userAccountView = new \HealthKerd\View\userAccount\userForm\FailedEditPwdFormBuilder();
-            $userAccountView->buildOrder($this->cleanedUpPost, $checksArray);
+
+            if (strlen($pdoErrorMessage) == 0) {
+                $this->pwdFeedbackToForm['feedbackFromDB'] = 'success';
+            } else {
+                $this->pwdFeedbackToForm['feedbackFromDB'] = 'fail';
+            }
         }
+
+        echo json_encode($this->pwdFeedbackToForm);
     }
 }

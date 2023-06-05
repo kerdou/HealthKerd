@@ -1,4 +1,5 @@
 import pwdRegex from '../../../services/regexStore/pwdRegex.js';
+import fetchDataTransfer from '../../../services/fetchAPI.js';
 import _ from 'lodash';
 
 export default function pwdFormBehaviour()
@@ -95,6 +96,75 @@ export default function pwdFormBehaviour()
         }
     };
 
+
+    interface feedbackFromBackendInterf {
+        checkedInputs: {
+            [key: string]: {
+                checkFoundQuantities: {
+                    length: number,
+                    lower: number,
+                    upper: number,
+                    nbr: number,
+                    spe: number
+                },
+                checksVerdicts: {
+                    length: boolean,
+                    lower: boolean,
+                    upper: boolean,
+                    nbr: boolean,
+                    spe: boolean
+                },
+                overallValidityVerdict: boolean
+            }
+        },
+        feedbackFromDB: string,
+        pwdsAreIdentical: boolean,
+        pwdsAreValid: boolean
+    }
+
+    let feedbackFromBackend: feedbackFromBackendInterf = {
+        checkedInputs: {
+            pwd: {
+                checkFoundQuantities: {
+                    length: 0,
+                    lower: 0,
+                    upper: 0,
+                    nbr: 0,
+                    spe: 0
+                },
+                checksVerdicts: {
+                    length: false,
+                    lower: false,
+                    upper: false,
+                    nbr: false,
+                    spe: false
+                },
+                overallValidityVerdict: false
+            },
+            confPwd: {
+                checkFoundQuantities: {
+                    length: 0,
+                    lower: 0,
+                    upper: 0,
+                    nbr: 0,
+                    spe: 0
+                },
+                checksVerdicts: {
+                    length: false,
+                    lower: false,
+                    upper: false,
+                    nbr: false,
+                    spe: false
+                },
+                overallValidityVerdict: false
+            }
+        },
+        feedbackFromDB: 'aborted',
+        pwdsAreIdentical: false,
+        pwdsAreValid: false
+    };
+
+
     fieldInputsEventListeners();
     formButtonsEventListeners();
 
@@ -123,11 +193,11 @@ export default function pwdFormBehaviour()
 
         formObj.checkedInputs[inputID].checkFoundQuantities = pwdRegex(formObj.checkedInputs[inputID].htmlElement.value);
 
-        formObj.checkedInputs[inputID].checksVerdicts.length = formObj.checkedInputs[inputID].checkFoundQuantities.length >= 8 ? true : false;
-        formObj.checkedInputs[inputID].checksVerdicts.lower = formObj.checkedInputs[inputID].checkFoundQuantities.lower >= 1 ? true : false;
-        formObj.checkedInputs[inputID].checksVerdicts.upper = formObj.checkedInputs[inputID].checkFoundQuantities.upper >= 1 ? true : false;
-        formObj.checkedInputs[inputID].checksVerdicts.nbr = formObj.checkedInputs[inputID].checkFoundQuantities.nbr >= 1 ? true : false;
-        formObj.checkedInputs[inputID].checksVerdicts.spe = formObj.checkedInputs[inputID].checkFoundQuantities.spe >= 1 ? true : false;
+        formObj.checkedInputs[inputID].checksVerdicts.length = formObj.checkedInputs[inputID].checkFoundQuantities.length >= formObj.minimalQtyCriterias.length ? true : false;
+        formObj.checkedInputs[inputID].checksVerdicts.lower = formObj.checkedInputs[inputID].checkFoundQuantities.lower >= formObj.minimalQtyCriterias.lower ? true : false;
+        formObj.checkedInputs[inputID].checksVerdicts.upper = formObj.checkedInputs[inputID].checkFoundQuantities.upper >= formObj.minimalQtyCriterias.upper ? true : false;
+        formObj.checkedInputs[inputID].checksVerdicts.nbr = formObj.checkedInputs[inputID].checkFoundQuantities.nbr >= formObj.minimalQtyCriterias.nbr ? true : false;
+        formObj.checkedInputs[inputID].checksVerdicts.spe = formObj.checkedInputs[inputID].checkFoundQuantities.spe >= formObj.minimalQtyCriterias.spe ? true : false;
 
         const gatheredChecksArr: boolean[] = [];
 
@@ -137,13 +207,20 @@ export default function pwdFormBehaviour()
 
         formObj.checkedInputs[inputID].overallValidityVerdict = gatheredChecksArr.includes(false) ? false : true;
 
+        fieldClassManagmnt(inputID);
+        identicalPwdManager();
+    }
+
+
+    /** Ajout un suppression de la classe montrant le message d'erreur pour chaque champ
+     * @param {string} inputID ID du champ impacté
+     */
+    function fieldClassManagmnt(inputID: string) {
         if (formObj.checkedInputs[inputID].overallValidityVerdict) {
             formObj.checkedInputs[inputID].htmlElement.classList.remove('is-invalid');
         } else {
             formObj.checkedInputs[inputID].htmlElement.classList.add('is-invalid');
         }
-
-        identicalPwdManager();
     }
 
 
@@ -181,11 +258,77 @@ export default function pwdFormBehaviour()
     }
 
 
-    /** Comportement lors de l'appui sur le bouton de Submit
+    /** Permet de lancer la gestion asynchrone du fom, évite un message d'erreur à cause du void
      */
     function submitForm() {
+        void submitFormAsyncManagmnt();
+    }
+
+
+    /** Comportement lors de l'appui sur le bouton de Submit
+     */
+    async function submitFormAsyncManagmnt() {
         if (formObj.checkedInputs.pwd.overallValidityVerdict && formObj.checkedInputs.confPwd.overallValidityVerdict) {
-            formObj.form.submit();
+            const formContent = {
+                pwd: formObj.checkedInputs.pwd.htmlElement.value,
+                confPwd: formObj.checkedInputs.confPwd.htmlElement.value
+            };
+
+            feedbackFromBackend = await fetchDataTransfer('?controller=userAccountPostAsync&action=pwdModif', formContent);
+            addAndModifyFormFeedback();
+        }
+    }
+
+
+    /** Gestion du feedback du backend pour la creéation et la modif d'un doc
+     */
+    function addAndModifyFormFeedback() {
+        if (feedbackFromBackend.pwdsAreIdentical && feedbackFromBackend.pwdsAreValid) {
+            validFormFollowUp();
+        } else {
+            invalidFormFollowUp();
+        }
+    }
+
+
+    /** S'il y a un souci sur un des champs on met à jour l'overallValidityVerdict l'état du champ dans
+     * formObj.checkedInputs[key].overallValidityVerdict et on fait apparaitre un erreur sur le champ concerné
+     */
+    function invalidFormFollowUp() {
+        Object.entries(formObj.checkedInputs).forEach(([key, value]) => {
+            formObj.checkedInputs[key].overallValidityVerdict = feedbackFromBackend.checkedInputs[key].overallValidityVerdict;
+            fieldClassManagmnt(key);
+        });
+
+        if (feedbackFromBackend.pwdsAreIdentical) {
+            formObj.comparisonMsg.htmlElement.classList.remove('is-invalid');
+            formObj.comparisonMsg.inputsAreIdentical = true;
+        } else {
+            formObj.comparisonMsg.htmlElement.classList.add('is-invalid');
+            formObj.comparisonMsg.inputsAreIdentical = false;
+            formObj.checkedInputs.pwd.htmlElement.classList.add('is-invalid');
+            formObj.checkedInputs.confPwd.htmlElement.classList.add('is-invalid');
+        }
+    }
+
+
+    /** Cas de figure où tous les champs sont bons
+     * On revient sur la page montrant le compte du user
+     * Sinon on se contente d'avoir un message dans la console...pour le moment
+     */
+    function validFormFollowUp() {
+        switch (formObj.form.case) {
+            case 'accountModif':
+                if (feedbackFromBackend['feedbackFromDB'] == 'success') {
+                    //window.location.assign(`index.php?controller=userAccount&action=showAccountPage`);
+                } else {
+                    console.log('On a un pépin');
+                }
+                break;
+
+            default:
+                //window.location.assign(`index.php?controller=userAccount&action=showAccountPage`);
+                break;
         }
     }
 }
