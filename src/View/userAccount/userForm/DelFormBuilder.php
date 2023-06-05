@@ -132,11 +132,9 @@ class DelFormBuilder extends \HealthKerd\View\common\ViewInChief
         $this->mainFieldsSettingsList = array(
             'mainFieldsTemplate' => file_get_contents($_ENV['APPROOTPATH'] . 'templates/loggedIn/userAccount/userForm/sections/mainFields.html'),
 
-            'lastnameValidity' => '',
             'lastnameValue' => $_SESSION['lastName'],
             'lastNameReadOnly' => 'readonly',
 
-            'firstnameValidity' => '',
             'firstnameValue' => $_SESSION['firstName'],
             'fistNameReadOnly' => 'readonly',
 
@@ -147,15 +145,12 @@ class DelFormBuilder extends \HealthKerd\View\common\ViewInChief
             'uChecked' => $this->transformList['uChecked'],
             'uDisabled' => 'disabled',
 
-            'birthDateValidity' => '',
             'birthDateValue' => $this->transformList['birthDate'],
             'birthDateReadOnly' => 'readonly',
 
-            'loginValidity' => '',
             'loginValue' => $this->userData['userLogin'],
             'loginReadOnly' => 'readonly',
 
-            'mailValidity' => '',
             'mailValue' => $this->userData['email'],
             'mailReadOnly' => 'readonly'
         );
@@ -167,11 +162,9 @@ class DelFormBuilder extends \HealthKerd\View\common\ViewInChief
     {
         $this->mainFieldsContent = $this->mainFieldsSettingsList['mainFieldsTemplate'];
 
-        $this->mainFieldsContent = str_replace('{lastnameValidity}', $this->mainFieldsSettingsList['lastnameValidity'], $this->mainFieldsContent);
         $this->mainFieldsContent = str_replace('{lastnameValue}', $this->mainFieldsSettingsList['lastnameValue'], $this->mainFieldsContent);
         $this->mainFieldsContent = str_replace('{lastNameReadOnly}', $this->mainFieldsSettingsList['lastNameReadOnly'], $this->mainFieldsContent);
 
-        $this->mainFieldsContent = str_replace('{firstnameValidity}', $this->mainFieldsSettingsList['firstnameValidity'], $this->mainFieldsContent);
         $this->mainFieldsContent = str_replace('{firstnameValue}', $this->mainFieldsSettingsList['firstnameValue'], $this->mainFieldsContent);
         $this->mainFieldsContent = str_replace('{fistNameReadOnly}', $this->mainFieldsSettingsList['fistNameReadOnly'], $this->mainFieldsContent);
 
@@ -182,15 +175,12 @@ class DelFormBuilder extends \HealthKerd\View\common\ViewInChief
         $this->mainFieldsContent = str_replace('{uChecked}', $this->mainFieldsSettingsList['uChecked'], $this->mainFieldsContent);
         $this->mainFieldsContent = str_replace('{uDisabled}', $this->mainFieldsSettingsList['uDisabled'], $this->mainFieldsContent);
 
-        $this->mainFieldsContent = str_replace('{birthDateValidity}', $this->mainFieldsSettingsList['birthDateValidity'], $this->mainFieldsContent);
         $this->mainFieldsContent = str_replace('{birthDateValue}', $this->mainFieldsSettingsList['birthDateValue'], $this->mainFieldsContent);
         $this->mainFieldsContent = str_replace('{birthDateReadOnly}', $this->mainFieldsSettingsList['birthDateReadOnly'], $this->mainFieldsContent);
 
-        $this->mainFieldsContent = str_replace('{loginValidity}', $this->mainFieldsSettingsList['loginValidity'], $this->mainFieldsContent);
         $this->mainFieldsContent = str_replace('{loginValue}', $this->mainFieldsSettingsList['loginValue'], $this->mainFieldsContent);
         $this->mainFieldsContent = str_replace('{loginReadOnly}', $this->mainFieldsSettingsList['loginReadOnly'], $this->mainFieldsContent);
 
-        $this->mainFieldsContent = str_replace('{mailValidity}', $this->mainFieldsSettingsList['mailValidity'], $this->mainFieldsContent);
         $this->mainFieldsContent = str_replace('{mailValue}', $this->mainFieldsSettingsList['mailValue'], $this->mainFieldsContent);
         $this->mainFieldsContent = str_replace('{mailReadOnly}', $this->mainFieldsSettingsList['mailReadOnly'], $this->mainFieldsContent);
     }

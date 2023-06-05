@@ -129,12 +129,10 @@ class DocDeleteFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function namesSetup(): void
     {
         // Nom de famille
-        $this->formTemplate = str_replace('{lastnameValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{lastnameValue}', $this->docData['lastName'], $this->formTemplate);
         $this->formTemplate = str_replace('{lastNameReadOnly}', 'readonly', $this->formTemplate);
 
         // Prénom
-        $this->formTemplate = str_replace('{firstnameValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{firstnameValue}', $this->docData['firstName'], $this->formTemplate);
         $this->formTemplate = str_replace('{fistNameReadOnly}', 'readonly', $this->formTemplate);
     }
@@ -144,12 +142,10 @@ class DocDeleteFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function telAndMailSetup(): void
     {
         // Tel
-        $this->formTemplate = str_replace('{telValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{telValue}', $this->docData['tel'], $this->formTemplate);
         $this->formTemplate = str_replace('{telReadOnly}', 'readonly', $this->formTemplate);
 
         // Mail
-        $this->formTemplate = str_replace('{mailValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{mailValue}', $this->docData['mail'], $this->formTemplate);
         $this->formTemplate = str_replace('{mailReadOnly}', 'readonly', $this->formTemplate);
     }
@@ -159,12 +155,10 @@ class DocDeleteFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function webLinksSetup(): void
     {
         // Site web perso
-        $this->formTemplate = str_replace('{webpageValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{webpageValue}', $this->docData['webPage'], $this->formTemplate);
         $this->formTemplate = str_replace('{webpageReadOnly}', 'readonly', $this->formTemplate);
 
         // Page Docotlib
-        $this->formTemplate = str_replace('{doctolibpageValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{doctolibpageValue}', $this->docData['doctolibPage'], $this->formTemplate);
         $this->formTemplate = str_replace('{doctolibpageReadOnly}', 'readonly', $this->formTemplate);
     }

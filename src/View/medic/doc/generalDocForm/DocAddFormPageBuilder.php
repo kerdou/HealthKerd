@@ -114,12 +114,10 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function namesSetup(): void
     {
         // Nom de famille
-        $this->formTemplate = str_replace('{lastnameValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{lastnameValue}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{lastNameReadOnly}', '', $this->formTemplate);
 
         // Prénom
-        $this->formTemplate = str_replace('{firstnameValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{firstnameValue}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{fistNameReadOnly}', '', $this->formTemplate);
     }
@@ -129,12 +127,10 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function telAndMailSetup(): void
     {
         // Tel
-        $this->formTemplate = str_replace('{telValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{telValue}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{telReadOnly}', '', $this->formTemplate);
 
         // Mail
-        $this->formTemplate = str_replace('{mailValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{mailValue}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{mailReadOnly}', '', $this->formTemplate);
     }
@@ -144,12 +140,10 @@ class DocAddFormPageBuilder extends \HealthKerd\View\common\ViewInChief
     private function webLinksSetup(): void
     {
         // Site web perso
-        $this->formTemplate = str_replace('{webpageValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{webpageValue}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{webpageReadOnly}', '', $this->formTemplate);
 
         // Page Docotlib
-        $this->formTemplate = str_replace('{doctolibpageValidity}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{doctolibpageValue}', '', $this->formTemplate);
         $this->formTemplate = str_replace('{doctolibpageReadOnly}', '', $this->formTemplate);
     }
