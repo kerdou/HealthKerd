@@ -1,10 +1,19 @@
 import _ from 'lodash';
 
+interface pwdSummaryInter {
+    length: number,
+    lower: number,
+    upper: number,
+    nbr: number,
+    spe: number
+}
+
+
 /** Vérification des mots de passe
  * @param {string} stringToCheck    Mot de passe à vérifier
  * @return {RegExpMatchArray[]}       Résultat du test du regex
  */
-export default function pwdRegex(stringToCheck: string): {[index: string]: number} {
+export default function pwdRegex(stringToCheck: string): pwdSummaryInter {
     stringToCheck = stringToCheck.trim();
 
     const pwdExpr = /(?<lower>([a-z]+)?)(?<upper>([A-Z]+)?)(?<nbr>([0-9]+)?)(?<spe>(\W+)?)/; // Remplace par \ par des \\. Etape nécessaire avant de transformer la string en expression régulière.
